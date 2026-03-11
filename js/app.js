@@ -830,31 +830,20 @@ let mobileStep = 0; // 0=eligeP1, 1=eligeP2, 2=listos
 function isMobile() { return window.innerWidth <= 768; }
 
 function mobileSelectPlayer(p) {
-  if (mobileStep === 0) {
-    // Sin jugadores — elige P1
+  if (!sel.p1) {
+    // Sin P1 — este es P1
     sel.p1 = p;
     mobileStep = 1;
-  } else if (mobileStep === 1) {
-    if (sel.p1 && p.id === sel.p1.id) return; // mismo jugador, ignorar
-    // Elige P2
+  } else if (!sel.p2) {
+    // Tenemos P1, sin P2
+    if (p.id === sel.p1.id) return; // mismo, ignorar
     sel.p2 = p;
     mobileStep = 2;
   } else {
-    // mobileStep === 2: ya hay dos jugadores
-    if (p.id === sel.p1.id) {
-      // Pulsa P1 → se elimina P1, P2 pasa a P1, P2 queda vacío
-      sel.p1 = sel.p2;
-      sel.p2 = null;
-      mobileStep = 1;
-    } else if (sel.p2 && p.id === sel.p2.id) {
-      // Pulsa P2 actual → se elimina P2, vuelve a elegir P2
-      sel.p2 = null;
-      mobileStep = 1;
-    } else {
-      // Pulsa otro jugador → reemplaza P2
-      sel.p2 = p;
-      mobileStep = 2;
-    }
+    // Tenemos los dos — cualquier toque reemplaza P2
+    if (p.id === sel.p1.id) return; // no puede ser el mismo que P1
+    sel.p2 = p;
+    mobileStep = 2;
   }
   updateMobileUI();
 }
@@ -1063,6 +1052,10 @@ function initMobileSimulator() {
   document.getElementById('mob-btn-x100')?.addEventListener('click', () => {
     simulate1000();
     document.getElementById('winner-banner')?.scrollIntoView({behavior:'smooth'});
+  });
+  document.getElementById('mob-btn-newmatch')?.addEventListener('click', () => {
+    mobileReset();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   updateMobileUI();
