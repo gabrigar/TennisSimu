@@ -99,6 +99,60 @@ const LANG = {
     th_result:       'RESULT',
     matches_found:   'matches found',
     players_loaded:  'players loaded',
+    // Stats page — peak stats
+    peak_serve:      '1st Serve',
+    peak_winners:    'Winners/match',
+    peak_return:     'Return %',
+    peak_breaks:     'Break conv.',
+    // Speed cards
+    total_power:     'Total power',
+    kmh_avg:         'km/h avg',
+    // Stat cards
+    pct_1st_srv:     '1st Serve %',
+    in_the_zone:     'Landing in zone',
+    pts_1st_in:      'Pts 1st srv in',
+    when_enters:     'When it lands',
+    pts_2nd_srv:     'Pts with 2nd srv',
+    when_1st_fails:  'When 1st misses',
+    return_pts_won:  'Return pts won',
+    winners_match:   'Winners/match',
+    in_prime:        'Avg in prime',
+    ufe_label:       'Unforced errors',
+    ufe_sub:         'Avg per match',
+    bp_conv_label:   'Break pts conv.',
+    bp_saved_label:  'Break pts saved',
+    when_attacked:   'Under pressure',
+    decisive_set:    'Decisive set',
+    all_on_line:     'When it all matters',
+    net_pts:         'Net points',
+    net_eff:         'Volley efficiency',
+    height_lbl:      'Height',
+    height_sub:      'Serve & reach advantage',
+    // Rally dist
+    data_real:       '✓ Real data',
+    data_est:        '~ Estimated',
+    rally_short_desc:'Aces, winners, immediate errors',
+    rally_mid_desc:  'Medium rallies, point building',
+    rally_long_desc: 'Long rallies, endurance, fitness',
+    // Stat table rows
+    srv_pct_lbl:     '1st Srv %',
+    srv1_eff:        '1st srv eff.',
+    srv2_eff:        '2nd srv eff.',
+    control_lbl:     'Control',
+    errors_lbl:      'errors',
+    solidity_lbl:    'Solidity (BP saved)',
+    tb_lbl:          'Tiebreaks',
+    dec_set_lbl:     '💪 Decisive set',
+    net_lbl:         '🥅 Net',
+    // Comparador
+    comp_pts_1st:    'Pts won 1st srv',
+    comp_pts_2nd:    'Pts won 2nd srv',
+    comp_winners:    'Winners/match',
+    comp_errors:     'Unforced errors',
+    comp_breaks:     'Break conv.',
+    comp_tb:         'Tiebreaks',
+    comp_dec:        'Decisive set',
+    comp_serve_kmh:  'Serve km/h',
   },
   es: {
     // Nav
@@ -197,6 +251,60 @@ const LANG = {
     th_result:       'RESULTADO',
     matches_found:   'partidos encontrados',
     players_loaded:  'jugadores cargados',
+    // Stats page — peak stats
+    peak_serve:      '1er Servicio',
+    peak_winners:    'Winners/partido',
+    peak_return:     '% Dev. ganada',
+    peak_breaks:     'Conv. Breaks',
+    // Speed cards
+    total_power:     'Potencia total',
+    kmh_avg:         'km/h media',
+    // Stat cards
+    pct_1st_srv:     '% 1er Servicio',
+    in_the_zone:     'Entran en zona',
+    pts_1st_in:      'Pts 1st srv in',
+    when_enters:     'Cuando entra',
+    pts_2nd_srv:     'Pts con 2do srv',
+    when_1st_fails:  'Cuando falla el 1ro',
+    return_pts_won:  'Return pts won',
+    winners_match:   'Winners/partido',
+    in_prime:        'Media en su prime',
+    ufe_label:       'Errores no forz.',
+    ufe_sub:         'Media por partido',
+    bp_conv_label:   'Conv. Break pts',
+    bp_saved_label:  'Break pts salvados',
+    when_attacked:   'Cuando le atacan',
+    decisive_set:    'Set decisivo',
+    all_on_line:     'Cuando se juega todo',
+    net_pts:         'Pts en red',
+    net_eff:         'Eficacia en volea',
+    height_lbl:      'Altura',
+    height_sub:      'Ventaja saque/reach',
+    // Rally dist
+    data_real:       '✓ Dato real',
+    data_est:        '~ Estimado',
+    rally_short_desc:'Aces, winners, errores inmediatos',
+    rally_mid_desc:  'Intercambios medios, construcción del punto',
+    rally_long_desc: 'Rallies largos, resistencia, físico',
+    // Stat table rows
+    srv_pct_lbl:     '1er Srv %',
+    srv1_eff:        'Efic. 1er srv',
+    srv2_eff:        'Efic. 2do srv',
+    control_lbl:     'Control',
+    errors_lbl:      'errores',
+    solidity_lbl:    'Solidez (breaks salv.)',
+    tb_lbl:          'Tiebreaks',
+    dec_set_lbl:     '💪 Set decisivo',
+    net_lbl:         '🥅 Red',
+    // Comparador
+    comp_pts_1st:    'Pts ganados 1er',
+    comp_pts_2nd:    'Pts ganados 2do',
+    comp_winners:    'Winners/partido',
+    comp_errors:     'Errores no forz.',
+    comp_breaks:     'Conv. Breaks',
+    comp_tb:         'Tiebreaks',
+    comp_dec:        'Set decisivo',
+    comp_serve_kmh:  'Saque km/h',
   }
 };
 
@@ -1198,10 +1306,10 @@ function showPlayerDetail(playerId) {
 
         <div class="player-bio">${p.bio || ''}</div>
         <div class="peak-stat">
-          <div class="peak-item"><div class="peak-label">1er Servicio</div><div class="peak-value">${Math.round(s.serve1pct * 100)}%</div></div>
-          <div class="peak-item"><div class="peak-label">Winners/partido</div><div class="peak-value">${s.winners}</div></div>
-          <div class="peak-item"><div class="peak-label">% Dev. ganada</div><div class="peak-value">${Math.round(s.returnWin * 100)}%</div></div>
-          <div class="peak-item"><div class="peak-label">Conv. Breaks</div><div class="peak-value">${Math.round(s.breakConvert * 100)}%</div></div>
+          <div class="peak-item"><div class="peak-label">${t('peak_serve')}</div><div class="peak-value">${Math.round(s.serve1pct * 100)}%</div></div>
+          <div class="peak-item"><div class="peak-label">${t('peak_winners')}</div><div class="peak-value">${s.winners}</div></div>
+          <div class="peak-item"><div class="peak-label">${t('peak_return')}</div><div class="peak-value">${Math.round(s.returnWin * 100)}%</div></div>
+          <div class="peak-item"><div class="peak-label">${t('peak_breaks')}</div><div class="peak-value">${Math.round(s.breakConvert * 100)}%</div></div>
         </div>
       </div>
     </div>
@@ -1230,9 +1338,9 @@ function showPlayerDetail(playerId) {
           <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round(((s.rest_kmh||148)-125)/45*100)}%;background:#a855f7"></div></div>
         </div>
         <div class="speed-card combo">
-          <div class="speed-icon">⚡</div><div class="speed-label">Potencia total</div>
+          <div class="speed-icon">⚡</div><div class="speed-label">${t('total_power')}</div>
           <div class="speed-value">${Math.round(((s.serve_kmh||200)+(s.fh_kmh||145)+(s.bh_kmh||138)+(s.rest_kmh||148))/4)}</div>
-          <div class="speed-unit">km/h media</div>
+          <div class="speed-unit">${t('kmh_avg')}</div>
           <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round((((s.serve_kmh||200)+(s.fh_kmh||145)+(s.bh_kmh||138)+(s.rest_kmh||148))/4-138)/50*100)}%;background:linear-gradient(90deg,#c8f000,#a855f7)"></div></div>
         </div>
       </div>
@@ -1240,44 +1348,44 @@ function showPlayerDetail(playerId) {
       <div class="section-label" style="margin-top:2rem">${t('sim_stats')}</div>
       <div class="stat-cards">
         <div class="stat-card highlight">
-          <div class="stat-card-label">% 1er Servicio</div>
+          <div class="stat-card-label">${t('pct_1st_srv')}</div>
           <div class="stat-card-value" style="color:var(--accent)">${Math.round(s.serve1pct * 100)}%</div>
-          <div class="stat-card-sub">Entran en zona</div>
+          <div class="stat-card-sub">${t('in_the_zone')}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Pts 1st srv in</div>
+          <div class="stat-card-label">${t('pts_1st_in')}</div>
           <div class="stat-card-value">${Math.round(s.win1st * 100)}%</div>
-          <div class="stat-card-sub">Cuando entra</div>
+          <div class="stat-card-sub">${t('when_enters')}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Pts con 2do srv</div>
+          <div class="stat-card-label">${t('pts_2nd_srv')}</div>
           <div class="stat-card-value">${Math.round(s.win2nd * 100)}%</div>
-          <div class="stat-card-sub">Cuando falla el 1ro</div>
+          <div class="stat-card-sub">${t('when_1st_fails')}</div>
         </div>
         <div class="stat-card">
           <div class="stat-card-label">${t('return_pct')}</div>
           <div class="stat-card-value">${Math.round(s.returnWin * 100)}%</div>
-          <div class="stat-card-sub">Return pts won</div>
+          <div class="stat-card-sub">${t('return_pts_won')}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Winners/partido</div>
+          <div class="stat-card-label">${t('winners_match')}</div>
           <div class="stat-card-value">${s.winners}</div>
-          <div class="stat-card-sub">Media en su prime</div>
+          <div class="stat-card-sub">${t('in_prime')}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Errores no forz.</div>
+          <div class="stat-card-label">${t('ufe_label')}</div>
           <div class="stat-card-value">${s.errors}</div>
-          <div class="stat-card-sub">Media por partido</div>
+          <div class="stat-card-sub">${t('ufe_sub')}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Conv. Break pts</div>
+          <div class="stat-card-label">${t('bp_conv_label')}</div>
           <div class="stat-card-value">${Math.round(s.breakConvert * 100)}%</div>
           <div class="stat-card-sub">${t('when_chance')}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Break pts salvados</div>
+          <div class="stat-card-label">${t('bp_saved_label')}</div>
           <div class="stat-card-value">${Math.round(s.breakSave * 100)}%</div>
-          <div class="stat-card-sub">Cuando le atacan</div>
+          <div class="stat-card-sub">${t('when_attacked')}</div>
         </div>
         <div class="stat-card highlight">
           <div class="stat-card-label">${t('tb_won')}</div>
@@ -1285,19 +1393,19 @@ function showPlayerDetail(playerId) {
           <div class="stat-card-sub">${t('max_pressure')}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Set decisivo</div>
+          <div class="stat-card-label">${t('decisive_set')}</div>
           <div class="stat-card-value">${Math.round((p.dec_win || 0.64) * 100)}%</div>
-          <div class="stat-card-sub">Cuando se juega todo</div>
+          <div class="stat-card-sub">${t('all_on_line')}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Pts en red</div>
+          <div class="stat-card-label">${t('net_pts')}</div>
           <div class="stat-card-value">${Math.round((p.net_win || 0.65) * 100)}%</div>
-          <div class="stat-card-sub">Eficacia en volea</div>
+          <div class="stat-card-sub">${t('net_eff')}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Altura</div>
+          <div class="stat-card-label">${t('height_lbl')}</div>
           <div class="stat-card-value">${p.height || '—'}<span style="font-size:1rem;color:var(--muted)">cm</span></div>
-          <div class="stat-card-sub">Ventaja saque/reach</div>
+          <div class="stat-card-sub">${t('height_sub')}</div>
         </div>
       </div>
 
@@ -1324,24 +1432,24 @@ function showPlayerDetail(playerId) {
         <div class="surface-title">
           Rally distribution
           <span class="data-badge ${s.data_type === 'real' ? 'badge-real' : 'badge-est'}">
-            ${s.data_type === 'real' ? '✓ Dato real' : '~ Estimado'}
+            ${s.data_type === 'real' ? t('data_real') : t('data_est')}
           </span>
         </div>
         <div class="rally-distribution">
           <div class="rally-bar-row">
             <div class="rally-bar-label">⚡ 0–4 golpes</div>
             <div class="rally-bar-outer"><div class="rally-bar-fill rally-short" style="width:${s.rally_short || 40}%"><span class="rally-pct">${s.rally_short || 40}%</span></div></div>
-            <div class="rally-desc">Aces, winners directos, errores inmediatos</div>
+            <div class="rally-desc">${t('rally_short_desc')}</div>
           </div>
           <div class="rally-bar-row">
             <div class="rally-bar-label">🔄 5–8 golpes</div>
             <div class="rally-bar-outer"><div class="rally-bar-fill rally-mid" style="width:${s.rally_mid || 34}%"><span class="rally-pct">${s.rally_mid || 34}%</span></div></div>
-            <div class="rally-desc">Intercambiomedium rallies, point building</div>
+            <div class="rally-desc">${t('rally_mid_desc')}</div>
           </div>
           <div class="rally-bar-row">
             <div class="rally-bar-label">💪 9+ golpes</div>
             <div class="rally-bar-outer"><div class="rally-bar-fill rally-long" style="width:${s.rally_long || 26}%"><span class="rally-pct">${s.rally_long || 26}%</span></div></div>
-            <div class="rally-desc">Rallies lalong rallies, endurance</div>
+            <div class="rally-desc">${t('rally_long_desc')}</div>
           </div>
         </div>
       </div>
@@ -1352,17 +1460,17 @@ function showPlayerDetail(playerId) {
           ['🎯 Vel. saque',        (s.serve_kmh||'—')+' km/h',        barW(s.serve_kmh||200, 170, 250)],
           ['👊 Vel. derecha',      (s.fh_kmh||'—')+' km/h',           barW(s.fh_kmh||145, 118, 178)],
           ['🔄 ' + t('bh_speed'),        (s.bh_kmh||'—')+' km/h',           barW(s.bh_kmh||138, 115, 162)],
-          ['1er Srv %',            Math.round(s.serve1pct*100)+'%',    barW(s.serve1pct, 0.56, 0.70)],
-          ['Efic. 1er srv',        Math.round(s.win1st*100)+'%',       barW(s.win1st, 0.68, 0.86)],
-          ['Efic. 2do srv',        Math.round(s.win2nd*100)+'%',       barW(s.win2nd, 0.50, 0.62)],
+          [t('srv_pct_lbl'),            Math.round(s.serve1pct*100)+'%',    barW(s.serve1pct, 0.56, 0.70)],
+          [t('srv1_eff'),        Math.round(s.win1st*100)+'%',       barW(s.win1st, 0.68, 0.86)],
+          [t('srv2_eff'),        Math.round(s.win2nd*100)+'%',       barW(s.win2nd, 0.50, 0.62)],
           [t('return_row'),           Math.round(s.returnWin*100)+'%',    barW(s.returnWin, 0.28, 0.52)],
           ['Winners',              s.winners+'/partido',               barW(s.winners, 24, 52)],
-          ['Control',              s.errors+' errores',                100-barW(s.errors, 18, 38)],
+          [t('control_lbl'),        s.errors+' '+t('errors_lbl'),                100-barW(s.errors, 18, 38)],
           ['Conv. breaks',         Math.round(s.breakConvert*100)+'%', barW(s.breakConvert, 0.32, 0.54)],
-          ['Solidez (breaks salv.)', Math.round(s.breakSave*100)+'%', barW(s.breakSave, 0.60, 0.74)],
-          ['🎯 Tiebreaks',         Math.round((p.tb_win||0.62)*100)+'%', barW(p.tb_win||0.62, 0.52, 0.76)],
-          ['💪 Set decisivo',      Math.round((p.dec_win||0.64)*100)+'%', barW(p.dec_win||0.64, 0.54, 0.76)],
-          ['🥅 Red',               Math.round((p.net_win||0.65)*100)+'%', barW(p.net_win||0.65, 0.50, 0.84)],
+          [t('solidity_lbl'), Math.round(s.breakSave*100)+'%', barW(s.breakSave, 0.60, 0.74)],
+          [t('tb_lbl'),         Math.round((p.tb_win||0.62)*100)+'%', barW(p.tb_win||0.62, 0.52, 0.76)],
+          [t('dec_set_lbl'),      Math.round((p.dec_win||0.64)*100)+'%', barW(p.dec_win||0.64, 0.54, 0.76)],
+          [t('net_lbl'),               Math.round((p.net_win||0.65)*100)+'%', barW(p.net_win||0.65, 0.50, 0.84)],
         ].map(([label, val, pct]) => `
           <div class="stat-table-row">
             <div class="str-label">${label}</div>
@@ -1470,16 +1578,16 @@ function renderComparadorComparison() {
 
   const statRows = [
     // [label, val1, val2, rawN1, rawN2, invert?]
-    ['1er Srv %',        Math.round(s1.serve1pct*100)+'%', Math.round(s2.serve1pct*100)+'%', s1.serve1pct,      s2.serve1pct,      false],
-    ['Pts ganados 1er',  Math.round(s1.win1st*100)+'%',    Math.round(s2.win1st*100)+'%',    s1.win1st,         s2.win1st,         false],
-    ['Pts ganados 2do',  Math.round(s1.win2nd*100)+'%',    Math.round(s2.win2nd*100)+'%',    s1.win2nd,         s2.win2nd,         false],
+    [t('srv_pct_lbl'),        Math.round(s1.serve1pct*100)+'%', Math.round(s2.serve1pct*100)+'%', s1.serve1pct,      s2.serve1pct,      false],
+    [t('comp_pts_1st'),  Math.round(s1.win1st*100)+'%',    Math.round(s2.win1st*100)+'%',    s1.win1st,         s2.win1st,         false],
+    [t('comp_pts_2nd'),  Math.round(s1.win2nd*100)+'%',    Math.round(s2.win2nd*100)+'%',    s1.win2nd,         s2.win2nd,         false],
     [t('return_row'),       Math.round(s1.returnWin*100)+'%', Math.round(s2.returnWin*100)+'%', s1.returnWin,      s2.returnWin,      false],
-    ['Winners/partido',  s1.winners,                       s2.winners,                       s1.winners,        s2.winners,        false],
-    ['Errores no forz.', s1.errors,                        s2.errors,                        s1.errors,         s2.errors,         true],
-    ['Conv. Breaks',     Math.round(s1.breakConvert*100)+'%', Math.round(s2.breakConvert*100)+'%', s1.breakConvert, s2.breakConvert, false],
-    ['Tiebreaks',        Math.round((p1.tb_win||0.62)*100)+'%', Math.round((p2.tb_win||0.62)*100)+'%', p1.tb_win||0.62, p2.tb_win||0.62, false],
-    ['Set decisivo',     Math.round((p1.dec_win||0.64)*100)+'%', Math.round((p2.dec_win||0.64)*100)+'%', p1.dec_win||0.64, p2.dec_win||0.64, false],
-    ['Saque km/h',       s1.serve_kmh||'—',                s2.serve_kmh||'—',                s1.serve_kmh||200, s2.serve_kmh||200, false],
+    [t('comp_winners'),  s1.winners,                       s2.winners,                       s1.winners,        s2.winners,        false],
+    [t('comp_errors'), s1.errors,                        s2.errors,                        s1.errors,         s2.errors,         true],
+    [t('comp_breaks'),     Math.round(s1.breakConvert*100)+'%', Math.round(s2.breakConvert*100)+'%', s1.breakConvert, s2.breakConvert, false],
+    [t('comp_tb'),        Math.round((p1.tb_win||0.62)*100)+'%', Math.round((p2.tb_win||0.62)*100)+'%', p1.tb_win||0.62, p2.tb_win||0.62, false],
+    [t('comp_dec'),     Math.round((p1.dec_win||0.64)*100)+'%', Math.round((p2.dec_win||0.64)*100)+'%', p1.dec_win||0.64, p2.dec_win||0.64, false],
+    [t('comp_serve_kmh'),       s1.serve_kmh||'—',                s2.serve_kmh||'—',                s1.serve_kmh||200, s2.serve_kmh||200, false],
   ];
 
   // GS breakdown dots helper
