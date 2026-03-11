@@ -1752,7 +1752,25 @@
   /* Ocultar desktop, mostrar móvil */
   #desktop-selector { display: none !important; }
   #mobile-selector  { display: block !important; }
-  #again-wrap       { display: none !important; } /* sustituido por mob-post-sim */
+  /* again-wrap: siempre visible en móvil, x100 + new match */
+  #again-wrap {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.4rem 0;
+  }
+  #again-wrap .sim-btn-1000,
+  #again-wrap .again-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  #sim1000-result {
+    flex: 0 0 100%;
+    order: -1;
+  }
 
   /* Ocultar bloque duplicado — la info ya está en el VS bar */
   .selection-display  { display: none !important; }
