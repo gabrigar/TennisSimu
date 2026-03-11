@@ -1758,8 +1758,7 @@
   .selection-display  { display: none !important; }
   #section-label-config { display: none !important; }
 
-  /* Mostrar botón ×100 en móvil dentro de again-wrap — ya lo gestiona mob-post-sim */
-  #mob-post-sim { display: none; } /* se activa por JS al simular */
+  /* mob-post-sim: visible via JS (display:flex) al simular — no sobreescribir aquí */
 
   /* ── Header de estado ── */
   .mob-sel-header {
