@@ -1784,84 +1784,175 @@
     letter-spacing: 0.05em;
   }
 
-  /* ── VS bar con imágenes de fondo ── */
+  /* ── Player cards — P1 y P2 ── */
   .mob-vs-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 0.5rem;
+    min-height: 5rem;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  /* hide old pseudoelement backgrounds */
+  .mob-vs-bar::before, .mob-vs-bar::after { display: none; }
+
+  .mob-vs-sep {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    font-family: 'Anton', sans-serif;
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding: 0 0.3rem;
+    background: var(--bg);
+    z-index: 1;
+  }
+
+  /* Shared player slot styles */
+  .mob-player-slot {
     position: relative;
     overflow: hidden;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    padding: 0.6rem 1rem;
-    margin-bottom: 0.5rem;
-    min-height: 3.5rem;
-  }
-  .mob-vs-bar::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: var(--p1img);
-    background-size: auto 150%;
-    background-position: 0% 15%;
-    background-repeat: no-repeat;
-    mask-image: linear-gradient(to right, rgba(0,0,0,0.70) 0%, transparent 60%);
-    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.70) 0%, transparent 60%);
-  }
-  .mob-vs-bar::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: var(--p2img);
-    background-size: auto 150%;
-    background-position: 100% 15%;
-    background-repeat: no-repeat;
-    mask-image: linear-gradient(to left, rgba(0,0,0,0.70) 0%, transparent 60%);
-    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.70) 0%, transparent 60%);
-  }
-  .mob-vs-p1, .mob-vs-p2, .mob-vs-sep {
-    position: relative;
-    z-index: 1;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.9);
-  }
-  .mob-vs-p1  { color: var(--accent);  max-width: 38%; }
-  .mob-vs-p2  { color: var(--accent2); max-width: 38%; text-align: right; }
-  .mob-vs-sep { color: var(--muted); font-family: 'Anton',sans-serif; font-size: 0.9rem; }
-
-  /* ── Grid de jugadores compacto — 16 en pantalla ── */
-  .mob-grid {
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    justify-content: center;
+    padding: 0.5rem 0.6rem;
+    background: var(--surface);
+    min-height: 5rem;
+  }
+  .mob-player-slot.slot-p1 { border-left: 3px solid var(--accent); }
+  .mob-player-slot.slot-p2 { border-right: 3px solid var(--accent2); text-align: right; align-items: flex-end; }
+  .mob-player-slot.slot-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mob-slot-empty-label {
+    font-family: 'Anton', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .slot-p1 .mob-slot-empty-label { color: var(--accent); opacity: 0.6; }
+  .slot-p2 .mob-slot-empty-label { color: var(--accent2); opacity: 0.6; }
+
+  /* Photo fading background */
+  .mob-player-slot::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--slot-img, none);
+    background-size: auto 130%;
+    background-repeat: no-repeat;
+    background-position: 0% 10%;
+    mask-image: linear-gradient(to right, rgba(0,0,0,0.55) 0%, transparent 70%);
+    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.55) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .slot-p2::before {
+    background-position: 100% 10%;
+    mask-image: linear-gradient(to left, rgba(0,0,0,0.55) 0%, transparent 70%);
+    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.55) 0%, transparent 70%);
+  }
+
+  .mob-slot-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .mob-slot-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .slot-p1 .mob-slot-name { color: var(--accent); }
+  .slot-p2 .mob-slot-name { color: var(--accent2); }
+
+  .mob-slot-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    margin-top: 0.15rem;
+  }
+  .slot-p2 .mob-slot-stats { align-items: flex-end; }
+  .mob-slot-stat {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .mob-slot-stat span {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* legacy selectors — keep working but hidden */
+  .mob-vs-p1, .mob-vs-p2 { display: none; }
+
+  /* ── Grid de jugadores — 2 columnas, ~10 visibles ── */
+  .mob-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
     margin-bottom: 0.5rem;
-    max-height: 65vh;
+    max-height: 55vh;
     overflow-y: auto;
+    padding-right: 2px;
   }
   .mob-card {
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.28rem 0.6rem;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.45rem 0.5rem;
     background: var(--surface);
-    border-left: 2px solid transparent;
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
     cursor: pointer;
-    transition: background 0.1s;
-    min-height: 0;
+    transition: background 0.12s, border-color 0.12s;
   }
   .mob-card:active { background: var(--surface2); }
-  .mob-card.mob-sel-p1 { border-left-color: var(--accent);  background: rgba(200,240,0,0.07); }
-  .mob-card.mob-sel-p2 { border-left-color: var(--accent2); background: rgba(0,229,255,0.07); }
+  .mob-card.mob-sel-p1 { border-left-color: var(--accent);  background: rgba(200,240,0,0.08); }
+  .mob-card.mob-sel-p2 { border-left-color: var(--accent2); background: rgba(0,229,255,0.08); }
 
-  .mob-flag  { font-size: 0.85rem; flex-shrink: 0; }
-  .mob-name  { font-family:'Barlow Condensed',sans-serif; font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .mob-era   { font-size:0.62rem; color:var(--muted); flex-shrink:0; }
-  .mob-gs    { font-size:0.68rem; flex-shrink:0; }
-  .mob-m1k   { font-size:0.68rem; flex-shrink:0; }
+  .mob-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    width: 100%;
+  }
+  .mob-flag  { font-size: 0.9rem; flex-shrink: 0; line-height: 1; }
+  .mob-name  {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.73rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+  }
+  .mob-gs-badge {
+    font-size: 0.62rem;
+    color: var(--accent);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .mob-era, .mob-gs, .mob-m1k { display: none; }
 
   /* ── Botones post-sim ── */
   #mob-post-sim { display: none; }
