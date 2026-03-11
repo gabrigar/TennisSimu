@@ -47,11 +47,15 @@
     <div id="mob-sel-header" class="mob-sel-header"></div>
     <input class="search-bar" placeholder="🔍 Search player..." id="mob-search">
     <div class="mob-grid" id="mob-grid"></div>
-    <!-- VS bar with images -->
-    <div class="mob-vs-bar" id="mob-vs-bar" style="display:none">
-      <span class="mob-vs-p1" id="mob-vs-p1"></span>
-      <span class="mob-vs-sep">VS</span>
-      <span class="mob-vs-p2" id="mob-vs-p2"></span>
+    <!-- Player slots — se actualizan al elegir jugadores -->
+    <div class="mob-vs-bar" id="mob-vs-bar">
+      <div class="mob-player-slot slot-p1 slot-empty" id="mob-slot-p1">
+        <div class="mob-slot-empty-label">PLAYER 1</div>
+      </div>
+      <div class="mob-vs-sep">VS</div>
+      <div class="mob-player-slot slot-p2 slot-empty" id="mob-slot-p2">
+        <div class="mob-slot-empty-label">PLAYER 2</div>
+      </div>
     </div>
   </div>
 
