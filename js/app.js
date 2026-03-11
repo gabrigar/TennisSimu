@@ -256,6 +256,7 @@ function applyLang() {
   setText('mob-btn-p2',     t('change_p2'));
   setText('mob-btn-reset',  t('reset_all'));
   setText('mob-btn-x100',   t('x100'));
+  setText('mob-btn-newmatch', t('new_match'));
 
   // 100 matches header
   setText('sim1000-header', t('x100_header'));
