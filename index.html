@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>TennisSimu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <div class="logo">Tennis<span>Simu</span></div>
+  <button id="lang-toggle" class="lang-toggle">ES</button>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-page="simulator">⚡ Simulator</button>
+    <button class="nav-tab" data-page="stats">📊 Stats</button>
+    <button class="nav-tab" data-page="comparador">🔄 Compare</button>
+    <button class="nav-tab" data-page="historico">🔥 History</button>
+  </div>
+</header>
+
+<!-- ==================== PAGE: SIMULATOR ==================== -->
+<div id="page-simulator" class="page active">
+<div class="main-grid">
+
+  <!-- DESKTOP selector (hidden on mobile) -->
+  <div id="desktop-selector" style="display:contents">
+  <div>
+    <div class="section-label" id="section-label-p1">Player 1</div>
+    <input class="search-bar" placeholder="Search player..." id="search-p1">
+    <div class="player-grid" id="grid-p1"></div>
+  </div>
+
+  <div>
+    <div class="section-label" id="section-label-p2">Player 2</div>
+    <input class="search-bar" placeholder="Search player..." id="search-p2">
+    <div class="player-grid" id="grid-p2"></div>
+  </div>
+  </div><!-- /desktop-selector -->
+
+  <!-- MOBILE selector (hidden on desktop) -->
+  <div id="mobile-selector" style="display:none; grid-column:1/-1">
+    <div id="mob-sel-header" class="mob-sel-header"></div>
+    <input class="search-bar" placeholder="🔍 Search player..." id="mob-search">
+    <div class="mob-grid" id="mob-grid"></div>
+    <!-- VS bar with images -->
+    <div class="mob-vs-bar" id="mob-vs-bar" style="display:none">
+      <span class="mob-vs-p1" id="mob-vs-p1"></span>
+      <span class="mob-vs-sep">VS</span>
+      <span class="mob-vs-p2" id="mob-vs-p2"></span>
+    </div>
+  </div>
+
+  <div style="grid-column:1/-1">
+    <div class="section-label" id="section-label-config">Settings</div>
+    <div class="selection-display">
+      <div class="sel-name p1" id="sel-p1" id="sel-p1">— Select P1 —</div>
+      <div class="sel-vs">VS</div>
+      <div class="sel-name p2" id="sel-p2">— Select P2 —</div>
+    </div>
+    <div class="config-panel">
+      <div class="config-row">
+        <span id="label-surface">Surface</span>
+        <div class="config-options" id="surface-opts">
+          <button class="opt-btn active" data-val="hard">Hard</button>
+          <button class="opt-btn" data-val="clay">Clay</button>
+          <button class="opt-btn" data-val="grass">Grass</button>
+        </div>
+      </div>
+      <div class="config-row">
+        <span id="label-sets">Sets</span>
+        <div class="config-options" id="sets-opts">
+          <button class="opt-btn" data-val="3">3 sets</button>
+          <button class="opt-btn active" data-val="5">5 sets</button>
+        </div>
+      </div>
+      <div class="config-row">
+        <span id="label-tb">Final tiebreak</span>
+        <div class="config-options" id="tb-opts">
+          <button class="opt-btn active" data-val="yes">Yes</button>
+          <button class="opt-btn" data-val="no">No</button>
+        </div>
+      </div>
+    </div>
+    <br>
+    <button class="sim-btn" id="sim-btn" disabled>SIMULATE MATCH</button>
+  </div>
+
+  <div class="winner-banner" id="winner-banner" style="display:none">
+    <div class="winner-label" id="winner-label-text">🏆 Match winner</div>
+    <div class="winner-name" id="winner-name">—</div>
+    <div class="winner-score" id="winner-score">—</div>
+  </div>
+
+  <div id="scoreboard" style="display:none">
+    <div class="score-header">
+      <div id="sb-header-player">Player</div>
+      <div>S1</div><div>S2</div><div>S3</div><div>S4</div><div>S5</div>
+      <div id="sb-header-games">Games</div>
+    </div>
+    <div class="score-row">
+      <div class="player-label"><span class="dot-p1"></span><span id="sb-name-p1">—</span></div>
+      <div class="set-score inactive" id="s1p1">-</div>
+      <div class="set-score inactive" id="s2p1">-</div>
+      <div class="set-score inactive" id="s3p1">-</div>
+      <div class="set-score inactive" id="s4p1">-</div>
+      <div class="set-score inactive" id="s5p1">-</div>
+      <div class="games-total p1" id="tot-p1">0</div>
+    </div>
+    <div class="score-row">
+      <div class="player-label"><span class="dot-p2"></span><span id="sb-name-p2">—</span></div>
+      <div class="set-score inactive" id="s1p2">-</div>
+      <div class="set-score inactive" id="s2p2">-</div>
+      <div class="set-score inactive" id="s3p2">-</div>
+      <div class="set-score inactive" id="s4p2">-</div>
+      <div class="set-score inactive" id="s5p2">-</div>
+      <div class="games-total p2" id="tot-p2">0</div>
+    </div>
+  </div>
+
+  <div id="match-stats" style="display:none">
+    <div class="section-label" id="match-stats-label">Match stats</div>
+    <div class="stats-two-cols" id="stats-grid">
+      <div class="stats-col" id="stats-col-p1"></div>
+      <div class="stats-col" id="stats-col-p2"></div>
+    </div>
+  </div>
+  <div id="point-log" style="display:none"></div>
+  <!-- MOBILE post-sim buttons -->
+  <div id="mob-post-sim" style="display:none; grid-column:1/-1; flex-direction:column; gap:0.5rem;">
+    <button class="mob-action-btn mob-repeat"  id="mob-btn-repeat">↩ REPEAT MATCH</button>
+    <button class="mob-action-btn mob-p2"      id="mob-btn-p2">🔄 CHANGE PLAYER 2</button>
+    <button class="mob-action-btn mob-reset"   id="mob-btn-reset">✕ RESET ALL</button>
+    <button class="mob-action-btn mob-x100"    id="mob-btn-x100">× 100 MATCHES</button>
+  </div>
+
+  <div id="again-wrap" style="display:none; grid-column:1/-1;">
+    <div id="sim1000-result" style="display:none;">
+      <div class="sim1000-header" id="sim1000-header">100 MATCHES</div>
+      <div class="sim1000-nums">
+        <div class="sim1000-num p1" id="sim1000-num-p1">—</div>
+        <div class="sim1000-num p2" id="sim1000-num-p2">—</div>
+      </div>
+      <div class="sim1000-bar-wrap">
+        <div class="sim1000-bar-p1" id="sim1000-bar-p1"></div>
+        <div class="sim1000-bar-p2" id="sim1000-bar-p2"></div>
+      </div>
+    </div>
+    <button class="sim-btn sim-btn-1000" id="sim-btn-1000" disabled>× 100</button>
+    <button class="again-btn" id="again-btn">↩ New match</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== PAGE: COMPARADOR ==================== -->
+<div id="page-comparador" class="page">
+  <div class="stats-page-layout">
+
+    <!-- SIDEBAR -->
+    <div class="players-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Database · <span id="comp-player-count">0</span> players</div>
+        <input class="sidebar-search" placeholder="Search name..." id="comp-sidebar-search">
+        <div class="era-filter" id="comp-era-filter">
+          <button class="era-btn active" data-era="all">All</button>
+          <button class="era-btn" data-era="2010s">2010s+</button>
+          <button class="era-btn" data-era="2000s">2000s</button>
+          <button class="era-btn" data-era="90s">90s</button>
+          <button class="era-btn" data-era="80s">80s</button>
+          <button class="era-btn" data-era="70s">70s</button>
+        </div>
+      </div>
+      <div id="comp-players-list"></div>
+    </div>
+
+    <!-- DETAIL VIEW: dos columnas de jugadores -->
+    <div class="player-detail" id="comp-player-detail">
+      <div class="detail-empty" id="comp-empty-view">
+        <div class="detail-empty-icon">🔄</div>
+        <div class="detail-empty-text" id="comp-empty-text">Select two players to compare them</div>
+      </div>
+      <div id="comp-detail-content" style="display:none;"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== PAGE: ESTADÍSTICAS ==================== -->
+<div id="page-stats" class="page">
+  <div class="stats-page-layout">
+
+    <!-- SIDEBAR -->
+    <div class="players-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Database · <span id="player-count">0</span> players</div>
+        <input class="sidebar-search" placeholder="Search name..." id="sidebar-search">
+        <div class="era-filter" id="era-filter">
+          <button class="era-btn active" data-era="all">All</button>
+          <button class="era-btn" data-era="2010s">2010s+</button>
+          <button class="era-btn" data-era="2000s">2000s</button>
+          <button class="era-btn" data-era="90s">90s</button>
+          <button class="era-btn" data-era="80s">80s</button>
+          <button class="era-btn" data-era="70s">70s</button>
+        </div>
+      </div>
+      <div id="players-list"></div>
+    </div>
+
+    <!-- DETAIL -->
+    <div class="player-detail" id="player-detail">
+      <div class="detail-empty" id="detail-empty">
+        <div class="detail-empty-icon">🎾</div>
+        <div class="detail-empty-text" id="detail-empty-text">Select a player to view their stats</div>
+      </div>
+      <div id="detail-content" style="display:none;"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== PAGE: HISTÓRICO ==================== -->
+<div id="page-historico" class="page">
+  <div class="results-header">
+    <h2 id="hist-title">HISTORICAL RESULTS</h2>
+    <p class="results-subtitle" id="hist-sub">9,489 real matches · 1985–2024 · 99 players</p>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="results-filters">
+    <div class="filter-group">
+      <label id="rf-label-p1">PLAYER 1</label>
+      <select id="rf-p1"><option value="">All</option></select>
+    </div>
+    <div class="filter-group">
+      <label id="rf-label-p2">PLAYER 2</label>
+      <select id="rf-p2"><option value="">All</option></select>
+    </div>
+    <div class="filter-group">
+      <label id="rf-label-surface">SURFACE</label>
+      <select id="rf-surf">
+        <option value="">All</option>
+        <option value="H">Hard</option>
+        <option value="C">Clay</option>
+        <option value="G">Grass</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label id="rf-label-level">LEVEL</label>
+      <select id="rf-lvl">
+        <option value="">All</option>
+        <option value="Grand Slam">Grand Slam</option>
+        <option value="Masters 1000">Masters 1000</option>
+        <option value="ATP Finals">ATP Finals</option>
+        <option value="ATP 500">ATP 500</option>
+        <option value="ATP 250">ATP 250</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label id="rf-label-year-from">YEAR FROM</label>
+      <select id="rf-year-from"><option value="">1985</option></select>
+    </div>
+    <div class="filter-group">
+      <label id="rf-label-year-to">YEAR TO</label>
+      <select id="rf-year-to"><option value="">2024</option></select>
+    </div>
+    <button class="btn-filter" id="rf-btn-filter" onclick="applyResultsFilter()">FILTER</button>
+    <button class="btn-filter btn-reset" id="rf-btn-reset" onclick="resetResultsFilter()">RESET</button>
+  </div>
+
+  <!-- H2H BADGE -->
+  <div id="h2h-badge" style="display:none;"></div>
+
+  <!-- CONTADOR -->
+  <div id="results-count" class="results-count"></div>
+
+  <!-- TABLA -->
+  <div class="results-table-wrap">
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th id="th-year">YEAR</th>
+          <th id="th-tournament">TOURNAMENT</th>
+          <th id="th-level">LEVEL</th>
+          <th id="th-round">ROUND</th>
+          <th id="th-surface">SURFACE</th>
+          <th id="th-winner">WINNER</th>
+          <th id="th-loser">LOSER</th>
+          <th id="th-result">RESULT</th>
+        </tr>
+      </thead>
+      <tbody id="results-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- PAGINACIÓN -->
+  <div id="results-pagination" class="results-pagination"></div>
+</div>
+
+<script src="js/players.js" defer></script>
+<script src="js/engine.js" defer></script>
+<script src="js/results_db.js" defer></script>
+<script src="js/app.js" defer></script>
+
+<!-- Ensure initialization happens after all scripts load -->
+<script>
+  function ensureInitialized() {
+    if (typeof PLAYERS === 'undefined' ||  typeof initializeUI === 'undefined' || typeof RESULTS_DB === 'undefined') {
+      console.log('[TL] Waiting for scripts to load...');
+      setTimeout(ensureInitialized, 100);
+      return;
+    }
+    console.log('[TL] All scripts loaded, calling initializeUI');
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeUI);
+    } else {
+      initializeUI();
+    }
+  }
+  
+  // Start check immediately
+  ensureInitialized();
+  
+  // Also ensure on window load
+  window.addEventListener('load', () => {
+    console.log('[TL] Window.load event, checking if need to re-init...');
+    setTimeout(() => {
+      if (document.getElementById('grid-p1')?.children.length === 0) {
+        console.log('[TL] Grids empty, re-initializing...');
+        if (typeof initializeUI === 'function') {
+          initializeUI();
+        }
+      }
+    }, 200);
+  });
+</script>
+</body>
+</html>
