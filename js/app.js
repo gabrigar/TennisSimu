@@ -360,11 +360,7 @@ function applyLang() {
   setText('match-stats-label', t('match_stats'));
 
   // Post-sim mobile buttons
-  setText('mob-btn-repeat', t('repeat'));
-  setText('mob-btn-p2',     t('change_p2'));
-  setText('mob-btn-reset',  t('reset_all'));
-  setText('mob-btn-x100',   t('x100'));
-  setText('mob-btn-newmatch', t('new_match'));
+  // mob-post-sim buttons removed — x100 and new match use again-wrap directly
 
   // 100 matches header
   setText('sim1000-header', t('x100_header'));
@@ -916,14 +912,6 @@ function renderResult(p1, p2, setsP1, setsP2, winner, scoreStr, stats, matchLog,
     if (el) { el.style.display = 'block'; }
   });
 
-  // En móvil: ocultar again-wrap y mostrar mob-post-sim
-  if (isMobile()) {
-    const aw = document.getElementById('again-wrap');
-    if (aw) aw.style.display = 'none';
-    const mps = document.getElementById('mob-post-sim');
-    if (mps) mps.style.display = 'flex';
-  }
-
   setTimeout(() => {
     document.getElementById('winner-banner')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 100);
@@ -970,10 +958,12 @@ function mobileReset() {
   mobileStep = 0;
   const search = document.getElementById('mob-search');
   if (search) search.value = '';
-  ['scoreboard','match-stats','point-log','winner-banner','again-wrap','mob-post-sim'].forEach(id => {
+  ['scoreboard','match-stats','point-log','winner-banner'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
+  // again-wrap stays visible (always shown in mobile)
+  document.getElementById('sim1000-result').style.display = 'none';
   document.getElementById('winner-banner')?.classList.remove('has-winner-img');
   updateMobileUI();
 }
@@ -983,10 +973,11 @@ function mobileChangeP2() {
   mobileStep = 1;
   const search = document.getElementById('mob-search');
   if (search) search.value = '';
-  ['scoreboard','match-stats','point-log','winner-banner','again-wrap','mob-post-sim'].forEach(id => {
+  ['scoreboard','match-stats','point-log','winner-banner'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
+  document.getElementById('sim1000-result').style.display = 'none';
   document.getElementById('winner-banner')?.classList.remove('has-winner-img');
   updateMobileUI();
 }
@@ -1123,9 +1114,6 @@ function randomFlashAndSim() {
         updateMobileUI();
         setTimeout(() => {
           simulate();
-          document.getElementById('mob-post-sim').style.display = 'flex';
-          const wb = document.getElementById('again-wrap');
-          if (wb) wb.style.display = 'none';
           document.getElementById('winner-banner')?.scrollIntoView({behavior:'smooth'});
         }, 200);
       }, 500);
@@ -1152,28 +1140,18 @@ function initMobileSimulator() {
     simBtn.onclick = () => {
       if (!sel.p1 || !sel.p2) { randomFlashAndSim(); return; }
       simulate();
-      const wb = document.getElementById('again-wrap');
-      if (wb) wb.style.display = 'none';
-      document.getElementById('mob-post-sim').style.display = 'flex';
       document.getElementById('winner-banner')?.scrollIntoView({behavior:'smooth'});
     };
   }
 
-  // Post-sim buttons
-  document.getElementById('mob-btn-repeat')?.addEventListener('click', () => {
-    simulate();
-    document.getElementById('winner-banner')?.scrollIntoView({behavior:'smooth'});
-  });
-  document.getElementById('mob-btn-p2')?.addEventListener('click', mobileChangeP2);
-  document.getElementById('mob-btn-reset')?.addEventListener('click', mobileReset);
-  document.getElementById('mob-btn-x100')?.addEventListener('click', () => {
-    simulate1000();
-    document.getElementById('winner-banner')?.scrollIntoView({behavior:'smooth'});
-  });
-  document.getElementById('mob-btn-newmatch')?.addEventListener('click', () => {
-    mobileReset();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  // Override again-btn for mobile: use mobileReset instead of resetSim
+  const againBtnMob = document.getElementById('again-btn');
+  if (againBtnMob) {
+    againBtnMob.onclick = () => {
+      mobileReset();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  }
 
   updateMobileUI();
 }
