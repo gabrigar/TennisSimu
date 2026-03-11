@@ -831,12 +831,30 @@ function isMobile() { return window.innerWidth <= 768; }
 
 function mobileSelectPlayer(p) {
   if (mobileStep === 0) {
+    // Sin jugadores — elige P1
     sel.p1 = p;
     mobileStep = 1;
   } else if (mobileStep === 1) {
-    if (sel.p1 && p.id === sel.p1.id) return; // same player
+    if (sel.p1 && p.id === sel.p1.id) return; // mismo jugador, ignorar
+    // Elige P2
     sel.p2 = p;
     mobileStep = 2;
+  } else {
+    // mobileStep === 2: ya hay dos jugadores
+    if (p.id === sel.p1.id) {
+      // Pulsa P1 → se elimina P1, P2 pasa a P1, P2 queda vacío
+      sel.p1 = sel.p2;
+      sel.p2 = null;
+      mobileStep = 1;
+    } else if (sel.p2 && p.id === sel.p2.id) {
+      // Pulsa P2 actual → se elimina P2, vuelve a elegir P2
+      sel.p2 = null;
+      mobileStep = 1;
+    } else {
+      // Pulsa otro jugador → reemplaza P2
+      sel.p2 = p;
+      mobileStep = 2;
+    }
   }
   updateMobileUI();
 }
@@ -844,7 +862,8 @@ function mobileSelectPlayer(p) {
 function mobileReset() {
   sel.p1 = null; sel.p2 = null;
   mobileStep = 0;
-  document.getElementById('mob-search').value = '';
+  const search = document.getElementById('mob-search');
+  if (search) search.value = '';
   ['scoreboard','match-stats','point-log','winner-banner','again-wrap','mob-post-sim'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
@@ -856,7 +875,8 @@ function mobileReset() {
 function mobileChangeP2() {
   sel.p2 = null;
   mobileStep = 1;
-  document.getElementById('mob-search').value = '';
+  const search = document.getElementById('mob-search');
+  if (search) search.value = '';
   ['scoreboard','match-stats','point-log','winner-banner','again-wrap','mob-post-sim'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
@@ -865,42 +885,65 @@ function mobileChangeP2() {
   updateMobileUI();
 }
 
+function renderMobileSlot(slotId, player, side) {
+  const slot = document.getElementById(slotId);
+  if (!slot) return;
+  const colorVar = side === 'p1' ? 'var(--accent)' : 'var(--accent2)';
+  const emptyLabel = side === 'p1' ? (t ? t('pick_p1') : 'PLAYER 1') : (t ? t('pick_p2') : 'PLAYER 2');
+
+  if (!player) {
+    slot.classList.add('slot-empty');
+    slot.style.removeProperty('--slot-img');
+    slot.innerHTML = `<div class="mob-slot-empty-label">${emptyLabel}</div>`;
+    return;
+  }
+
+  slot.classList.remove('slot-empty');
+  slot.style.setProperty('--slot-img', `url(img/${player.id}.png)`);
+  const s = player.stats;
+  slot.innerHTML = `
+    <div class="mob-slot-content">
+      <div class="mob-slot-name">${flagHTML(player)} ${player.name}</div>
+      <div class="mob-slot-stats">
+        <div class="mob-slot-stat">1st srv <span>${Math.round(s.serve1pct*100)}%</span></div>
+        <div class="mob-slot-stat">W <span>${s.winners}</span></div>
+        ${(player.gs||0) > 0 ? `<div class="mob-slot-stat">GS <span style="color:${colorVar}">${player.gs}</span></div>` : ''}
+      </div>
+    </div>`;
+}
+
 function updateMobileUI() {
   if (!isMobile()) return;
-  const header   = document.getElementById('mob-sel-header');
-  const vsBar    = document.getElementById('mob-vs-bar');
-  const simBtn   = document.getElementById('sim-btn');
-  const s1000    = document.getElementById('sim-btn-1000');
-  const search   = document.getElementById('mob-search');
+
+  // VS bar — siempre visible
+  const vsBar = document.getElementById('mob-vs-bar');
+  if (vsBar) vsBar.style.display = 'grid';
+
+  // Actualizar slots
+  renderMobileSlot('mob-slot-p1', sel.p1, 'p1');
+  renderMobileSlot('mob-slot-p2', sel.p2, 'p2');
 
   // Header de estado
-  if (mobileStep === 0) {
-    header.innerHTML = `<span class="mob-step-label p1">${t('pick_p1')}</span>`;
-    vsBar.style.display = 'none';
-  } else if (mobileStep === 1) {
-    const gs  = sel.p1.gs || 0;
-    const m1k = sel.p1.masters || 0;
-    header.innerHTML = `
-      <span class="mob-chip p1">${flagHTML(sel.p1)} ${sel.p1.name} ${gs?'🏆'+gs:''} ${m1k?'💎'+m1k:''}</span>
-      <span class="mob-step-label p2">${t('pick_p2')}</span>`;
-    vsBar.style.display = 'none';
-  } else {
-    header.innerHTML = '';
-    vsBar.style.display = 'flex';
-    // Imágenes de fondo del VS bar
-    const vb = document.getElementById('mob-vs-bar');
-    vb.style.setProperty('--p1img', `url(img/${sel.p1.id}.png)`);
-    vb.style.setProperty('--p2img', `url(img/${sel.p2.id}.png)`);
-    document.getElementById('mob-vs-p1').innerHTML = `${flagHTML(sel.p1)} ${sel.p1.name}`;
-    document.getElementById('mob-vs-p2').innerHTML = `${flagHTML(sel.p2)} ${sel.p2.name}`;
+  const header = document.getElementById('mob-sel-header');
+  if (header) {
+    if (mobileStep === 0) {
+      header.innerHTML = `<span class="mob-step-label p1">${t('pick_p1')}</span>`;
+    } else if (mobileStep === 1) {
+      header.innerHTML = `<span class="mob-step-label p2">${t('pick_p2')}</span>`;
+    } else {
+      header.innerHTML = '';
+    }
   }
 
   // Botones simular
   const ready = (mobileStep === 2);
-  if (simBtn) { simBtn.disabled = !ready; simBtn.classList.toggle('sim-used', false); }
-  if (s1000)  { s1000.disabled = !ready; }
+  const simBtn = document.getElementById('sim-btn');
+  const s1000  = document.getElementById('sim-btn-1000');
+  if (simBtn) simBtn.disabled = !ready;
+  if (s1000)  s1000.disabled  = !ready;
 
-  // Re-renderizar grid móvil
+  // Re-renderizar grid
+  const search = document.getElementById('mob-search');
   renderMobileGrid(search ? search.value : '');
 }
 
@@ -919,14 +962,13 @@ function renderMobileGrid(filter) {
     const isSelP1 = sel.p1 && sel.p1.id === p.id;
     const isSelP2 = sel.p2 && sel.p2.id === p.id;
     card.className = 'mob-card' + (isSelP1 ? ' mob-sel-p1' : '') + (isSelP2 ? ' mob-sel-p2' : '');
-    const gs  = p.gs     || 0;
-    const m1k = p.masters|| 0;
+    const gs = p.gs || 0;
     card.innerHTML = `
-      <span class="mob-flag">${flagHTML(p)}</span>
-      <span class="mob-name">${p.name}</span>
-      <span class="mob-era">${(p.era||'').split('-')[0]}</span>
-      ${gs  ? `<span class="mob-gs">🏆${gs}</span>`   : ''}
-      ${m1k ? `<span class="mob-m1k">💎${m1k}</span>` : ''}`;
+      <div class="mob-card-top">
+        <span class="mob-flag">${flagHTML(p)}</span>
+        <span class="mob-name">${p.name}</span>
+        ${gs ? `<span class="mob-gs-badge">🏆${gs}</span>` : ''}
+      </div>`;
     card.onclick = () => mobileSelectPlayer(p);
     grid.appendChild(card);
   });
