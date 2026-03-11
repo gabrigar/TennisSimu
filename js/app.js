@@ -916,6 +916,14 @@ function renderResult(p1, p2, setsP1, setsP2, winner, scoreStr, stats, matchLog,
     if (el) { el.style.display = 'block'; }
   });
 
+  // En móvil: ocultar again-wrap y mostrar mob-post-sim
+  if (isMobile()) {
+    const aw = document.getElementById('again-wrap');
+    if (aw) aw.style.display = 'none';
+    const mps = document.getElementById('mob-post-sim');
+    if (mps) mps.style.display = 'flex';
+  }
+
   setTimeout(() => {
     document.getElementById('winner-banner')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 100);
@@ -1304,7 +1312,7 @@ function showPlayerDetail(playerId) {
           </div>
         </div>
 
-        <div class="player-bio">${p.bio || ''}</div>
+        <div class="player-bio">${(currentLang==='en' ? p.bio_en : p.bio) || p.bio || ''}</div>
         <div class="peak-stat">
           <div class="peak-item"><div class="peak-label">${t('peak_serve')}</div><div class="peak-value">${Math.round(s.serve1pct * 100)}%</div></div>
           <div class="peak-item"><div class="peak-label">${t('peak_winners')}</div><div class="peak-value">${s.winners}</div></div>
