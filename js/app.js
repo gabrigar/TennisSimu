@@ -966,6 +966,13 @@ function mobileReset() {
   document.getElementById('sim1000-result').style.display = 'none';
   document.getElementById('winner-banner')?.classList.remove('has-winner-img');
   updateMobileUI();
+  // Scroll to top of mobile selector so player grid is visible
+  const mobileSel = document.getElementById('mobile-selector');
+  if (mobileSel) {
+    mobileSel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function mobileChangeP2() {
@@ -1149,7 +1156,6 @@ function initMobileSimulator() {
   if (againBtnMob) {
     againBtnMob.onclick = () => {
       mobileReset();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
   }
 
