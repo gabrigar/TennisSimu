@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TennisSimu — GOAT Ranking v4</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--border:#2a2a3a;--accent:#c8f000;--accent2:#00e5ff;--text:#e8e8f0;--muted:#6a6a8a;--hard:#00b4d8;--clay:#e07a3b;--grass:#52b788;--gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
+.header{background:var(--bg2);border-bottom:2px solid var(--accent);padding:18px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'Anton',sans-serif;font-size:26px;letter-spacing:1px}.logo span{color:var(--accent)}
+.header-meta{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);text-align:right;line-height:1.7}
+.header-meta strong{color:var(--accent)}
+.hero{padding:44px 40px 24px;max-width:1400px;margin:0 auto}
+.hero-title{font-family:'Anton',sans-serif;font-size:clamp(40px,7vw,80px);line-height:.92;letter-spacing:2px;margin-bottom:10px}
+.hero-title .hl{color:var(--accent)}
+.hero-sub{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border:1px solid var(--border);color:var(--muted)}
+.tag.a{border-color:var(--accent);color:var(--accent)}.tag.h{border-color:var(--hard);color:var(--hard)}.tag.c{border-color:var(--clay);color:var(--clay)}.tag.g{border-color:var(--grass);color:var(--grass)}
+.podium-section{max-width:1400px;margin:0 auto;padding:0 40px 40px}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:18px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.podium{display:grid;grid-template-columns:1fr 1.12fr 1fr;gap:14px;margin-bottom:40px}
+.p-card{background:var(--bg2);border:1px solid var(--border);padding:24px 20px;cursor:pointer;transition:transform .2s,border-color .2s}
+.p-card:hover{transform:translateY(-3px);border-color:var(--accent)}
+.p-card.p1{border-top:3px solid var(--gold);order:2}.p-card.p2{border-top:3px solid var(--silver);order:1}.p-card.p3{border-top:3px solid var(--bronze);order:3}
+.p-medal{font-family:'Anton',sans-serif;font-size:44px;line-height:1;margin-bottom:6px}
+.p-rnk{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:5px}
+.p-card.p1 .p-rnk{color:var(--gold)}.p-card.p2 .p-rnk{color:var(--silver)}.p-card.p3 .p-rnk{color:var(--bronze)}
+.p-name{font-family:'Anton',sans-serif;font-size:clamp(17px,2.4vw,26px);line-height:1.1;margin-bottom:3px}
+.p-pct{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:900;color:var(--accent);margin:8px 0 10px;line-height:1}
+.p-chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:2px 7px}
+.chip.h{background:rgba(0,180,216,.12);color:var(--hard);border:1px solid rgba(0,180,216,.3)}
+.chip.c{background:rgba(224,122,59,.12);color:var(--clay);border:1px solid rgba(224,122,59,.3)}
+.chip.g{background:rgba(82,183,136,.12);color:var(--grass);border:1px solid rgba(82,183,136,.3)}
+.p-meta{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--muted);margin-top:8px}
+.tabs-section{max-width:1400px;margin:0 auto;padding:0 40px 60px}
+.tabs-nav{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:22px;overflow-x:auto}
+.tab-btn{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:11px 18px;background:none;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .2s}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.srch{background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;padding:7px 13px;outline:none;width:210px;transition:border-color .2s}
+.srch:focus{border-color:var(--accent)}.srch::placeholder{color:var(--muted)}
+.ebts{display:flex;gap:4px;flex-wrap:wrap}
+.ebt{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 11px;background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .15s}
+.ebt:hover{border-color:var(--text);color:var(--text)}.ebt.active{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.rcount{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px}
+.rt{width:100%;border-collapse:collapse}
+.rt th{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:left;padding:9px 11px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap}
+.rt th:hover{color:var(--text)}.rt th.sorted{color:var(--accent)}
+.rt td{padding:9px 11px;border-bottom:1px solid rgba(42,42,58,.4);font-family:'Barlow Condensed',sans-serif;font-size:14px;vertical-align:middle}
+.rt tr{cursor:pointer;transition:background .1s}.rt tr:hover td{background:rgba(200,240,0,.04)}
+.rnum{font-family:'Anton',sans-serif;font-size:17px;color:var(--muted);width:44px}.rnum.t3{color:var(--accent)}
+.pname{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.3px}
+.pera{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--muted)}
+.wpct{font-family:'Anton',sans-serif;font-size:19px;color:var(--accent)}
+.barcell{width:110px}.barbg{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.barfill{height:100%;border-radius:2px;background:var(--accent)}
+.sp{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600}
+.sp.h{color:var(--hard)}.sp.c{color:var(--clay)}.sp.g{color:var(--grass)}
+.ebadge{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border:1px solid var(--border);color:var(--muted);white-space:nowrap}
+.ebadge.ng{border-color:var(--accent2);color:var(--accent2)}.ebadge.ge{border-color:var(--accent);color:var(--accent)}.ebadge.me{border-color:#b48aff;color:#b48aff}.ebadge.ce{border-color:var(--clay);color:var(--clay)}
+.gscell{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--gold)}
+.surf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.surf-hdr{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:9px 13px;margin-bottom:2px}
+.surf-hdr.hh{background:rgba(0,180,216,.12);color:var(--hard);border-left:3px solid var(--hard)}
+.surf-hdr.ch{background:rgba(224,122,59,.12);color:var(--clay);border-left:3px solid var(--clay)}
+.surf-hdr.gh{background:rgba(82,183,136,.12);color:var(--grass);border-left:3px solid var(--grass)}
+.srow{display:flex;align-items:center;gap:9px;padding:8px 13px;border-bottom:1px solid rgba(42,42,58,.35);cursor:pointer;transition:background .1s}
+.srow:hover{background:rgba(255,255,255,.03)}
+.srow-rk{font-family:'Anton',sans-serif;font-size:13px;color:var(--muted);width:22px;flex-shrink:0}
+.srow-nm{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;flex:1}
+.srow-pct{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700}
+.srow-flag{font-size:13px}
+.epoch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.ep-hdr{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:9px 13px;margin-bottom:2px}
+.ep-hdr.ng{background:rgba(0,229,255,.08);color:var(--accent2);border-left:3px solid var(--accent2)}
+.ep-hdr.ge{background:rgba(200,240,0,.08);color:var(--accent);border-left:3px solid var(--accent)}
+.ep-hdr.me{background:rgba(180,138,255,.08);color:#b48aff;border-left:3px solid #b48aff}
+.ep-hdr.ce{background:rgba(224,122,59,.08);color:var(--clay);border-left:3px solid var(--clay)}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
+.modal-ov.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--accent);width:90%;max-width:540px;max-height:88vh;overflow-y:auto;padding:30px;position:relative}
+.modal-x{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
+.modal-x:hover{color:var(--text)}
+.modal-rnk{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.modal-nm{font-family:'Anton',sans-serif;font-size:30px;line-height:1;margin-bottom:3px}
+.modal-meta{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--muted);margin-bottom:20px}
+.modal-pct{font-family:'Anton',sans-serif;font-size:52px;color:var(--accent);line-height:1;margin-bottom:2px}
+.modal-pct-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.modal-surfs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.msc{padding:12px;text-align:center}
+.msc.h{background:rgba(0,180,216,.07);border:1px solid rgba(0,180,216,.2)}
+.msc.c{background:rgba(224,122,59,.07);border:1px solid rgba(224,122,59,.2)}
+.msc.g{background:rgba(82,183,136,.07);border:1px solid rgba(82,183,136,.2)}
+.msc-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+.msc.h .msc-lbl{color:var(--hard)}.msc.c .msc-lbl{color:var(--clay)}.msc.g .msc-lbl{color:var(--grass)}
+.msc-pct{font-family:'Anton',sans-serif;font-size:24px}
+.msc.h .msc-pct{color:var(--hard)}.msc.c .msc-pct{color:var(--clay)}.msc.g .msc-pct{color:var(--grass)}
+.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.mstat{background:var(--bg3);padding:11px;display:flex;justify-content:space-between;align-items:center}
+.mstat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.mstat-val{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700}
+footer{border-top:1px solid var(--border);padding:18px 40px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);letter-spacing:1px}
+footer a{color:var(--accent);text-decoration:none}
+@media(max-width:900px){
+  .header,.hero,.podium-section,.tabs-section{padding-left:16px;padding-right:16px}
+  .podium{grid-template-columns:1fr}.p-card.p1,.p-card.p2,.p-card.p3{order:unset}
+  .surf-grid{grid-template-columns:1fr}.epoch-grid{grid-template-columns:1fr}
+  .barcell{display:none}.rt th:nth-child(8),.rt td:nth-child(8){display:none}
+}
+@media(max-width:600px){
+  .rt th:nth-child(6),.rt td:nth-child(6),.rt th:nth-child(7),.rt td:nth-child(7){display:none}
+}
+.epoch-rank-lbl{font-family:"Barlow Condensed",sans-serif;font-size:10px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Tennis<span>Simu</span></div>
+  <div class="header-meta">ENGINE v4 · FIX A+B+C+D+net_win<br><strong>1,606,800 matches</strong> · 104 players · 5 sets + tiebreak</div>
+</div>
+
+<div class="hero">
+  <div class="hero-title">GOAT<br><span class="hl">RANKING</span></div>
+  <div class="hero-sub">Engine v3 · All-time simulation · 100 × 3 surfaces per pair</div>
+  <div class="tags">
+    <span class="tag a">5356 unique pairs</span>
+    <span class="tag h">Hard 45%</span>
+    <span class="tag c">Clay 35%</span>
+    <span class="tag g">Grass 20%</span>
+    <span class="tag">Fix C: surface bias</span>
+    <span class="tag">Fix D: error displacement</span>
+  </div>
+</div>
+
+<div class="podium-section">
+  <div class="sec-title">Top 3</div>
+  <div class="podium" id="podium"></div>
+</div>
+
+<div class="tabs-section">
+  <div class="tabs-nav">
+    <button class="tab-btn active" data-tab="overall">🏆 Overall</button>
+    <button class="tab-btn" data-tab="hard">💎 Hard Court</button>
+    <button class="tab-btn" data-tab="clay">🔶 Clay Court</button>
+    <button class="tab-btn" data-tab="grass">🟢 Grass Court</button>
+    <button class="tab-btn" data-tab="splits">📊 Surface Split</button>
+    <button class="tab-btn" data-tab="epochs">🕰 By Era</button>
+  </div>
+
+  <div class="tab-content" id="tab-overall">
+    <div class="controls">
+      <input class="srch" id="srch-overall" placeholder="🔍 Search player...">
+      <div class="ebts" id="epoch-filter">
+        <button class="ebt active" data-ep="all">All</button>
+        <button class="ebt" data-ep="Next Gen">Next Gen</button>
+        <button class="ebt" data-ep="Golden Era">Golden Era</button>
+        <button class="ebt" data-ep="Modern Era">Modern Era</button>
+        <button class="ebt" data-ep="Classic Era">Classic Era</button>
+      </div>
+      <span class="rcount" id="rcount-overall"></span>
+    </div>
+    <table class="rt" id="tbl-overall">
+      <thead><tr>
+        <th data-sort="rank"># ↕</th>
+        <th>Player</th>
+        <th data-sort="winPct">Win% ↕</th>
+        <th class="barcell"></th>
+        <th data-sort="hardPct">Hard ↕</th>
+        <th data-sort="clayPct">Clay ↕</th>
+        <th data-sort="grassPct">Grass ↕</th>
+        <th>Era</th>
+        <th data-sort="gs">GS ↕</th>
+      </tr></thead>
+      <tbody id="tbody-overall"></tbody>
+    </table>
+  </div>
+
+  <div class="tab-content" id="tab-hard" style="display:none">
+    <table class="rt"><thead><tr>
+      <th>#</th><th>Player</th><th>Hard% ↕</th><th class="barcell"></th>
+      <th>Clay</th><th>Grass</th><th>Overall</th><th>Era</th>
+    </tr></thead><tbody id="tbody-hard"></tbody></table>
+  </div>
+
+  <div class="tab-content" id="tab-clay" style="display:none">
+    <table class="rt"><thead><tr>
+      <th>#</th><th>Player</th><th>Clay% ↕</th><th class="barcell"></th>
+      <th>Hard</th><th>Grass</th><th>Overall</th><th>Era</th>
+    </tr></thead><tbody id="tbody-clay"></tbody></table>
+  </div>
+
+  <div class="tab-content" id="tab-grass" style="display:none">
+    <table class="rt"><thead><tr>
+      <th>#</th><th>Player</th><th>Grass% ↕</th><th class="barcell"></th>
+      <th>Hard</th><th>Clay</th><th>Overall</th><th>Era</th>
+    </tr></thead><tbody id="tbody-grass"></tbody></table>
+  </div>
+
+  <div class="tab-content" id="tab-splits" style="display:none">
+    <div class="surf-grid" id="splits-grid"></div>
+  </div>
+
+  <div class="tab-content" id="tab-epochs" style="display:none">
+    <div class="epoch-grid" id="epoch-grid"></div>
+  </div>
+</div>
+
+<div class="modal-ov" id="modal-ov">
+  <div class="modal">
+    <button class="modal-x" id="modal-x">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<footer>
+  <a href="https://gabrigar.github.io/TennisSimu/" target="_blank">TennisSimu</a> ·
+  Markov Chain Engine v3 · 1,606,800 simulated matches · Players compete with natural stats, no era adjustment
+</footer>
+
+<script>
+const RANKING_DATA = [{"id": "djokovic", "name": "Novak Djokovic", "country": "SRB", "flag": "🇷🇸", "era": "2004-present", "prime": "2011-2016", "epoch": "Golden Era", "style": "Baseliner", "gs": 24, "winPct": 0.8605362921867776, "hardPct": 0.8723300970873786, "clayPct": 0.8671844660194175, "grassPct": 0.83, "totalW": 26466, "totalL": 4434, "rank": 1}, {"id": "alcaraz", "name": "Carlos Alcaraz", "country": "ESP", "flag": "🇪🇸", "era": "2021-present", "prime": "2023-present", "epoch": "Next Gen", "style": "All-court", "gs": 7, "winPct": 0.8406380027739252, "hardPct": 0.8333980582524272, "clayPct": 0.8531067961165049, "grassPct": 0.8362135922330097, "totalW": 25984, "totalL": 4916, "rank": 2}, {"id": "sinner", "name": "Jannik Sinner", "country": "ITA", "flag": "🇮🇹", "era": "2018-present", "prime": "2024-present", "epoch": "Next Gen", "style": "Baseliner", "gs": 4, "winPct": 0.7890291262135922, "hardPct": 0.8281553398058252, "clayPct": 0.7709708737864077, "grassPct": 0.743883495145631, "totalW": 24133, "totalL": 6767, "rank": 3}, {"id": "zverev", "name": "Alexander Zverev", "country": "GER", "flag": "🇩🇪", "era": "2015-present", "prime": "2021-present", "epoch": "Next Gen", "style": "All-court", "gs": 1, "winPct": 0.7418677762367083, "hardPct": 0.7550485436893204, "clayPct": 0.7474757281553398, "grassPct": 0.7102912621359223, "totalW": 22792, "totalL": 8108, "rank": 4}, {"id": "nadal", "name": "Rafael Nadal", "country": "ESP", "flag": "🇪🇸", "era": "2003-2024", "prime": "2008-2012", "epoch": "Golden Era", "style": "Baseliner", "gs": 22, "winPct": 0.7199861303744798, "hardPct": 0.6501941747572816, "clayPct": 0.8849514563106796, "grassPct": 0.6146601941747573, "totalW": 22143, "totalL": 8757, "rank": 5}, {"id": "berrettini", "name": "Matteo Berrettini", "country": "ITA", "flag": "🇮🇹", "era": "2015-present", "prime": "2021-present", "epoch": "Next Gen", "style": "Serve & Baseline", "gs": 0, "winPct": 0.696037910309755, "hardPct": 0.7111650485436893, "clayPct": 0.6455339805825243, "grassPct": 0.7395145631067961, "totalW": 21591, "totalL": 9309, "rank": 6}, {"id": "federer", "name": "Roger Federer", "country": "SUI", "flag": "🇨🇭", "era": "2000-2022", "prime": "2004-2007", "epoch": "Golden Era", "style": "All-court", "gs": 20, "winPct": 0.6960194174757282, "hardPct": 0.7479611650485437, "clayPct": 0.5863106796116505, "grassPct": 0.756116504854369, "totalW": 21531, "totalL": 9369, "rank": 7}, {"id": "martin_del_potro", "name": "Juan Martín del Potro", "country": "ARG", "flag": "🇦🇷", "era": "2007-2022", "prime": "2009-2013", "epoch": "Golden Era", "style": "Serve & Baseline", "gs": 1, "winPct": 0.6959778085991678, "hardPct": 0.7370873786407767, "clayPct": 0.6141747572815534, "grassPct": 0.7365048543689321, "totalW": 21504, "totalL": 9396, "rank": 8}, {"id": "medvedev", "name": "Daniil Medvedev", "country": "RUS", "flag": "🇷🇺", "era": "2015-present", "prime": "2021-present", "epoch": "Next Gen", "style": "Baseliner", "gs": 1, "winPct": 0.6752750809061487, "hardPct": 0.7907766990291262, "clayPct": 0.5068932038834951, "grassPct": 0.7031067961165048, "totalW": 20608, "totalL": 10292, "rank": 9}, {"id": "murray", "name": "Andy Murray", "country": "GBR", "flag": "🇬🇧", "era": "2005-present", "prime": "2012-2016", "epoch": "Golden Era", "style": "Baseliner", "gs": 3, "winPct": 0.6732501155802126, "hardPct": 0.6880582524271844, "clayPct": 0.5988349514563107, "grassPct": 0.7507766990291262, "totalW": 20988, "totalL": 9912, "rank": 10}, {"id": "borg", "name": "Björn Borg", "country": "SWE", "flag": "🇸🇪", "era": "1973-1983", "prime": "1977-1981", "epoch": "Classic Era", "style": "Baseliner", "gs": 11, "winPct": 0.664257975034674, "hardPct": 0.5285436893203883, "clayPct": 0.8178640776699029, "grassPct": 0.693495145631068, "totalW": 21011, "totalL": 9889, "rank": 11}, {"id": "auger", "name": "Félix Auger-Aliassime", "country": "CAN", "flag": "🇨🇦", "era": "2018-present", "prime": "2022-present", "epoch": "Next Gen", "style": "All-court", "gs": 0, "winPct": 0.6567267683772537, "hardPct": 0.6935922330097087, "clayPct": 0.5720388349514564, "grassPct": 0.7089320388349515, "totalW": 20338, "totalL": 10562, "rank": 12}, {"id": "tsonga", "name": "Jo-Wilfried Tsonga", "country": "FRA", "flag": "🇫🇷", "era": "2005-2022", "prime": "2008-2012", "epoch": "Golden Era", "style": "All-court", "gs": 0, "winPct": 0.6546463245492372, "hardPct": 0.6967961165048544, "clayPct": 0.5525242718446602, "grassPct": 0.721747572815534, "totalW": 20302, "totalL": 10598, "rank": 13}, {"id": "mensik", "name": "Jakub Menšík", "country": "CZE", "flag": "🇨🇿", "era": "2022-present", "prime": "2025-present", "epoch": "Next Gen", "style": "Serve & Baseline", "gs": 0, "winPct": 0.650748959778086, "hardPct": 0.7200970873786408, "clayPct": 0.5953398058252427, "grassPct": 0.603495145631068, "totalW": 19765, "totalL": 11135, "rank": 14}, {"id": "safin", "name": "Marat Safin", "country": "RUS", "flag": "🇷🇺", "era": "1997-2009", "prime": "2000-2005", "epoch": "Modern Era", "style": "All-court", "gs": 3, "winPct": 0.6493018955154878, "hardPct": 0.7104854368932039, "clayPct": 0.5345631067961165, "grassPct": 0.6998058252427184, "totalW": 20032, "totalL": 10868, "rank": 15}, {"id": "shelton", "name": "Ben Shelton", "country": "USA", "flag": "🇺🇸", "era": "2022-present", "prime": "2023-present", "epoch": "Next Gen", "style": "Serve & Baseline", "gs": 0, "winPct": 0.6485991678224688, "hardPct": 0.71, "clayPct": 0.5106796116504855, "grassPct": 0.7311650485436894, "totalW": 20104, "totalL": 10796, "rank": 16}, {"id": "roddick", "name": "Andy Roddick", "country": "USA", "flag": "🇺🇸", "era": "2001-2012", "prime": "2003-2007", "epoch": "Golden Era", "style": "Serve & Baseline", "gs": 1, "winPct": 0.6441423948220064, "hardPct": 0.6902912621359223, "clayPct": 0.5333980582524271, "grassPct": 0.716116504854369, "totalW": 19980, "totalL": 10920, "rank": 17}, {"id": "thiem", "name": "Dominic Thiem", "country": "AUT", "flag": "🇦🇹", "era": "2011-2022", "prime": "2018-2020", "epoch": "Golden Era", "style": "All-court", "gs": 1, "winPct": 0.6433656957928803, "hardPct": 0.649126213592233, "clayPct": 0.7032038834951456, "grassPct": 0.5492233009708738, "totalW": 19586, "totalL": 11314, "rank": 18}, {"id": "draper", "name": "Jack Draper", "country": "GBR", "flag": "🇬🇧", "era": "2021-present", "prime": "2024-present", "epoch": "Next Gen", "style": "All-court", "gs": 0, "winPct": 0.6395515487748495, "hardPct": 0.6805825242718446, "clayPct": 0.5436893203883495, "grassPct": 0.6999029126213592, "totalW": 19819, "totalL": 11081, "rank": 19}, {"id": "mcenroe", "name": "John McEnroe", "country": "USA", "flag": "🇺🇸", "era": "1978-1994", "prime": "1981-1984", "epoch": "Classic Era", "style": "Serve & Volley", "gs": 8, "winPct": 0.6341331484049931, "hardPct": 0.6666019417475728, "clayPct": 0.5016504854368932, "grassPct": 0.7611650485436893, "totalW": 19873, "totalL": 11027, "rank": 20}, {"id": "kyrgios", "name": "Nick Kyrgios", "country": "AUS", "flag": "🇦🇺", "era": "2013-present", "prime": "2022-2023", "epoch": "Golden Era", "style": "All-court", "gs": 0, "winPct": 0.6306981044845124, "hardPct": 0.681747572815534, "clayPct": 0.507378640776699, "grassPct": 0.7114563106796117, "totalW": 19576, "totalL": 11324, "rank": 21}, {"id": "ljubicic", "name": "Ivan Ljubičić", "country": "CRO", "flag": "🇭🇷", "era": "1998-2012", "prime": "2005-2006", "epoch": "Modern Era", "style": "Serve & Baseline", "gs": 0, "winPct": 0.6302912621359223, "hardPct": 0.6610679611650485, "clayPct": 0.5721359223300971, "grassPct": 0.6563106796116505, "totalW": 19462, "totalL": 11438, "rank": 22}, {"id": "khachanov", "name": "Karen Khachanov", "country": "RUS", "flag": "🇷🇺", "era": "2012-present", "prime": "2018-present", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.6286407766990292, "hardPct": 0.675242718446602, "clayPct": 0.5810679611650486, "grassPct": 0.6113592233009709, "totalW": 19237, "totalL": 11663, "rank": 23}, {"id": "cilic", "name": "Marin Čilić", "country": "CRO", "flag": "🇭🇷", "era": "2005-present", "prime": "2014-2018", "epoch": "Golden Era", "style": "Serve & Baseline", "gs": 1, "winPct": 0.6231114193250116, "hardPct": 0.6747572815533981, "clayPct": 0.5001941747572816, "grassPct": 0.7022330097087378, "totalW": 19335, "totalL": 11565, "rank": 24}, {"id": "fritz", "name": "Taylor Fritz", "country": "USA", "flag": "🇺🇸", "era": "2016-present", "prime": "2022-present", "epoch": "Next Gen", "style": "Serve & Baseline", "gs": 0, "winPct": 0.6134997688395747, "hardPct": 0.7012621359223301, "clayPct": 0.4421359223300971, "grassPct": 0.6954368932038835, "totalW": 18940, "totalL": 11960, "rank": 25}, {"id": "tsitsipas", "name": "Stefanos Tsitsipas", "country": "GRE", "flag": "🇬🇷", "era": "2016-present", "prime": "2021-present", "epoch": "Next Gen", "style": "All-court", "gs": 0, "winPct": 0.6092741562644475, "hardPct": 0.5945631067961165, "clayPct": 0.6669902912621359, "grassPct": 0.5549514563106797, "totalW": 18710, "totalL": 12190, "rank": 26}, {"id": "wawrinka", "name": "Stan Wawrinka", "country": "SUI", "flag": "🇨🇭", "era": "2004-present", "prime": "2014-2016", "epoch": "Golden Era", "style": "Baseliner", "gs": 3, "winPct": 0.6086037910309755, "hardPct": 0.6215533980582524, "clayPct": 0.6232038834951457, "grassPct": 0.5648543689320389, "totalW": 18639, "totalL": 12261, "rank": 27}, {"id": "raonic", "name": "Milos Raonic", "country": "CAN", "flag": "🇨🇦", "era": "2009-present", "prime": "2014-2017", "epoch": "Golden Era", "style": "Serve & Baseline", "gs": 0, "winPct": 0.601155802126676, "hardPct": 0.6577669902912622, "clayPct": 0.47135922330097085, "grassPct": 0.6809708737864077, "totalW": 18644, "totalL": 12256, "rank": 28}, {"id": "sampras", "name": "Pete Sampras", "country": "USA", "flag": "🇺🇸", "era": "1988-2002", "prime": "1993-1998", "epoch": "Modern Era", "style": "Serve & Volley", "gs": 11, "winPct": 0.5968747110494683, "hardPct": 0.6534951456310679, "clayPct": 0.46359223300970875, "grassPct": 0.6815533980582524, "totalW": 18526, "totalL": 12374, "rank": 29}, {"id": "rublev", "name": "Andrey Rublev", "country": "RUS", "flag": "🇷🇺", "era": "2015-present", "prime": "2020-present", "epoch": "Next Gen", "style": "Baseliner", "gs": 0, "winPct": 0.5956125751271383, "hardPct": 0.6331067961165049, "clayPct": 0.5928155339805825, "grassPct": 0.5320388349514563, "totalW": 18107, "totalL": 12793, "rank": 30}, {"id": "soderling", "name": "Robin Söderling", "country": "SWE", "flag": "🇸🇪", "era": "2001-2011", "prime": "2009-2010", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.5947665279704114, "hardPct": 0.6015533980582525, "clayPct": 0.6084466019417476, "grassPct": 0.5633980582524272, "totalW": 18266, "totalL": 12634, "rank": 31}, {"id": "rune", "name": "Holger Rune", "country": "DEN", "flag": "🇩🇰", "era": "2020-present", "prime": "2022-present", "epoch": "Next Gen", "style": "All-court", "gs": 0, "winPct": 0.5855940822931114, "hardPct": 0.5901941747572815, "clayPct": 0.6086407766990292, "grassPct": 0.5450485436893204, "totalW": 17962, "totalL": 12938, "rank": 32}, {"id": "humbert", "name": "Ugo Humbert", "country": "FRA", "flag": "🇫🇷", "era": "2017-present", "prime": "2023-present", "epoch": "Next Gen", "style": "All-court", "gs": 0, "winPct": 0.5817429496070273, "hardPct": 0.6113592233009709, "clayPct": 0.5149514563106796, "grassPct": 0.6219417475728155, "totalW": 18007, "totalL": 12893, "rank": 33}, {"id": "becker", "name": "Boris Becker", "country": "GER", "flag": "🇩🇪", "era": "1984-1999", "prime": "1989-1994", "epoch": "Classic Era", "style": "Serve & Volley", "gs": 5, "winPct": 0.569921405455386, "hardPct": 0.6204854368932039, "clayPct": 0.41699029126213594, "grassPct": 0.693009708737864, "totalW": 17824, "totalL": 13076, "rank": 34}, {"id": "rafter", "name": "Pat Rafter", "country": "AUS", "flag": "🇦🇺", "era": "1991-2001", "prime": "1997-2001", "epoch": "Modern Era", "style": "Serve & Volley", "gs": 2, "winPct": 0.5639528432732317, "hardPct": 0.647378640776699, "clayPct": 0.37067961165048546, "grassPct": 0.684368932038835, "totalW": 17535, "totalL": 13365, "rank": 35}, {"id": "krajicek", "name": "Richard Krajicek", "country": "NED", "flag": "🇳🇱", "era": "1989-2003", "prime": "1994-1998", "epoch": "Modern Era", "style": "Serve & Volley", "gs": 1, "winPct": 0.5617984281091077, "hardPct": 0.616504854368932, "clayPct": 0.4345631067961165, "grassPct": 0.6414563106796116, "totalW": 17433, "totalL": 13467, "rank": 36}, {"id": "dimitrov", "name": "Grigor Dimitrov", "country": "BUL", "flag": "🇧🇬", "era": "2009-present", "prime": "2017-2018", "epoch": "Golden Era", "style": "All-court", "gs": 0, "winPct": 0.5536569579288027, "hardPct": 0.6049514563106796, "clayPct": 0.4287378640776699, "grassPct": 0.6362135922330097, "totalW": 17200, "totalL": 13700, "rank": 37}, {"id": "nalbandian", "name": "David Nalbandian", "country": "ARG", "flag": "🇦🇷", "era": "1999-2013", "prime": "2005-2008", "epoch": "Modern Era", "style": "Baseliner", "gs": 0, "winPct": 0.5530143319463708, "hardPct": 0.5300970873786408, "clayPct": 0.5860194174757282, "grassPct": 0.5480582524271844, "totalW": 17141, "totalL": 13759, "rank": 38}, {"id": "agassi", "name": "Andre Agassi", "country": "USA", "flag": "🇺🇸", "era": "1986-2006", "prime": "1994-1999", "epoch": "Classic Era", "style": "Baseliner", "gs": 8, "winPct": 0.5527230698104485, "hardPct": 0.645242718446602, "clayPct": 0.49466019417475726, "grassPct": 0.46747572815533983, "totalW": 16556, "totalL": 14344, "rank": 39}, {"id": "gonzalez", "name": "Fernando González", "country": "CHI", "flag": "🇨🇱", "era": "1999-2012", "prime": "2007-2008", "epoch": "Modern Era", "style": "Baseliner", "gs": 0, "winPct": 0.5521544151641239, "hardPct": 0.5812621359223301, "clayPct": 0.5435922330097087, "grassPct": 0.511747572815534, "totalW": 16857, "totalL": 14043, "rank": 40}, {"id": "stich", "name": "Michael Stich", "country": "GER", "flag": "🇩🇪", "era": "1987-1997", "prime": "1991-1994", "epoch": "Classic Era", "style": "Serve & Volley", "gs": 1, "winPct": 0.5415164123901988, "hardPct": 0.5846601941747572, "clayPct": 0.3966990291262136, "grassPct": 0.6666019417475728, "totalW": 16974, "totalL": 13926, "rank": 41}, {"id": "haas", "name": "Tommy Haas", "country": "GER", "flag": "🇩🇪", "era": "1996-2017", "prime": "2002-2007", "epoch": "Modern Era", "style": "All-court", "gs": 0, "winPct": 0.5351456310679612, "hardPct": 0.5535922330097087, "clayPct": 0.456504854368932, "grassPct": 0.6120388349514563, "totalW": 16708, "totalL": 14192, "rank": 42}, {"id": "tiafoe", "name": "Frances Tiafoe", "country": "USA", "flag": "🇺🇸", "era": "2015-present", "prime": "2022-present", "epoch": "Next Gen", "style": "All-court", "gs": 0, "winPct": 0.5344382801664355, "hardPct": 0.608252427184466, "clayPct": 0.3963106796116505, "grassPct": 0.5949514563106796, "totalW": 16475, "totalL": 14425, "rank": 43}, {"id": "edberg", "name": "Stefan Edberg", "country": "SWE", "flag": "🇸🇪", "era": "1982-1996", "prime": "1990-1992", "epoch": "Classic Era", "style": "Serve & Volley", "gs": 6, "winPct": 0.5329588534442904, "hardPct": 0.6062135922330097, "clayPct": 0.3232038834951456, "grassPct": 0.6947572815533981, "totalW": 16729, "totalL": 14171, "rank": 44}, {"id": "kafelnikov", "name": "Yevgeny Kafelnikov", "country": "RUS", "flag": "🇷🇺", "era": "1992-2003", "prime": "1999-2000", "epoch": "Modern Era", "style": "All-court", "gs": 2, "winPct": 0.5277438742487286, "hardPct": 0.5167961165048544, "clayPct": 0.5846601941747572, "grassPct": 0.4677669902912621, "totalW": 16163, "totalL": 14737, "rank": 45}, {"id": "philippoussis", "name": "Mark Philippoussis", "country": "AUS", "flag": "🇦🇺", "era": "1994-2006", "prime": "1998-2003", "epoch": "Modern Era", "style": "Serve & Volley", "gs": 0, "winPct": 0.5260517799352751, "hardPct": 0.609126213592233, "clayPct": 0.32543689320388347, "grassPct": 0.657378640776699, "totalW": 16397, "totalL": 14503, "rank": 46}, {"id": "blake", "name": "James Blake", "country": "USA", "flag": "🇺🇸", "era": "2001-2013", "prime": "2005-2006", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.5206426259824318, "hardPct": 0.5874757281553398, "clayPct": 0.4002912621359223, "grassPct": 0.5688349514563107, "totalW": 16033, "totalL": 14867, "rank": 47}, {"id": "gasquet", "name": "Richard Gasquet", "country": "FRA", "flag": "🇫🇷", "era": "2002-present", "prime": "2007-2015", "epoch": "Golden Era", "style": "All-court", "gs": 0, "winPct": 0.5186315302820157, "hardPct": 0.48970873786407765, "clayPct": 0.5215533980582524, "grassPct": 0.5666019417475728, "totalW": 16252, "totalL": 14648, "rank": 48}, {"id": "newcombe", "name": "John Newcombe", "country": "AUS", "flag": "🇦🇺", "era": "1960-1981", "prime": "1967-1974", "epoch": "Classic Era", "style": "Serve & Volley", "gs": 7, "winPct": 0.5168608414239482, "hardPct": 0.5468932038834952, "clayPct": 0.36213592233009706, "grassPct": 0.6794174757281554, "totalW": 16361, "totalL": 14539, "rank": 49}, {"id": "ivanisevic", "name": "Goran Ivanišević", "country": "CRO", "flag": "🇭🇷", "era": "1988-2004", "prime": "1992-1998", "epoch": "Modern Era", "style": "Serve & Volley", "gs": 1, "winPct": 0.514539990753583, "hardPct": 0.5941747572815534, "clayPct": 0.3194174757281553, "grassPct": 0.6443689320388349, "totalW": 16047, "totalL": 14853, "rank": 50}, {"id": "paul", "name": "Tommy Paul", "country": "USA", "flag": "🇺🇸", "era": "2018-present", "prime": "2023-present", "epoch": "Next Gen", "style": "Baseliner", "gs": 0, "winPct": 0.5110355987055016, "hardPct": 0.563495145631068, "clayPct": 0.42650485436893204, "grassPct": 0.5349514563106796, "totalW": 15707, "totalL": 15193, "rank": 51}, {"id": "isner", "name": "John Isner", "country": "USA", "flag": "🇺🇸", "era": "2007-2023", "prime": "2012-2018", "epoch": "Golden Era", "style": "Serve & Baseline", "gs": 0, "winPct": 0.5044845122515026, "hardPct": 0.5894174757281554, "clayPct": 0.3206796116504854, "grassPct": 0.6089320388349515, "totalW": 15646, "totalL": 15254, "rank": 52}, {"id": "jarry", "name": "Nicolás Jarry", "country": "CHI", "flag": "🇨🇱", "era": "2015-present", "prime": "2023-present", "epoch": "Next Gen", "style": "Serve & Baseline", "gs": 0, "winPct": 0.496833102172908, "hardPct": 0.4904854368932039, "clayPct": 0.5005825242718447, "grassPct": 0.5030097087378641, "totalW": 15389, "totalL": 15511, "rank": 53}, {"id": "ruud", "name": "Casper Ruud", "country": "NOR", "flag": "🇳🇴", "era": "2017-present", "prime": "2022-present", "epoch": "Next Gen", "style": "Baseliner", "gs": 0, "winPct": 0.4956356911696717, "hardPct": 0.4462135922330097, "clayPct": 0.6510679611650485, "grassPct": 0.36699029126213595, "totalW": 15082, "totalL": 15818, "rank": 54}, {"id": "forget", "name": "Guy Forget", "country": "FRA", "flag": "🇫🇷", "era": "1982-1997", "prime": "1990-1992", "epoch": "Classic Era", "style": "Serve & Baseline", "gs": 0, "winPct": 0.4946509477577439, "hardPct": 0.5153398058252427, "clayPct": 0.3663106796116505, "grassPct": 0.6370873786407767, "totalW": 15643, "totalL": 15257, "rank": 55}, {"id": "shapovalov", "name": "Denis Shapovalov", "country": "CAN", "flag": "🇨🇦", "era": "2017-present", "prime": "2021-present", "epoch": "Next Gen", "style": "All-court", "gs": 0, "winPct": 0.49131299121590377, "hardPct": 0.5263106796116505, "clayPct": 0.36563106796116507, "grassPct": 0.6042718446601941, "totalW": 15411, "totalL": 15489, "rank": 56}, {"id": "monfils", "name": "Gaël Monfils", "country": "FRA", "flag": "🇫🇷", "era": "2004-present", "prime": "2016-2022", "epoch": "Golden Era", "style": "All-court", "gs": 0, "winPct": 0.49000000000000005, "hardPct": 0.5299029126213592, "clayPct": 0.4388349514563107, "grassPct": 0.48980582524271843, "totalW": 15023, "totalL": 15877, "rank": 57}, {"id": "de_minaur", "name": "Alex de Minaur", "country": "AUS", "flag": "🇦🇺", "era": "2017-present", "prime": "2023-present", "epoch": "Next Gen", "style": "Baseliner", "gs": 0, "winPct": 0.4870735090152566, "hardPct": 0.5119417475728155, "clayPct": 0.40689320388349515, "grassPct": 0.5545631067961165, "totalW": 15176, "totalL": 15724, "rank": 58}, {"id": "korda", "name": "Petr Korda", "country": "CZE", "flag": "🇨🇿", "era": "1987-1999", "prime": "1992-1998", "epoch": "Classic Era", "style": "All-court", "gs": 1, "winPct": 0.4812621359223301, "hardPct": 0.46640776699029124, "clayPct": 0.48718446601941745, "grassPct": 0.49970873786407766, "totalW": 14969, "totalL": 15931, "rank": 59}, {"id": "rosewall", "name": "Ken Rosewall", "country": "AUS", "flag": "🇦🇺", "era": "1956-1977", "prime": "1971-1974", "epoch": "Classic Era", "style": "All-court", "gs": 8, "winPct": 0.47920018492834027, "hardPct": 0.41145631067961164, "clayPct": 0.5259223300970873, "grassPct": 0.5357281553398058, "totalW": 15173, "totalL": 15727, "rank": 60}, {"id": "hewitt", "name": "Lleyton Hewitt", "country": "AUS", "flag": "🇦🇺", "era": "1998-2016", "prime": "2001-2003", "epoch": "Modern Era", "style": "Baseliner", "gs": 2, "winPct": 0.4789597780859917, "hardPct": 0.5403883495145632, "clayPct": 0.341747572815534, "grassPct": 0.5604854368932038, "totalW": 14859, "totalL": 16041, "rank": 61}, {"id": "baghdatis", "name": "Marcos Baghdatis", "country": "CYP", "flag": "🇨🇾", "era": "2004-2017", "prime": "2006-2009", "epoch": "Golden Era", "style": "All-court", "gs": 0, "winPct": 0.4777300046232085, "hardPct": 0.5301941747572816, "clayPct": 0.3754368932038835, "grassPct": 0.526504854368932, "totalW": 14751, "totalL": 16149, "rank": 62}, {"id": "lendl", "name": "Ivan Lendl", "country": "CZE", "flag": "🇨🇿", "era": "1978-1994", "prime": "1985-1989", "epoch": "Classic Era", "style": "Baseliner", "gs": 8, "winPct": 0.46875173370319, "hardPct": 0.4790291262135922, "clayPct": 0.5466019417475728, "grassPct": 0.3412621359223301, "totalW": 14079, "totalL": 16821, "rank": 63}, {"id": "moya", "name": "Carlos Moyá", "country": "ESP", "flag": "🇪🇸", "era": "1994-2010", "prime": "1998-2002", "epoch": "Modern Era", "style": "Baseliner", "gs": 1, "winPct": 0.4677577438742487, "hardPct": 0.4033009708737864, "clayPct": 0.6470873786407767, "grassPct": 0.3327184466019418, "totalW": 14246, "totalL": 16654, "rank": 64}, {"id": "cash", "name": "Pat Cash", "country": "AUS", "flag": "🇦🇺", "era": "1982-1997", "prime": "1987-1988", "epoch": "Classic Era", "style": "Serve & Volley", "gs": 1, "winPct": 0.4671613499768839, "hardPct": 0.4958252427184466, "clayPct": 0.2866019417475728, "grassPct": 0.6683495145631068, "totalW": 14943, "totalL": 15957, "rank": 65}, {"id": "leconte", "name": "Henri Leconte", "country": "FRA", "flag": "🇫🇷", "era": "1980-1996", "prime": "1986-1988", "epoch": "Classic Era", "style": "All-court", "gs": 0, "winPct": 0.4584697179842811, "hardPct": 0.40980582524271847, "clayPct": 0.49262135922330097, "grassPct": 0.498252427184466, "totalW": 14427, "totalL": 16473, "rank": 66}, {"id": "nishikori", "name": "Kei Nishikori", "country": "JPN", "flag": "🇯🇵", "era": "2007-present", "prime": "2014-2016", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.45121590383726307, "hardPct": 0.4955339805825243, "clayPct": 0.4437864077669903, "grassPct": 0.38184466019417473, "totalW": 13608, "totalL": 17292, "rank": 67}, {"id": "verdasco", "name": "Fernando Verdasco", "country": "ESP", "flag": "🇪🇸", "era": "2001-2023", "prime": "2009-2012", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.4493573740175683, "hardPct": 0.42601941747572813, "clayPct": 0.5060194174757282, "grassPct": 0.4120388349514563, "totalW": 13844, "totalL": 17056, "rank": 68}, {"id": "enqvist", "name": "Thomas Enqvist", "country": "SWE", "flag": "🇸🇪", "era": "1991-2005", "prime": "1996-1998", "epoch": "Modern Era", "style": "Baseliner", "gs": 0, "winPct": 0.4482108183079057, "hardPct": 0.4609708737864078, "clayPct": 0.44398058252427186, "grassPct": 0.4311650485436893, "totalW": 13762, "totalL": 17138, "rank": 69}, {"id": "musetti", "name": "Lorenzo Musetti", "country": "ITA", "flag": "🇮🇹", "era": "2019-present", "prime": "2024-present", "epoch": "Next Gen", "style": "All-court", "gs": 0, "winPct": 0.447207582061951, "hardPct": 0.40864077669902915, "clayPct": 0.45922330097087377, "grassPct": 0.49980582524271844, "totalW": 14087, "totalL": 16813, "rank": 70}, {"id": "lopez", "name": "Feliciano López", "country": "ESP", "flag": "🇪🇸", "era": "2000-2022", "prime": "2005-2012", "epoch": "Golden Era", "style": "Serve & Volley", "gs": 0, "winPct": 0.4452334720295885, "hardPct": 0.45271844660194177, "clayPct": 0.2986407766990291, "grassPct": 0.6369902912621359, "totalW": 14300, "totalL": 16600, "rank": 71}, {"id": "bautista", "name": "Roberto Bautista", "country": "ESP", "flag": "🇪🇸", "era": "2008-present", "prime": "2019-2021", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.4427877947295423, "hardPct": 0.4192233009708738, "clayPct": 0.5130097087378641, "grassPct": 0.38689320388349513, "totalW": 13587, "totalL": 17313, "rank": 72}, {"id": "kuerten", "name": "Gustavo Kuerten", "country": "BRA", "flag": "🇧🇷", "era": "1995-2008", "prime": "2000-2001", "epoch": "Modern Era", "style": "Baseliner", "gs": 3, "winPct": 0.4333749422098937, "hardPct": 0.34184466019417475, "clayPct": 0.6427184466019418, "grassPct": 0.3050485436893204, "totalW": 13283, "totalL": 17617, "rank": 73}, {"id": "ferrero", "name": "Juan Carlos Ferrero", "country": "ESP", "flag": "🇪🇸", "era": "1999-2012", "prime": "2002-2003", "epoch": "Modern Era", "style": "Baseliner", "gs": 1, "winPct": 0.41501155802126677, "hardPct": 0.31786407766990293, "clayPct": 0.6347572815533981, "grassPct": 0.2822330097087379, "totalW": 12719, "totalL": 18181, "rank": 74}, {"id": "nastase", "name": "Ilie Năstase", "country": "ROU", "flag": "🇷🇴", "era": "1965-1985", "prime": "1972-1975", "epoch": "Classic Era", "style": "All-court", "gs": 3, "winPct": 0.4125335182616736, "hardPct": 0.35640776699029125, "clayPct": 0.4690291262135922, "grassPct": 0.4344660194174757, "totalW": 12977, "totalL": 17923, "rank": 75}, {"id": "davydenko", "name": "Nikolay Davydenko", "country": "RUS", "flag": "🇷🇺", "era": "2000-2014", "prime": "2006-2009", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.4071151178918169, "hardPct": 0.45349514563106796, "clayPct": 0.4087378640776699, "grassPct": 0.3213592233009709, "totalW": 12191, "totalL": 18709, "rank": 76}, {"id": "cobolli", "name": "Flavio Cobolli", "country": "ITA", "flag": "🇮🇹", "era": "2020-present", "prime": "2025-present", "epoch": "Next Gen", "style": "Baseliner", "gs": 0, "winPct": 0.4070550161812298, "hardPct": 0.36194174757281555, "clayPct": 0.46233009708737866, "grassPct": 0.410873786407767, "totalW": 12722, "totalL": 18178, "rank": 77}, {"id": "ferrer", "name": "David Ferrer", "country": "ESP", "flag": "🇪🇸", "era": "2000-2019", "prime": "2012-2014", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.38766065649560794, "hardPct": 0.32427184466019415, "clayPct": 0.5823300970873786, "grassPct": 0.2292233009708738, "totalW": 11699, "totalL": 19201, "rank": 78}, {"id": "courier", "name": "Jim Courier", "country": "USA", "flag": "🇺🇸", "era": "1988-2000", "prime": "1992-1993", "epoch": "Modern Era", "style": "Baseliner", "gs": 4, "winPct": 0.38484049930651876, "hardPct": 0.3515533980582524, "clayPct": 0.5156310679611651, "grassPct": 0.2616504854368932, "totalW": 11627, "totalL": 19273, "rank": 79}, {"id": "muster", "name": "Thomas Muster", "country": "AUT", "flag": "🇦🇹", "era": "1985-1999", "prime": "1995-1996", "epoch": "Classic Era", "style": "Baseliner", "gs": 1, "winPct": 0.37950531668978266, "hardPct": 0.2007766990291262, "clayPct": 0.7514563106796116, "grassPct": 0.18048543689320387, "totalW": 11667, "totalL": 19233, "rank": 80}, {"id": "fognini", "name": "Fabio Fognini", "country": "ITA", "flag": "🇮🇹", "era": "2005-present", "prime": "2013-2019", "epoch": "Golden Era", "style": "All-court", "gs": 0, "winPct": 0.3713823393435044, "hardPct": 0.33223300970873787, "clayPct": 0.4622330097087379, "grassPct": 0.31466019417475727, "totalW": 11424, "totalL": 19476, "rank": 81}, {"id": "pioline", "name": "Cédric Pioline", "country": "FRA", "flag": "🇫🇷", "era": "1990-2002", "prime": "1995-1999", "epoch": "Modern Era", "style": "All-court", "gs": 0, "winPct": 0.3702265372168284, "hardPct": 0.38815533980582523, "clayPct": 0.28679611650485437, "grassPct": 0.45475728155339806, "totalW": 11636, "totalL": 19264, "rank": 82}, {"id": "connors", "name": "Jimmy Connors", "country": "USA", "flag": "🇺🇸", "era": "1972-1996", "prime": "1974-1978", "epoch": "Classic Era", "style": "Baseliner", "gs": 8, "winPct": 0.36259361997226075, "hardPct": 0.4335922330097087, "clayPct": 0.24223300970873787, "grassPct": 0.4033009708737864, "totalW": 11115, "totalL": 19785, "rank": 83}, {"id": "mahut", "name": "Nicolas Mahut", "country": "FRA", "flag": "🇫🇷", "era": "2002-2023", "prime": "2016-2019", "epoch": "Golden Era", "style": "Serve & Volley", "gs": 0, "winPct": 0.35978733240869165, "hardPct": 0.35067961165048545, "clayPct": 0.18514563106796117, "grassPct": 0.6206796116504855, "totalW": 11912, "totalL": 18988, "rank": 84}, {"id": "bublik", "name": "Alexander Bublik", "country": "KAZ", "flag": "🇰🇿", "era": "2016-present", "prime": "2025-present", "epoch": "Next Gen", "style": "Serve & Baseline", "gs": 0, "winPct": 0.35843735552473416, "hardPct": 0.35019417475728154, "clayPct": 0.278252427184466, "grassPct": 0.4855339805825243, "totalW": 11474, "totalL": 19426, "rank": 85}, {"id": "youzhny", "name": "Mikhail Youzhny", "country": "RUS", "flag": "🇷🇺", "era": "1999-2015", "prime": "2006-2010", "epoch": "Modern Era", "style": "All-court", "gs": 0, "winPct": 0.35064724919093854, "hardPct": 0.3687378640776699, "clayPct": 0.3392233009708738, "grassPct": 0.3340776699029126, "totalW": 10733, "totalL": 20167, "rank": 86}, {"id": "wilander", "name": "Mats Wilander", "country": "SWE", "flag": "🇸🇪", "era": "1982-1996", "prime": "1985-1988", "epoch": "Classic Era", "style": "Baseliner", "gs": 7, "winPct": 0.34299121590383724, "hardPct": 0.2946601941747573, "clayPct": 0.46815533980582524, "grassPct": 0.25475728155339805, "totalW": 10481, "totalL": 20419, "rank": 87}, {"id": "cerundolo", "name": "Francisco Cerúndolo", "country": "ARG", "flag": "🇦🇷", "era": "2019-present", "prime": "2023-present", "epoch": "Next Gen", "style": "Baseliner", "gs": 0, "winPct": 0.3348497457235321, "hardPct": 0.22097087378640776, "clayPct": 0.560873786407767, "grassPct": 0.22339805825242717, "totalW": 10354, "totalL": 20546, "rank": 88}, {"id": "chung", "name": "Hyeon Chung", "country": "KOR", "flag": "🇰🇷", "era": "2013-present", "prime": "2018-2018", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.32608876560332867, "hardPct": 0.20766990291262136, "clayPct": 0.5588349514563107, "grassPct": 0.2133980582524272, "totalW": 10093, "totalL": 20807, "rank": 89}, {"id": "almagro", "name": "Nicolás Almagro", "country": "ESP", "flag": "🇪🇸", "era": "2003-2018", "prime": "2011-2013", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.32589921405455385, "hardPct": 0.23242718446601943, "clayPct": 0.5386407766990291, "grassPct": 0.1963106796116505, "totalW": 9964, "totalL": 20936, "rank": 90}, {"id": "garin", "name": "Cristian Garín", "country": "CHI", "flag": "🇨🇱", "era": "2015-present", "prime": "2019-2021", "epoch": "Next Gen", "style": "Baseliner", "gs": 0, "winPct": 0.3191493296347665, "hardPct": 0.25864077669902913, "clayPct": 0.4803883495145631, "grassPct": 0.20233009708737865, "totalW": 9696, "totalL": 21204, "rank": 91}, {"id": "davidovich", "name": "Alejandro Davidovich", "country": "ESP", "flag": "🇪🇸", "era": "2018-present", "prime": "2025-present", "epoch": "Next Gen", "style": "Baseliner", "gs": 0, "winPct": 0.315880721220527, "hardPct": 0.3429126213592233, "clayPct": 0.31223300970873785, "grassPct": 0.27233009708737865, "totalW": 9553, "totalL": 21347, "rank": 92}, {"id": "simon", "name": "Gilles Simon", "country": "FRA", "flag": "🇫🇷", "era": "2002-2022", "prime": "2008-2012", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.31468331021729085, "hardPct": 0.33106796116504855, "clayPct": 0.36194174757281555, "grassPct": 0.21902912621359225, "totalW": 9394, "totalL": 21506, "rank": 93}, {"id": "chang", "name": "Michael Chang", "country": "USA", "flag": "🇺🇸", "era": "1988-2003", "prime": "1989-1996", "epoch": "Modern Era", "style": "Baseliner", "gs": 1, "winPct": 0.29864077669902916, "hardPct": 0.2568932038834951, "clayPct": 0.42194174757281555, "grassPct": 0.20116504854368933, "totalW": 9064, "totalL": 21836, "rank": 94}, {"id": "hrbaty", "name": "Dominik Hrbatý", "country": "SVK", "flag": "🇸🇰", "era": "1996-2010", "prime": "2002-2004", "epoch": "Modern Era", "style": "Baseliner", "gs": 0, "winPct": 0.2971937124364309, "hardPct": 0.2587378640776699, "clayPct": 0.4115533980582524, "grassPct": 0.20631067961165048, "totalW": 9029, "totalL": 21871, "rank": 95}, {"id": "bruguera", "name": "Sergi Bruguera", "country": "ESP", "flag": "🇪🇸", "era": "1988-2002", "prime": "1993-1994", "epoch": "Modern Era", "style": "Baseliner", "gs": 2, "winPct": 0.293416551086454, "hardPct": 0.129126213592233, "clayPct": 0.6289320388349514, "grassPct": 0.11941747572815534, "totalW": 9038, "totalL": 21862, "rank": 96}, {"id": "robredo", "name": "Tommy Robredo", "country": "ESP", "flag": "🇪🇸", "era": "1999-2015", "prime": "2006-2009", "epoch": "Modern Era", "style": "Baseliner", "gs": 0, "winPct": 0.29119741100323626, "hardPct": 0.23699029126213592, "clayPct": 0.44427184466019415, "grassPct": 0.17446601941747572, "totalW": 8814, "totalL": 22086, "rank": 97}, {"id": "coria", "name": "Guillermo Coria", "country": "ARG", "flag": "🇦🇷", "era": "1999-2009", "prime": "2003-2004", "epoch": "Modern Era", "style": "Baseliner", "gs": 0, "winPct": 0.28847434119278775, "hardPct": 0.20116504854368933, "clayPct": 0.49388349514563107, "grassPct": 0.15805825242718446, "totalW": 8787, "totalL": 22113, "rank": 98}, {"id": "larsson", "name": "Magnus Larsson", "country": "SWE", "flag": "🇸🇪", "era": "1989-2001", "prime": "1994-1997", "epoch": "Modern Era", "style": "Baseliner", "gs": 0, "winPct": 0.2732085067036523, "hardPct": 0.1966990291262136, "clayPct": 0.4449514563106796, "grassPct": 0.1704854368932039, "totalW": 8365, "totalL": 22535, "rank": 99}, {"id": "costa", "name": "Albert Costa", "country": "ESP", "flag": "🇪🇸", "era": "1993-2006", "prime": "2001-2002", "epoch": "Modern Era", "style": "Baseliner", "gs": 1, "winPct": 0.25910772075820615, "hardPct": 0.13679611650485438, "clayPct": 0.506504854368932, "grassPct": 0.1329126213592233, "totalW": 7995, "totalL": 22905, "rank": 100}, {"id": "vilas", "name": "Guillermo Vilas", "country": "ARG", "flag": "🇦🇷", "era": "1969-1992", "prime": "1977-1978", "epoch": "Classic Era", "style": "Baseliner", "gs": 4, "winPct": 0.25704114655570964, "hardPct": 0.10572815533980583, "clayPct": 0.57, "grassPct": 0.0912621359223301, "totalW": 7900, "totalL": 23000, "rank": 101}, {"id": "granollers", "name": "Marcel Granollers", "country": "ESP", "flag": "🇪🇸", "era": "2004-present", "prime": "2012-2014", "epoch": "Golden Era", "style": "Baseliner", "gs": 0, "winPct": 0.2546694405917707, "hardPct": 0.18398058252427185, "clayPct": 0.41699029126213594, "grassPct": 0.1546601941747573, "totalW": 7783, "totalL": 23117, "rank": 102}, {"id": "berasategui", "name": "Alberto Berasategui", "country": "ESP", "flag": "🇪🇸", "era": "1991-2003", "prime": "1994-1996", "epoch": "Modern Era", "style": "Baseliner", "gs": 0, "winPct": 0.21475265834489132, "hardPct": 0.1074757281553398, "clayPct": 0.43970873786407766, "grassPct": 0.0929126213592233, "totalW": 6593, "totalL": 24307, "rank": 103}, {"id": "chela", "name": "Juan Ignacio Chela", "country": "ARG", "flag": "🇦🇷", "era": "1996-2014", "prime": "2005-2008", "epoch": "Modern Era", "style": "Baseliner", "gs": 0, "winPct": 0.20854368932038836, "hardPct": 0.1329126213592233, "clayPct": 0.38019417475728157, "grassPct": 0.10436893203883495, "totalW": 6360, "totalL": 24540, "rank": 104}];
+
+function pct(v){ return (v*100).toFixed(1)+'%'; }
+function pctI(v){ return Math.round(v*100)+'%'; }
+function epCls(e){ return e==='Next Gen'?'ng':e==='Golden Era'?'ge':e==='Modern Era'?'me':'ce'; }
+
+function openModal(p){
+  document.getElementById('modal-body').innerHTML =
+    '<div class="modal-rnk">RANK #'+p.rank+' · '+p.epoch+'</div>'+
+    '<div class="modal-nm">'+p.flag+' '+p.name+'</div>'+
+    '<div class="modal-meta">'+p.country+' · '+p.era+' · Prime: '+p.prime+' · '+p.style+'</div>'+
+    '<div class="modal-pct">'+pct(p.winPct)+'</div>'+
+    '<div class="modal-pct-lbl">Weighted Win Rate (Hard 45 / Clay 35 / Grass 20)</div>'+
+    '<div class="modal-surfs">'+
+      '<div class="msc h"><div class="msc-lbl">Hard</div><div class="msc-pct">'+pctI(p.hardPct)+'</div></div>'+
+      '<div class="msc c"><div class="msc-lbl">Clay</div><div class="msc-pct">'+pctI(p.clayPct)+'</div></div>'+
+      '<div class="msc g"><div class="msc-lbl">Grass</div><div class="msc-pct">'+pctI(p.grassPct)+'</div></div>'+
+    '</div>'+
+    '<div class="modal-stats">'+
+      '<div class="mstat"><span class="mstat-lbl">Grand Slams</span><span class="mstat-val" style="color:var(--gold)">'+p.gs+'</span></div>'+
+      '<div class="mstat"><span class="mstat-lbl">Era</span><span class="mstat-val">'+p.era+'</span></div>'+
+      '<div class="mstat"><span class="mstat-lbl">Total Wins</span><span class="mstat-val">'+p.totalW.toLocaleString()+'</span></div>'+
+      '<div class="mstat"><span class="mstat-lbl">Total Losses</span><span class="mstat-val">'+p.totalL.toLocaleString()+'</span></div>'+
+      '<div class="mstat"><span class="mstat-lbl">W/L Ratio</span><span class="mstat-val">'+(p.totalW/p.totalL).toFixed(2)+'</span></div>'+
+      '<div class="mstat"><span class="mstat-lbl">Style</span><span class="mstat-val">'+p.style+'</span></div>'+
+    '</div>';
+  document.getElementById('modal-ov').classList.add('open');
+}
+
+document.getElementById('modal-x').onclick = () => document.getElementById('modal-ov').classList.remove('open');
+document.getElementById('modal-ov').onclick = e => { if(e.target.id==='modal-ov') document.getElementById('modal-ov').classList.remove('open'); };
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.getElementById('modal-ov').classList.remove('open'); });
+
+// PODIUM
+(function(){
+  const top3 = RANKING_DATA.slice(0,3);
+  const medals=['\ud83e\udd47','\ud83e\udd48','\ud83e\udd49'];
+  const cls=['p1','p2','p3'];
+  const lbls=['#1 \u00b7 CHAMPION','#2 \u00b7 RUNNER-UP','#3'];
+  document.getElementById('podium').innerHTML = top3.map((p,i)=>
+    '<div class="p-card '+cls[i]+'" onclick="openModal(RANKING_DATA['+i+'])">'+
+    '<div class="p-medal">'+medals[i]+'</div>'+
+    '<div class="p-rnk">'+lbls[i]+'</div>'+
+    '<div class="p-name">'+p.flag+' '+p.name+'</div>'+
+    '<div class="p-pct">'+pct(p.winPct)+'</div>'+
+    '<div class="p-chips">'+
+      '<span class="chip h">H '+pctI(p.hardPct)+'</span>'+
+      '<span class="chip c">C '+pctI(p.clayPct)+'</span>'+
+      '<span class="chip g">G '+pctI(p.grassPct)+'</span>'+
+    '</div>'+
+    '<div class="p-meta">'+p.gs+' Grand Slams \u00b7 '+p.prime+'</div>'+
+    '</div>').join('');
+})();
+
+// OVERALL TABLE
+let sortKey='rank', sortDir=1, epFilter='all', srchTerm='';
+function renderOverall(){
+  let d=[...RANKING_DATA];
+  if(epFilter!=='all') d=d.filter(p=>p.epoch===epFilter);
+  if(srchTerm) d=d.filter(p=>p.name.toLowerCase().includes(srchTerm));
+  d.sort((a,b)=>sortDir*(a[sortKey]<b[sortKey]?-1:a[sortKey]>b[sortKey]?1:0));
+  const maxW=Math.max(...RANKING_DATA.map(p=>p.winPct));
+  document.getElementById('rcount-overall').textContent=d.length+' players';
+  document.getElementById('tbody-overall').innerHTML=d.map(p=>{
+    const ec=epCls(p.epoch);
+    const idx=RANKING_DATA.indexOf(p);
+    return '<tr onclick="openModal(RANKING_DATA['+idx+'])">'+
+      '<td><div class="rnum '+(p.rank<=3?'t3':'')+'">'+p.rank+'</div></td>'+
+      '<td><div class="pname">'+p.flag+' '+p.name+'</div><div class="pera">'+p.prime+'</div></td>'+
+      '<td><div class="wpct">'+pct(p.winPct)+'</div></td>'+
+      '<td class="barcell"><div class="barbg"><div class="barfill" style="width:'+(p.winPct/maxW*100).toFixed(1)+'%"></div></div></td>'+
+      '<td><span class="sp h">'+pctI(p.hardPct)+'</span></td>'+
+      '<td><span class="sp c">'+pctI(p.clayPct)+'</span></td>'+
+      '<td><span class="sp g">'+pctI(p.grassPct)+'</span></td>'+
+      '<td><span class="ebadge '+ec+'">'+p.epoch+'</span></td>'+
+      '<td><span class="gscell">'+p.gs+'</span></td>'+
+      '</tr>';
+  }).join('');
+}
+
+document.getElementById('tbl-overall').querySelectorAll('th[data-sort]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const k=th.dataset.sort;
+    if(sortKey===k) sortDir*=-1; else{sortKey=k;sortDir=k==='rank'?1:-1;}
+    document.querySelectorAll('#tbl-overall th').forEach(t=>t.classList.remove('sorted'));
+    th.classList.add('sorted'); renderOverall();
+  });
+});
+document.getElementById('srch-overall').addEventListener('input',e=>{srchTerm=e.target.value.toLowerCase();renderOverall();});
+document.getElementById('epoch-filter').addEventListener('click',e=>{
+  if(!e.target.classList.contains('ebt')) return;
+  document.querySelectorAll('#epoch-filter .ebt').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active'); epFilter=e.target.dataset.ep; renderOverall();
+});
+renderOverall();
+
+// SURFACE TABLES
+function renderSurfTbl(tbodyId,surfKey,a1,a2){
+  const sorted=[...RANKING_DATA].sort((a,b)=>b[surfKey]-a[surfKey]);
+  const maxW=sorted[0][surfKey];
+  document.getElementById(tbodyId).innerHTML=sorted.map((p,i)=>{
+    const idx=RANKING_DATA.indexOf(p);
+    return '<tr onclick="openModal(RANKING_DATA['+idx+'])">'+
+      '<td><div class="rnum '+(i<3?'t3':'')+'">'+( i+1)+'</div></td>'+
+      '<td><div class="pname">'+p.flag+' '+p.name+'</div><div class="pera">'+p.prime+'</div></td>'+
+      '<td><div class="wpct">'+pct(p[surfKey])+'</div></td>'+
+      '<td class="barcell"><div class="barbg"><div class="barfill" style="width:'+(p[surfKey]/maxW*100).toFixed(1)+'%"></div></div></td>'+
+      '<td><span class="sp">'+pctI(p[a1])+'</span></td>'+
+      '<td><span class="sp">'+pctI(p[a2])+'</span></td>'+
+      '<td><span class="sp">'+pct(p.winPct)+'</span></td>'+
+      '<td><span class="ebadge '+epCls(p.epoch)+'">'+p.epoch+'</span></td>'+
+      '</tr>';
+  }).join('');
+}
+renderSurfTbl('tbody-hard','hardPct','clayPct','grassPct');
+renderSurfTbl('tbody-clay','clayPct','hardPct','grassPct');
+renderSurfTbl('tbody-grass','grassPct','hardPct','clayPct');
+
+// SURFACE SPLIT
+(function(){
+  const surfs=[
+    {key:'hardPct',label:'HARD COURT TOP 25',cls:'hh',color:'var(--hard)'},
+    {key:'clayPct',label:'CLAY COURT TOP 25',cls:'ch',color:'var(--clay)'},
+    {key:'grassPct',label:'GRASS COURT TOP 25',cls:'gh',color:'var(--grass)'},
+  ];
+  document.getElementById('splits-grid').innerHTML=surfs.map(s=>{
+    const sorted=[...RANKING_DATA].sort((a,b)=>b[s.key]-a[s.key]).slice(0,25);
+    return '<div><div class="surf-hdr '+s.cls+'">'+s.label+'</div>'+
+      sorted.map((p,i)=>{
+        const idx=RANKING_DATA.indexOf(p);
+        return '<div class="srow" onclick="openModal(RANKING_DATA['+idx+'])">'+
+          '<div class="srow-rk">'+(i+1)+'</div>'+
+          '<div class="srow-flag">'+p.flag+'</div>'+
+          '<div class="srow-nm">'+p.name+'</div>'+
+          '<div class="srow-pct" style="color:'+s.color+'">'+pctI(p[s.key])+'</div>'+
+          '</div>';
+      }).join('')+'</div>';
+  }).join('');
+})();
+
+// EPOCH VIEW
+(function(){
+  const epochs=[
+    {key:'Next Gen',cls:'ng',label:'NEXT GEN (2015+)'},
+    {key:'Golden Era',cls:'ge',label:'GOLDEN ERA (2000–2014)'},
+    {key:'Modern Era',cls:'me',label:'MODERN ERA (1988–1999)'},
+    {key:'Classic Era',cls:'ce',label:'CLASSIC ERA (pre-1988)'},
+  ];
+  document.getElementById('epoch-grid').innerHTML=epochs.map(ep=>{
+    const players=RANKING_DATA.filter(p=>p.epoch===ep.key);
+    return '<div><div class="ep-hdr '+ep.cls+'">'+ep.label+' · '+players.length+' players</div>'+
+      players.map((p,i)=>{
+        const idx=RANKING_DATA.indexOf(p);
+        return '<div class="srow" onclick="openModal(RANKING_DATA['+idx+'])">'+
+          '<div class="srow-rk">'+(i+1)+'</div>'+
+          '<div class="srow-flag">'+p.flag+'</div>'+
+          '<div class="srow-nm">'+p.name+'</div>'+
+          '<div style="display:flex;gap:6px;align-items:center">'+
+            '<span class="srow-pct" style="color:var(--accent)">'+pct(p.winPct)+'</span>'+
+            '<span class="epoch-rank-lbl">#'+p.rank+'</span>'+
+          '</div></div>';
+      }).join('')+'</div>';
+  }).join('');
+})();
+
+// TABS
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).style.display='block';
+  });
+});
+
+</script>
+</body>
+</html>
