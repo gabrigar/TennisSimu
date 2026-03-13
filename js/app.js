@@ -467,10 +467,6 @@ function showPage(page) {
     initResultsPage();
     resultsInitialized = true;
   }
-  if (page === 'ranking') {
-    const iframe = document.getElementById('ranking-iframe');
-    if (iframe && !iframe.src) iframe.src = iframe.dataset.src;
-  }
 }
 
 // =====================================================
