@@ -8,7 +8,6 @@ const LANG = {
     nav_stats:       '📊 Stats',
     nav_compare:     '🔄 Compare',
     nav_history:     '🔥 History',
-    nav_ranking:     '🏅 GOAT Ranking',
     // Simulator
     player1:         'Player 1',
     player2:         'Player 2',
@@ -161,7 +160,6 @@ const LANG = {
     nav_stats:       '📊 Estadísticas',
     nav_compare:     '🔄 Comparador',
     nav_history:     '🔥 Histórico',
-    nav_ranking:     '🏅 Ranking GOAT',
     // Simulator
     player1:         'Jugador 1',
     player2:         'Jugador 2',
@@ -317,7 +315,7 @@ function applyLang() {
   const L = currentLang;
   // Nav tabs
   const tabs = document.querySelectorAll('.nav-tab');
-  const tabKeys = ['nav_simulator','nav_stats','nav_compare','nav_history','nav_ranking'];
+  const tabKeys = ['nav_simulator','nav_stats','nav_compare','nav_history'];
   tabs.forEach((tab, i) => { if (tabKeys[i]) tab.textContent = t(tabKeys[i]); });
 
   // Toggle button
@@ -1153,11 +1151,25 @@ function initMobileSimulator() {
     };
   }
 
-  // Override again-btn for mobile: use mobileReset instead of resetSim
+  // Override again-btn for mobile: hide results but KEEP selected players
+  // so the user can simulate again immediately without re-selecting
   const againBtnMob = document.getElementById('again-btn');
   if (againBtnMob) {
     againBtnMob.onclick = () => {
-      mobileReset();
+      // Hide result panels (same as desktop resetSim)
+      ['scoreboard','match-stats','point-log','winner-banner'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      document.getElementById('sim1000-result').style.display = 'none';
+      document.getElementById('winner-banner')?.classList.remove('has-winner-img');
+      // Keep sel.p1 and sel.p2 — don't wipe the selection
+      mobileStep = 2; // already have both players selected
+      updateMobileUI();
+      // Scroll back to sim button
+      const mobileSel = document.getElementById('mobile-selector');
+      if (mobileSel) mobileSel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else window.scrollTo({ top: 0, behavior: 'smooth' });
     };
   }
 
