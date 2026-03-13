@@ -8,6 +8,7 @@ const LANG = {
     nav_stats:       '📊 Stats',
     nav_compare:     '🔄 Compare',
     nav_history:     '🔥 History',
+    nav_ranking:     '🏅 GOAT Ranking',
     // Simulator
     player1:         'Player 1',
     player2:         'Player 2',
@@ -160,6 +161,7 @@ const LANG = {
     nav_stats:       '📊 Estadísticas',
     nav_compare:     '🔄 Comparador',
     nav_history:     '🔥 Histórico',
+    nav_ranking:     '🏅 Ranking GOAT',
     // Simulator
     player1:         'Jugador 1',
     player2:         'Jugador 2',
@@ -315,7 +317,7 @@ function applyLang() {
   const L = currentLang;
   // Nav tabs
   const tabs = document.querySelectorAll('.nav-tab');
-  const tabKeys = ['nav_simulator','nav_stats','nav_compare','nav_history'];
+  const tabKeys = ['nav_simulator','nav_stats','nav_compare','nav_history','nav_ranking'];
   tabs.forEach((tab, i) => { if (tabKeys[i]) tab.textContent = t(tabKeys[i]); });
 
   // Toggle button
@@ -464,6 +466,10 @@ function showPage(page) {
   if (page === 'historico' && !resultsInitialized) {
     initResultsPage();
     resultsInitialized = true;
+  }
+  if (page === 'ranking') {
+    const iframe = document.getElementById('ranking-iframe');
+    if (iframe && !iframe.src) iframe.src = iframe.dataset.src;
   }
 }
 
