@@ -954,6 +954,7 @@ function mobileSelectPlayer(p) {
 }
 
 function mobileReset() {
+  // Reset completo: borra jugadores y vuelve al paso 0
   sel.p1 = null; sel.p2 = null;
   mobileStep = 0;
   const search = document.getElementById('mob-search');
@@ -962,17 +963,27 @@ function mobileReset() {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
-  // again-wrap stays visible (always shown in mobile)
   document.getElementById('sim1000-result').style.display = 'none';
   document.getElementById('winner-banner')?.classList.remove('has-winner-img');
   updateMobileUI();
-  // Scroll to top of mobile selector so player grid is visible
   const mobileSel = document.getElementById('mobile-selector');
-  if (mobileSel) {
-    mobileSel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } else {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  if (mobileSel) mobileSel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function mobileNewMatch() {
+  // New match: conserva los jugadores seleccionados, solo oculta resultados
+  ['scoreboard','match-stats','point-log','winner-banner'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  document.getElementById('sim1000-result').style.display = 'none';
+  document.getElementById('winner-banner')?.classList.remove('has-winner-img');
+  mobileStep = 2;
+  updateMobileUI();
+  const mobileSel = document.getElementById('mobile-selector');
+  if (mobileSel) mobileSel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function mobileChangeP2() {
@@ -1151,27 +1162,9 @@ function initMobileSimulator() {
     };
   }
 
-  // Override again-btn for mobile: hide results but KEEP selected players
-  // so the user can simulate again immediately without re-selecting
+  // New match en móvil: conserva jugadores seleccionados
   const againBtnMob = document.getElementById('again-btn');
-  if (againBtnMob) {
-    againBtnMob.onclick = () => {
-      // Hide result panels (same as desktop resetSim)
-      ['scoreboard','match-stats','point-log','winner-banner'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-      });
-      document.getElementById('sim1000-result').style.display = 'none';
-      document.getElementById('winner-banner')?.classList.remove('has-winner-img');
-      // Keep sel.p1 and sel.p2 — don't wipe the selection
-      mobileStep = 2; // already have both players selected
-      updateMobileUI();
-      // Scroll back to sim button
-      const mobileSel = document.getElementById('mobile-selector');
-      if (mobileSel) mobileSel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      else window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-  }
+  if (againBtnMob) againBtnMob.onclick = mobileNewMatch;
 
   updateMobileUI();
 }
@@ -1964,7 +1957,7 @@ function initializeUI() {
 
   // Botón nuevo partido
   const againBtn = document.getElementById('again-btn');
-  if (againBtn) againBtn.onclick = resetSim;
+  if (againBtn && !isMobile()) againBtn.onclick = resetSim;
 
   // Ocultar paneles de resultado al inicio
   ['scoreboard','match-stats','point-log','winner-banner','again-wrap'].forEach(id => {
