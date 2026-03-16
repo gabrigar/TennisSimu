@@ -1,4 +1,4 @@
-# TennisSimu
+# SimuTennis
 Tennis Simulator
 Tennis<span>Simu</span>
 
@@ -6,9 +6,9 @@ Simulador de tenis histórico con motor Markov · 104 jugadores · 9.489 partido
 
 🔗 Live demo: gabrigar.github.io/TennisSimu
 
-¿Qué es TennisSimu?
-TennisSimu permite simular partidos de tenis entre cualquier combinación de los 104 mejores jugadores de la historia del tenis (1970–2025), usando un motor de simulación basado en cadenas de Markov calibrado con estadísticas reales de cada jugador en su mejor momento.
-¿Quién ganaría un partido entre Federer en hierba y Nadal en tierra? ¿Y McEnroe contra Djokovic en pista dura? TennisSimu te da una respuesta probabilística fundamentada en datos.
+¿Qué es SimuTennis?
+SimuTennis permite simular partidos de tenis entre cualquier combinación de los 104 mejores jugadores de la historia del tenis (1970–2025), usando un motor de simulación basado en cadenas de Markov calibrado con estadísticas reales de cada jugador en su mejor momento.
+¿Quién ganaría un partido entre Federer en hierba y Nadal en tierra? ¿Y McEnroe contra Djokovic en pista dura? SimuTennis te da una respuesta probabilística fundamentada en datos.
 
 Características
 
