@@ -85,7 +85,7 @@
       clearSlot: 'Clear slot',
       simulateRound: 'Simulate next round',
       championLabel: 'Tournament champion',
-      photoPlaceholder: 'PHOTO AREA\nDrop your image here later',
+      photoPlaceholder: '',
       stageEmpty: 'Fill the draw to start. You can select slots manually or generate a random bracket instantly.',
       stageReady: 'Draw ready. Simulate the first round when you want.',
       stageRound: 'Current step: {round}. Winners advance automatically into the next column.',
@@ -147,7 +147,7 @@
       clearSlot: 'Vaciar casilla',
       simulateRound: 'Simular siguiente ronda',
       championLabel: 'Campeon del torneo',
-      photoPlaceholder: 'ESPACIO PARA FOTO\nPon aqui tu imagen despues',
+      photoPlaceholder: '',
       stageEmpty: 'Rellena el cuadro para empezar. Puedes elegir slots a mano o generar un cuadro aleatorio al instante.',
       stageReady: 'Cuadro listo. Puedes simular la primera ronda cuando quieras.',
       stageRound: 'Paso actual: {round}. Los ganadores avanzan automaticamente a la siguiente columna.',
@@ -432,13 +432,15 @@
     const playersNote = document.getElementById('tourhub-sidebar-note');
     const overviewBtn = document.getElementById('tourhub-view-overview-btn');
     const focusBtn = document.getElementById('tourhub-view-focus-btn');
+    const bracketWrap = document.getElementById('tourhub-bracket-wrap');
 
     title.textContent = `${t('navTitle')} · ${t(`slams.${slam.key}`)}`;
     subtitle.textContent = t('subtitle');
     kicker.textContent = `${t(`slams.${slam.key}`)} · ${slam.city} · ${slam.venue}`;
     description.textContent = getLang() === 'es' ? slam.noteEs : slam.noteEn;
-    photo.textContent = t('photoPlaceholder');
-    photo.style.backgroundImage = `linear-gradient(135deg, rgba(10,10,15,0.35), rgba(10,10,15,0.78)), url('img/slams/${slam.key}.jpg')`;
+    photo.innerHTML = '';
+    photo.style.backgroundImage = `linear-gradient(135deg, rgba(10,10,15,0.28), rgba(10,10,15,0.82)), url('img/slams/${slam.key}.png')`;
+    bracketWrap?.style.setProperty('--tourhub-bracket-art', `url('img/slams/${slam.key}.png')`);
     slamLabel.textContent = t('slamLabel');
     actionsLabel.textContent = t('actionsLabel');
     progressLabel.textContent = t('progressLabel');
