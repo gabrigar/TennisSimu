@@ -122,6 +122,8 @@
       rgba(255,255,255,0.03) 18px,
       rgba(255,255,255,0.03) 20px
     );
+  background-size: cover;
+  background-position: center;
 }
 
 .tourhub-layout {
@@ -141,6 +143,10 @@
   font-size: var(--fs-sm);
   line-height: 1.45;
   margin-bottom: 0.8rem;
+}
+
+.tourhub-sidebar-filter {
+  margin-bottom: 0.9rem;
 }
 
 .tourhub-player-list {
@@ -239,16 +245,22 @@
   justify-content: flex-end;
 }
 
+.tourhub-view-switch {
+  display: none;
+  gap: 0.4rem;
+}
+
 .tourhub-bracket-wrap {
   overflow-x: auto;
   padding-bottom: 0.5rem;
+  scroll-behavior: smooth;
 }
 
 .tourhub-bracket {
-  min-width: 1200px;
+  min-width: 1560px;
   display: grid;
-  grid-template-columns: repeat(6, minmax(190px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(9, minmax(156px, 1fr));
+  gap: 0.75rem;
   align-items: start;
 }
 
@@ -270,19 +282,40 @@
 .tourhub-round-list {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.65rem;
 }
 
-.tourhub-round-1 .tourhub-round-list { padding-top: 1.7rem; }
-.tourhub-round-2 .tourhub-round-list { padding-top: 4.8rem; }
-.tourhub-round-3 .tourhub-round-list { padding-top: 10.8rem; }
-.tourhub-round-4 .tourhub-round-list { padding-top: 22rem; }
-.tourhub-round-champion .tourhub-round-list { padding-top: 22rem; }
+.tourhub-depth-0 .tourhub-round-list { padding-top: 0; }
+.tourhub-depth-1 .tourhub-round-list { padding-top: 1.45rem; }
+.tourhub-depth-2 .tourhub-round-list { padding-top: 4.05rem; }
+.tourhub-depth-3 .tourhub-round-list { padding-top: 9.15rem; }
+.tourhub-round-final .tourhub-round-list { padding-top: 18.55rem; }
 
 .tourhub-match-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: 0.55rem;
+  padding: 0.45rem;
+  min-height: 128px;
+}
+
+.tourhub-side-right .tourhub-round-title,
+.tourhub-side-right .tourhub-match-footer,
+.tourhub-side-right .tourhub-slot-seed,
+.tourhub-side-right .tourhub-slot-meta {
+  text-align: right;
+}
+
+.tourhub-side-right .tourhub-slot {
+  text-align: right;
+}
+
+.tourhub-side-right .tourhub-slot::before {
+  background-position: right top;
+}
+
+.tourhub-round-final .tourhub-round-title,
+.tourhub-round-final .tourhub-match-footer {
+  text-align: center;
 }
 
 .tourhub-match-card.done {
@@ -290,15 +323,35 @@
 }
 
 .tourhub-slot {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   text-align: left;
   background: var(--surface2);
   border: 1px solid #16161e;
   color: var(--text);
-  padding: 0.65rem 0.7rem;
-  margin-bottom: 0.35rem;
+  padding: 0.55rem 0.6rem;
+  min-height: 56px;
+  margin-bottom: 0.3rem;
   cursor: pointer;
   transition: all 0.15s;
+}
+
+.tourhub-slot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--winner-bg, none);
+  background-size: cover;
+  background-position: center top;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+.tourhub-slot > * {
+  position: relative;
+  z-index: 1;
 }
 
 .tourhub-slot:last-child {
@@ -327,6 +380,10 @@
   background: rgba(200,240,0,0.08);
 }
 
+.tourhub-slot.winner::before {
+  opacity: 1;
+}
+
 .tourhub-slot-seed {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 10px;
@@ -338,7 +395,7 @@
 
 .tourhub-slot-name {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: var(--fs-md);
+  font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   line-height: 1.05;
@@ -360,14 +417,53 @@
 }
 
 .tourhub-match-card.champion {
-  min-height: 104px;
+  position: relative;
+  overflow: hidden;
+  min-height: 128px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 0.7rem;
+  border-color: rgba(200,240,0,0.45);
+  background: linear-gradient(180deg, rgba(200,240,0,0.08), rgba(10,10,15,0.96));
+}
+
+.tourhub-match-card.champion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--champion-bg, none);
+  background-size: cover;
+  background-position: center top;
+  opacity: 0.42;
+  filter: saturate(0.9);
+  pointer-events: none;
 }
 
 .tourhub-champion-inside {
   text-align: center;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 0.4rem;
+}
+
+.tourhub-champion-kicker,
+.tourhub-champion-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tourhub-champion-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.05;
+  text-transform: uppercase;
+  margin: 0.2rem 0;
 }
 
 .tourhub-champion {
@@ -439,24 +535,66 @@
   }
 
   .tourhub-bracket {
-    min-width: 940px;
-    gap: 0.75rem;
+    min-width: 1020px;
+    grid-template-columns: repeat(9, minmax(120px, 1fr));
+    gap: 0.6rem;
   }
 
-  .tourhub-round-1 .tourhub-round-list { padding-top: 1.2rem; }
-  .tourhub-round-2 .tourhub-round-list { padding-top: 3.8rem; }
-  .tourhub-round-3 .tourhub-round-list { padding-top: 8.7rem; }
-  .tourhub-round-4 .tourhub-round-list { padding-top: 17.5rem; }
-  .tourhub-round-champion .tourhub-round-list { padding-top: 17.5rem; }
+  .tourhub-match-card {
+    min-height: 116px;
+  }
+
+  .tourhub-slot {
+    min-height: 52px;
+  }
+
+  .tourhub-depth-1 .tourhub-round-list { padding-top: 1.3rem; }
+  .tourhub-depth-2 .tourhub-round-list { padding-top: 3.55rem; }
+  .tourhub-depth-3 .tourhub-round-list { padding-top: 8rem; }
+  .tourhub-round-final .tourhub-round-list { padding-top: 16.25rem; }
 }
 
 @media (max-width: 600px) {
+  .tourhub-view-switch {
+    display: inline-flex;
+  }
+
+  .tourhub-stage-actions {
+    align-items: center;
+  }
+
+  .tourhub-bracket-wrap {
+    position: relative;
+    overflow: auto;
+    border: 1px solid rgba(255,255,255,0.06);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+      var(--bg);
+    max-height: 72vh;
+    padding: 0.65rem 0.65rem 1rem;
+    touch-action: pan-x pan-y pinch-zoom;
+  }
+
   .tourhub-meta-grid {
     grid-template-columns: 1fr;
   }
 
   .tourhub-bracket {
-    min-width: 820px;
+    min-width: 1180px;
+    transform-origin: top left;
+    transition: transform 0.2s ease;
+  }
+
+  .tourhub-bracket-wrap[data-view="overview"] .tourhub-bracket {
+    transform: scale(0.68);
+  }
+
+  .tourhub-bracket-wrap[data-view="overview"] {
+    min-height: 980px;
+  }
+
+  .tourhub-bracket-wrap[data-view="focus"] .tourhub-bracket {
+    transform: scale(1);
   }
 
   .tourhub-player-item {
@@ -468,14 +606,16 @@
   }
 
   .tourhub-match-card {
-    padding: 0.45rem;
+    padding: 0.4rem;
+    min-height: 106px;
   }
 
   .tourhub-slot {
-    padding: 0.55rem 0.6rem;
+    padding: 0.5rem 0.55rem;
+    min-height: 48px;
   }
 
   .tourhub-slot-name {
-    font-size: var(--fs-sm);
+    font-size: 0.92rem;
   }
 }
