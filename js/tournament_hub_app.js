@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const DRAW_SIZE = 32;
   const ROUND_NAMES = ['R32', 'R16', 'QF', 'SF', 'F'];
   const ROUND_LABEL_KEYS = ['roundR32', 'roundR16', 'roundQf', 'roundSf', 'roundF'];
@@ -71,13 +71,14 @@
 
   const I18N = {
     en: {
-      navTitle: 'SIMU GS',
+      navTitle: 'Grand Slams Simulator',
       subtitle: 'Build a major draw manually or randomly, then simulate the tournament round by round until a champion is crowned.',
       slamLabel: 'Grand Slam',
       actionsLabel: 'Draw tools',
       progressLabel: 'Simulation',
       playersTitle: 'Available players',
       playersSearch: 'Search player...',
+      eraLabel: 'Era filter',
       playersNote: 'Click a slot in the draw, then assign a player from this list. Already assigned players stay marked.',
       randomDraw: 'Random draw',
       clearDraw: 'Clear draw',
@@ -102,6 +103,8 @@
       championPending: 'Champion pending',
       championScore: 'Final score {score}',
       manualHint: 'Click to place player',
+      pendingHint: 'Waiting for simulation',
+      awaitingWinner: 'Awaiting winner',
       winnerTag: 'Winner',
       scoreTag: 'Score',
       unfilled: 'Empty slot',
@@ -118,6 +121,10 @@
       clearSummary: 'Draw cleared. Start again from the first round.',
       slotCleared: 'Selected slot cleared.',
       autoWinner: 'Advanced',
+      randomFillSummary: 'Random draw filled {count} open slots from the current era pool.',
+      viewOverview: 'Overview',
+      viewFocus: 'Focus',
+      eras: { all: 'All', '70s': '70s', '80s': '80s', '90s': '90s', '2000s': '2000s', '2010s': '2010s+' },
       slams: {
         ao: 'Australian Open',
         rg: 'Roland Garros',
@@ -126,13 +133,14 @@
       }
     },
     es: {
-      navTitle: 'SIMU GS',
+      navTitle: 'Grand Slams Simulator',
       subtitle: 'Construye un cuadro de Grand Slam a mano o de forma aleatoria y luego simula el torneo ronda a ronda hasta coronar campeon.',
       slamLabel: 'Grand Slam',
       actionsLabel: 'Herramientas',
       progressLabel: 'Simulacion',
       playersTitle: 'Jugadores disponibles',
       playersSearch: 'Buscar jugador...',
+      eraLabel: 'Filtro de era',
       playersNote: 'Haz clic en una casilla del cuadro y luego asigna un jugador desde esta lista. Los ya usados quedan marcados.',
       randomDraw: 'Sorteo aleatorio',
       clearDraw: 'Vaciar cuadro',
@@ -157,6 +165,8 @@
       championPending: 'Campeon pendiente',
       championScore: 'Marcador final {score}',
       manualHint: 'Haz clic para poner jugador',
+      pendingHint: 'Pendiente de simulacion',
+      awaitingWinner: 'Esperando ganador',
       winnerTag: 'Ganador',
       scoreTag: 'Marcador',
       unfilled: 'Casilla vacia',
@@ -173,6 +183,10 @@
       clearSummary: 'Cuadro vaciado. Puedes empezar otra vez desde primera ronda.',
       slotCleared: 'Casilla seleccionada vaciada.',
       autoWinner: 'Clasificado',
+      randomFillSummary: 'El sorteo aleatorio ha rellenado {count} huecos usando el filtro de era actual.',
+      viewOverview: 'Vista general',
+      viewFocus: 'Vista cercana',
+      eras: { all: 'Todas', '70s': '70s', '80s': '80s', '90s': '90s', '2000s': '2000s', '2010s': '2010s+' },
       slams: {
         ao: 'Open de Australia',
         rg: 'Roland Garros',
@@ -185,6 +199,8 @@
   const state = {
     slam: 'ao',
     search: '',
+    eraFilter: 'all',
+    mobileView: 'focus',
     selectedSlot: 0,
     entrants: Array(DRAW_SIZE).fill(null),
     rounds: [],
@@ -222,10 +238,23 @@
     return map;
   }
 
-  function getDisplayPlayers() {
+  function getEraBucket(player) {
+    const start = parseInt(String(player?.era || '').split('-')[0], 10);
+    if (start >= 2010) return '2010s';
+    if (start >= 2000) return '2000s';
+    if (start >= 1990) return '90s';
+    if (start >= 1980) return '80s';
+    return '70s';
+  }
+
+  function getEraFilteredPlayers() {
     if (typeof PLAYERS === 'undefined') return [];
+    return PLAYERS.filter((player) => state.eraFilter === 'all' || getEraBucket(player) === state.eraFilter);
+  }
+
+  function getDisplayPlayers() {
     const query = state.search.trim().toLowerCase();
-    const list = PLAYERS
+    const list = getEraFilteredPlayers()
       .filter((player) => {
         if (!query) return true;
         return [player.name, player.country, player.era, player.style]
@@ -292,10 +321,25 @@
   function createRandomDraw() {
     if (typeof PLAYERS === 'undefined') return;
     clearRounds();
-    const pool = shuffle(PLAYERS).slice(0, DRAW_SIZE);
-    state.entrants = pool;
-    state.selectedSlot = 0;
-    state.statusMessage = interpolate(t('randomSummary'), { count: DRAW_SIZE });
+    const assignedIds = new Set(state.entrants.filter(Boolean).map((player) => player.id));
+    const openSlots = [];
+    state.entrants.forEach((player, index) => {
+      if (!player) openSlots.push(index);
+    });
+
+    const pool = shuffle(getEraFilteredPlayers().filter((player) => !assignedIds.has(player.id)));
+    let filled = 0;
+
+    openSlots.forEach((slotIndex, index) => {
+      const player = pool[index];
+      if (!player) return;
+      state.entrants[slotIndex] = player;
+      filled++;
+    });
+
+    const nextEmpty = state.entrants.findIndex((entry) => !entry);
+    state.selectedSlot = nextEmpty >= 0 ? nextEmpty : 0;
+    state.statusMessage = interpolate(t('randomFillSummary'), { count: filled });
     render();
   }
 
@@ -384,24 +428,29 @@
     const progressLabel = document.getElementById('tourhub-progress-label');
     const playersTitle = document.getElementById('tourhub-players-title');
     const playersSearch = document.getElementById('tourhub-player-search');
+    const eraLabel = document.getElementById('tourhub-era-label');
     const playersNote = document.getElementById('tourhub-sidebar-note');
+    const overviewBtn = document.getElementById('tourhub-view-overview-btn');
+    const focusBtn = document.getElementById('tourhub-view-focus-btn');
 
-    title.textContent = `${t('navTitle')} · ${t(`slams.${slam.key}`)}`;
+    title.textContent = `${t('navTitle')} Â· ${t(`slams.${slam.key}`)}`;
     subtitle.textContent = t('subtitle');
-    kicker.textContent = `${t(`slams.${slam.key}`)} · ${slam.city} · ${slam.venue}`;
+    kicker.textContent = `${t(`slams.${slam.key}`)} Â· ${slam.city} Â· ${slam.venue}`;
     description.textContent = getLang() === 'es' ? slam.noteEs : slam.noteEn;
     photo.textContent = t('photoPlaceholder');
+    photo.style.backgroundImage = `linear-gradient(135deg, rgba(10,10,15,0.35), rgba(10,10,15,0.78)), url('img/slams/${slam.key}.jpg')`;
     slamLabel.textContent = t('slamLabel');
     actionsLabel.textContent = t('actionsLabel');
     progressLabel.textContent = t('progressLabel');
     playersTitle.textContent = t('playersTitle');
     playersSearch.placeholder = t('playersSearch');
+    eraLabel.textContent = t('eraLabel');
     playersNote.textContent = t('playersNote');
 
     const meta = [
-      [t('metaCountry'), `${slam.country} · ${slam.city}`],
+      [t('metaCountry'), `${slam.country} Â· ${slam.city}`],
       [t('metaVenue'), slam.venue],
-      [t('metaSurface'), `${slam.surface.toUpperCase()} · BO${slam.bestOf}`],
+      [t('metaSurface'), `${slam.surface.toUpperCase()} Â· BO${slam.bestOf}`],
       [t('metaCourt'), slam.court],
       [t('metaPace'), slam.pace],
       [t('metaBounce'), slam.bounce],
@@ -426,11 +475,29 @@
       button.onclick = () => setSlam(button.dataset.slam);
     });
 
+    const eraButtons = document.getElementById('tourhub-era-buttons');
+    eraButtons.innerHTML = Object.keys(t('eras')).map((key) => `
+      <button class="rankhub-btn ${state.eraFilter === key ? 'active' : ''}" data-era="${key}">
+        ${t(`eras.${key}`)}
+      </button>
+    `).join('');
+    eraButtons.querySelectorAll('[data-era]').forEach((button) => {
+      button.onclick = () => {
+        state.eraFilter = button.dataset.era;
+        renderTop();
+        renderSidebar();
+      };
+    });
+
     document.getElementById('tourhub-random-btn').textContent = t('randomDraw');
     document.getElementById('tourhub-clear-btn').textContent = t('clearDraw');
     document.getElementById('tourhub-clear-slot-btn').textContent = t('clearSlot');
     document.getElementById('tourhub-simulate-round-btn').textContent = t('simulateRound');
     document.getElementById('tourhub-champion-label').textContent = t('championLabel');
+    overviewBtn.textContent = t('viewOverview');
+    focusBtn.textContent = t('viewFocus');
+    overviewBtn.classList.toggle('active', state.mobileView === 'overview');
+    focusBtn.classList.toggle('active', state.mobileView === 'focus');
   }
 
   function renderSidebar() {
@@ -445,7 +512,7 @@
                 data-player-id="${player.id}">
           <div class="tourhub-player-main">
             <div class="tourhub-player-name">${playerFlag(player)}${player.name}</div>
-            <div class="tourhub-player-meta">${player.country} · ${player.era}</div>
+            <div class="tourhub-player-meta">${playerFlag(player)}${player.era}</div>
           </div>
           <div class="tourhub-player-side">
             ${assignedSlot != null ? `<span class="tourhub-slot-tag">#${assignedSlot + 1}</span>` : ''}
@@ -497,62 +564,99 @@
   }
 
   function getRoundParticipantsForRender(roundIndex) {
+    const buildPendingMatches = (participants, targetRoundIndex) => {
+      const matches = [];
+      for (let i = 0; i < participants.length; i += 2) {
+        matches.push({
+          p1: participants[i] || null,
+          p2: participants[i + 1] || null,
+          score: '',
+          winner: null,
+          roundIndex: targetRoundIndex,
+          pending: true
+        });
+      }
+      return matches;
+    };
+
     if (roundIndex === 0) {
+      if (state.rounds[0]) return state.rounds[0];
       const matches = [];
       for (let i = 0; i < DRAW_SIZE; i += 2) {
         matches.push({ p1: state.entrants[i], p2: state.entrants[i + 1], score: '', winner: null, roundIndex });
       }
       return matches;
     }
-    return state.rounds[roundIndex - 1] || Array(DRAW_SIZE / (2 ** (roundIndex + 1))).fill(null).map(() => ({
+
+    if (state.rounds[roundIndex]) return state.rounds[roundIndex];
+
+    if (state.rounds[roundIndex - 1]) {
+      const participants = state.rounds[roundIndex - 1].map((match) => match.winner || null);
+      return buildPendingMatches(participants, roundIndex);
+    }
+
+    return Array(DRAW_SIZE / (2 ** (roundIndex + 1))).fill(null).map(() => ({
       p1: null, p2: null, score: '', winner: null, roundIndex
     }));
   }
 
-  function renderBracket() {
-    const bracket = document.getElementById('tourhub-bracket');
-    const championMatch = getChampionMatch();
-    bracket.innerHTML = '';
+  function getBracketSideMatches(roundIndex, side) {
+    const matches = getRoundParticipantsForRender(roundIndex);
+    if (roundIndex === ROUND_NAMES.length - 1) return matches;
+    const midpoint = matches.length / 2;
+    return side === 'left' ? matches.slice(0, midpoint) : matches.slice(midpoint);
+  }
 
-    ROUND_NAMES.forEach((name, roundIndex) => {
-      const roundCol = document.createElement('div');
-      roundCol.className = `tourhub-round tourhub-round-${roundIndex}`;
-      const matches = getRoundParticipantsForRender(roundIndex);
-      roundCol.innerHTML = `
+  function renderRoundColumn(roundIndex, side) {
+    const matches = getBracketSideMatches(roundIndex, side);
+    const sideClass = side === 'left' ? 'tourhub-side-left' : 'tourhub-side-right';
+    return `
+      <div class="tourhub-round ${sideClass} tourhub-depth-${roundIndex}">
         <div class="tourhub-round-title">${t(ROUND_LABEL_KEYS[roundIndex])}</div>
         <div class="tourhub-round-list">
-          ${matches.map((match, matchIndex) => renderMatchCard(match, roundIndex, matchIndex)).join('')}
-        </div>
-      `;
-      bracket.appendChild(roundCol);
-    });
-
-    const championCol = document.createElement('div');
-    championCol.className = 'tourhub-round tourhub-round-champion';
-    championCol.innerHTML = `
-      <div class="tourhub-round-title">${t('championLabel')}</div>
-      <div class="tourhub-round-list">
-        <div class="tourhub-match-card champion ${championMatch ? 'done' : ''}">
-          <div class="tourhub-champion-inside">
-            <div class="tourhub-slot-name">${championMatch ? `${playerFlag(championMatch.winner)}${championMatch.winner.name}` : t('championPending')}</div>
-            <div class="tourhub-slot-meta">${championMatch ? interpolate(t('championScore'), { score: championMatch.score }) : t('manualHint')}</div>
-          </div>
+          ${matches.map((match, matchIndex) => renderMatchCard(match, roundIndex, matchIndex, side)).join('')}
         </div>
       </div>
     `;
-    bracket.appendChild(championCol);
   }
 
-  function renderMatchCard(match, roundIndex, matchIndex) {
-    const slotAIndex = roundIndex === 0 ? matchIndex * 2 : null;
-    const slotBIndex = roundIndex === 0 ? matchIndex * 2 + 1 : null;
+  function renderBracket() {
+    const bracket = document.getElementById('tourhub-bracket');
+    const bracketWrap = document.getElementById('tourhub-bracket-wrap');
+    const championMatch = getChampionMatch();
+    const finalMatch = getRoundParticipantsForRender(ROUND_NAMES.length - 1)[0] || null;
+    bracketWrap.dataset.view = state.mobileView;
+    bracket.innerHTML = `
+      ${renderRoundColumn(0, 'left')}
+      ${renderRoundColumn(1, 'left')}
+      ${renderRoundColumn(2, 'left')}
+      ${renderRoundColumn(3, 'left')}
+      <div class="tourhub-round tourhub-round-final">
+        <div class="tourhub-round-title">${t(ROUND_LABEL_KEYS[4])}</div>
+        <div class="tourhub-round-list">
+          ${finalMatch ? renderMatchCard(finalMatch, 4, 0, 'center') : renderMatchCard({ p1: null, p2: null, score: '', winner: null, roundIndex: 4, pending: true }, 4, 0, 'center')}
+          ${championMatch ? renderChampionCard(championMatch) : ''}
+        </div>
+      </div>
+      ${renderRoundColumn(3, 'right')}
+      ${renderRoundColumn(2, 'right')}
+      ${renderRoundColumn(1, 'right')}
+      ${renderRoundColumn(0, 'right')}
+    `;
+  }
+
+  function renderMatchCard(match, roundIndex, matchIndex, side = 'left') {
+    const baseIndex = side === 'right' && roundIndex === 0 ? DRAW_SIZE / 2 : 0;
+    const slotAIndex = roundIndex === 0 ? baseIndex + matchIndex * 2 : null;
+    const slotBIndex = roundIndex === 0 ? baseIndex + matchIndex * 2 + 1 : null;
     const winnerId = match.winner?.id;
+    const footerText = match.score || (match.pending ? t('pendingHint') : t('manualHint'));
     return `
       <div class="tourhub-match-card ${winnerId ? 'done' : ''}">
         ${renderSlot(match.p1, winnerId === match.p1?.id, slotAIndex)}
         ${renderSlot(match.p2, winnerId === match.p2?.id, slotBIndex)}
         <div class="tourhub-match-footer">
-          <span>${match.score || t('manualHint')}</span>
+          <span>${footerText}</span>
         </div>
       </div>
     `;
@@ -562,14 +666,34 @@
     const editable = slotIndex != null && state.rounds.length === 0;
     const active = editable && state.selectedSlot === slotIndex;
     const attrs = editable ? `data-slot-index="${slotIndex}"` : '';
+    const emptyMeta = editable ? t('manualHint') : t('awaitingWinner');
+    const winnerStyle = isWinner && player
+      ? `style="--winner-bg: linear-gradient(90deg, rgba(200,240,0,0.18), rgba(10,10,15,0.88) 62%), url('img/${player.id}.png');"`
+      : '';
     return `
       <button class="tourhub-slot ${player ? 'filled' : 'empty'} ${isWinner ? 'winner' : ''} ${active ? 'active' : ''}"
+              ${winnerStyle}
               ${attrs}
               ${editable ? '' : 'disabled'}>
         <div class="tourhub-slot-seed">${slotIndex != null ? `#${slotIndex + 1}` : ''}</div>
         <div class="tourhub-slot-name">${player ? `${playerFlag(player)}${player.name}` : t('unfilled')}</div>
-        <div class="tourhub-slot-meta">${player ? `${player.country} · ${player.era}` : t('manualHint')}</div>
+        <div class="tourhub-slot-meta">${player ? `${playerFlag(player)}${player.era}` : emptyMeta}</div>
       </button>
+    `;
+  }
+
+  function renderChampionCard(match) {
+    const winner = match?.winner;
+    if (!winner) return '';
+    const scoreText = match.score || '-';
+    return `
+      <div class="tourhub-match-card champion" style="--champion-bg: linear-gradient(180deg, rgba(200,240,0,0.14), rgba(10,10,15,0.92) 72%), url('img/${winner.id}.png');">
+        <div class="tourhub-champion-inside">
+          <div class="tourhub-champion-kicker">${t('championLabel')}</div>
+          <div class="tourhub-champion-name">${playerFlag(winner)}${winner.name}</div>
+          <div class="tourhub-champion-score">${scoreText}</div>
+        </div>
+      </div>
     `;
   }
 
@@ -587,20 +711,7 @@
 
   function renderChampion() {
     const banner = document.getElementById('tourhub-champion-banner');
-    const championName = document.getElementById('tourhub-champion-name');
-    const championScore = document.getElementById('tourhub-champion-score');
-    const champion = getChampionMatch();
-
-    if (!champion) {
-      banner.style.display = 'none';
-      championName.textContent = '—';
-      championScore.textContent = '—';
-      return;
-    }
-
-    banner.style.display = 'block';
-    championName.textContent = `${playerFlag(champion.winner)}${champion.winner.name}`;
-    championScore.textContent = champion.score || '—';
+    banner.style.display = 'none';
   }
 
   function render() {
@@ -627,6 +738,18 @@
     });
     document.getElementById('tourhub-clear-slot-btn')?.addEventListener('click', clearSelectedSlot);
     document.getElementById('tourhub-simulate-round-btn')?.addEventListener('click', simulateNextRound);
+    document.getElementById('tourhub-view-overview-btn')?.addEventListener('click', () => {
+      state.mobileView = 'overview';
+      renderTop();
+      renderBracket();
+      bindBracketSlots();
+    });
+    document.getElementById('tourhub-view-focus-btn')?.addEventListener('click', () => {
+      state.mobileView = 'focus';
+      renderTop();
+      renderBracket();
+      bindBracketSlots();
+    });
 
     initialized = true;
     render();
@@ -637,3 +760,8 @@
     render();
   };
 })();
+
+
+
+
+
