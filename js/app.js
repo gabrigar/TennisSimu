@@ -1,23 +1,21 @@
 ﻿// =====================================================
-// i18n â€” EN / ES
+// i18n - EN / ES
 // =====================================================
 const LANG = {
   en: {
-    // Nav
-    nav_simulator:   'Simulator',
-    nav_tournament:  'Grand Slams',
-    nav_stats:       'Stats',
-    nav_compare:     'Compare',
-    nav_history:     'History',
-    nav_ranking:     'Rankings',
-    // Simulator
+    nav_simulator:   '⚡ Simulator',
+    nav_tournament:  '🎾 Grand Slams',
+    nav_stats:       '📊 Stats',
+    nav_compare:     '🔄 Compare',
+    nav_history:     '🔥 History',
+    nav_ranking:     '🏆 Rankings',
     player1:         'Player 1',
     player2:         'Player 2',
     search_player:   'Search player...',
-    search_mob:      'ðŸ” Search player...',
+    search_mob:      '🔍 Search player...',
     settings:        'Settings',
-    sel_p1:          'â€” Select P1 â€”',
-    sel_p2:          'â€” Select P2 â€”',
+    sel_p1:          '— Select P1 —',
+    sel_p2:          '— Select P2 —',
     surface:         'Surface',
     surf_hard:       'Hard',
     surf_clay:       'Clay',
@@ -27,29 +25,27 @@ const LANG = {
     yes:             'Yes',
     no:              'No',
     simulate:        'SIMULATE MATCH',
-    match_winner:    'ðŸ† Match winner',
+    match_winner:    '🏆 Match winner',
     player_col:      'Player',
     games_col:       'Games',
     match_stats:     'Match stats',
-    repeat:          'â†© REPEAT MATCH',
-    change_p2:       'ðŸ”„ CHANGE PLAYER 2',
-    reset_all:       'âœ• RESET ALL',
+    repeat:          '↩ REPEAT MATCH',
+    change_p2:       '🔄 CHANGE PLAYER 2',
+    reset_all:       '✕ RESET ALL',
     x100:            'x100',
     x100_header:     '100 MATCHES',
-    new_match:       'â†© New match',
+    new_match:       '↩ New match',
     pick_p1:         'PICK PLAYER 1',
     pick_p2:         'PICK PLAYER 2',
-    // Match stat rows
     stat_aces:       'Aces',
     stat_df:         'Double faults',
     stat_winners:    'Winners',
     stat_ue:         'Unforced errors',
     stat_breaks:     'Breaks converted',
     stat_games:      'Games won',
-    stat_short:      'Points 0â€“4 shots',
-    stat_mid:        'Points 5â€“8 shots',
+    stat_short:      'Points 0–4 shots',
+    stat_mid:        'Points 5–8 shots',
     stat_long:       'Points 9+ shots',
-    // Stats page
     database:        'Database',
     players_lbl:     'players',
     search_name:     'Search name...',
@@ -75,13 +71,11 @@ const LANG = {
     bh_speed:        'BH speed',
     return_speed:    'Return speed',
     return_row:      'Return',
-    // Comparador
     titles:          'TITLES',
     total_titles:    'TOTAL TITLES',
-    clear_sel:       'â†© Clear selection',
-    // History page
+    clear_sel:       '↩ Clear selection',
     hist_title:      'HISTORICAL RESULTS',
-    hist_sub:        '9,489 real matches Â· 1985â€“2024 Â· 99 players',
+    hist_sub:        '9,489 real matches · 1985–2024 · 99 players',
     lbl_p1:          'PLAYER 1',
     lbl_p2:          'PLAYER 2',
     lbl_surface:     'SURFACE',
@@ -101,15 +95,12 @@ const LANG = {
     th_result:       'RESULT',
     matches_found:   'matches found',
     players_loaded:  'players loaded',
-    // Stats page â€” peak stats
     peak_serve:      '1st Serve',
     peak_winners:    'Winners/match',
     peak_return:     'Return %',
     peak_breaks:     'Break conv.',
-    // Speed cards
     total_power:     'Total power',
     kmh_avg:         'km/h avg',
-    // Stat cards
     pct_1st_srv:     '1st Serve %',
     in_the_zone:     'Landing in zone',
     pts_1st_in:      'Pts 1st srv in',
@@ -130,13 +121,11 @@ const LANG = {
     net_eff:         'Volley efficiency',
     height_lbl:      'Height',
     height_sub:      'Serve & reach advantage',
-    // Rally dist
-    data_real:       'âœ“ Real data',
+    data_real:       '✓ Real data',
     data_est:        '~ Estimated',
     rally_short_desc:'Aces, winners, immediate errors',
     rally_mid_desc:  'Medium rallies, point building',
     rally_long_desc: 'Long rallies, endurance, fitness',
-    // Stat table rows
     srv_pct_lbl:     '1st Srv %',
     srv1_eff:        '1st srv eff.',
     srv2_eff:        '2nd srv eff.',
@@ -144,9 +133,8 @@ const LANG = {
     errors_lbl:      'errors',
     solidity_lbl:    'Solidity (BP saved)',
     tb_lbl:          'Tiebreaks',
-    dec_set_lbl:     'ðŸ’ª Decisive set',
-    net_lbl:         'ðŸ¥… Net',
-    // Comparador
+    dec_set_lbl:     '💪 Decisive set',
+    net_lbl:         '🥅 Net',
     comp_pts_1st:    'Pts won 1st srv',
     comp_pts_2nd:    'Pts won 2nd srv',
     comp_winners:    'Winners/match',
@@ -157,95 +145,89 @@ const LANG = {
     comp_serve_kmh:  'Serve km/h',
   },
   es: {
-    // Nav
-    nav_simulator:   'Simulador',
-    nav_tournament:  'Grand Slams',
-    nav_stats:       'Estadisticas',
-    nav_compare:     'Comparador',
-    nav_history:     'Historico',
-    nav_ranking:     'Rankings',
-    // Simulator
+    nav_simulator:   '⚡ Simulador',
+    nav_tournament:  '🎾 Grand Slams',
+    nav_stats:       '📊 Estadísticas',
+    nav_compare:     '🔄 Comparador',
+    nav_history:     '🔥 Histórico',
+    nav_ranking:     '🏆 Rankings',
     player1:         'Jugador 1',
     player2:         'Jugador 2',
     search_player:   'Buscar jugador...',
-    search_mob:      'ðŸ” Buscar jugador...',
-    settings:        'ConfiguraciÃ³n',
-    sel_p1:          'â€” Selecciona P1 â€”',
-    sel_p2:          'â€” Selecciona P2 â€”',
+    search_mob:      '🔍 Buscar jugador...',
+    settings:        'Configuración',
+    sel_p1:          '— Selecciona P1 —',
+    sel_p2:          '— Selecciona P2 —',
     surface:         'Superficie',
     surf_hard:       'Dura',
     surf_clay:       'Tierra',
     surf_grass:      'Hierba',
     sets:            'Sets',
     final_tb:        'Tiebreak final',
-    yes:             'SÃ­',
+    yes:             'Sí',
     no:              'No',
     simulate:        'SIMULAR PARTIDO',
-    match_winner:    'ðŸ† Ganador del partido',
+    match_winner:    '🏆 Ganador del partido',
     player_col:      'Jugador',
     games_col:       'Juegos',
-    match_stats:     'EstadÃ­sticas del partido',
-    repeat:          'â†© REPETIR PARTIDO',
-    change_p2:       'ðŸ”„ CAMBIAR JUGADOR 2',
-    reset_all:       'âœ• CAMBIAR TODO',
+    match_stats:     'Estadísticas del partido',
+    repeat:          '↩ REPETIR PARTIDO',
+    change_p2:       '🔄 CAMBIAR JUGADOR 2',
+    reset_all:       '✕ CAMBIAR TODO',
     x100:            'x100',
     x100_header:     '100 PARTIDOS',
-    new_match:       'â†© Nuevo partido',
+    new_match:       '↩ Nuevo partido',
     pick_p1:         'ELIGE JUGADOR 1',
     pick_p2:         'ELIGE JUGADOR 2',
-    // Match stat rows
     stat_aces:       'Aces',
     stat_df:         'Dobles faltas',
     stat_winners:    'Winners',
     stat_ue:         'Errores no forzados',
     stat_breaks:     'Breaks convertidos',
     stat_games:      'Juegos ganados',
-    stat_short:      'Puntos 0â€“4 golpes',
-    stat_mid:        'Puntos 5â€“8 golpes',
+    stat_short:      'Puntos 0–4 golpes',
+    stat_mid:        'Puntos 5–8 golpes',
     stat_long:       'Puntos 9+ golpes',
-    // Stats page
     database:        'Base de datos',
     players_lbl:     'jugadores',
     search_name:     'Buscar nombre...',
     all:             'Todos',
-    sel_player:      'Selecciona un jugador para ver sus estadÃ­sticas',
+    sel_player:      'Selecciona un jugador para ver sus estadísticas',
     sel_two:         'Selecciona dos jugadores para compararlos',
     stroke_speeds:   'Velocidades de golpeo',
-    sim_stats:       'EstadÃ­sticas de simulaciÃ³n',
+    sim_stats:       'Estadísticas de simulación',
     tb_won:          'Tiebreaks ganados',
     surf_advantage:  'Ventaja por superficie',
     surf_modifiers:  'Modificadores por superficie',
-    return_pct:      '% DevoluciÃ³n',
-    when_chance:     'Cuando tiene opciÃ³n',
-    max_pressure:    'PresiÃ³n mÃ¡xima',
-    rally_dist:      'DistribuciÃ³n de rallies',
-    rally_mid_lbl:   'rallies medios, construcciÃ³n del punto',
-    rally_long_lbl:  'rallies largos, resistencia, fÃ­sico',
-    stat_col:        'EstadÃ­stica',
+    return_pct:      '% Devolución',
+    when_chance:     'Cuando tiene opción',
+    max_pressure:    'Presión máxima',
+    rally_dist:      'Distribución de rallies',
+    rally_mid_lbl:   'rallies medios, construcción del punto',
+    rally_long_lbl:  'rallies largos, resistencia, físico',
+    stat_col:        'Estadística',
     val_col:         'Valor',
     pct_col:         'Percentil',
-    serve_speed:     'Saque mÃ¡x.',
+    serve_speed:     'Saque máx.',
     fh_speed:        'Derecha',
-    bh_speed:        'RevÃ©s',
+    bh_speed:        'Revés',
     return_speed:    'Resto punta',
-    return_row:      'DevoluciÃ³n',
-    // Comparador
-    titles:          'PALMARÃ‰S',
-    total_titles:    'TOTAL TÃTULOS',
-    clear_sel:       'â†© Limpiar selecciÃ³n',
-    // History page
-    hist_title:      'RESULTADOS HISTÃ“RICOS',
-    hist_sub:        '9.489 partidos reales Â· 1985â€“2024 Â· 99 jugadores',
+    return_row:      'Devolución',
+    titles:          'PALMARÉS',
+    total_titles:    'TOTAL TÍTULOS',
+    clear_sel:       '↩ Limpiar selección',
+    hist_title:      'RESULTADOS HISTÓRICOS',
+    hist_sub:        '9.489 partidos reales · 1985–2024 · 99 jugadores',
     lbl_p1:          'JUGADOR 1',
     lbl_p2:          'JUGADOR 2',
     lbl_surface:     'SUPERFICIE',
     lbl_level:       'NIVEL',
-    lbl_year_from:   'AÃ‘O DESDE',
-    lbl_year_to:     'AÃ‘O HASTA',
+    lbl_year_from:   'AÑO DESDE',
+    lbl_year_to:     'AÑO HASTA',
     all_surf:        'Todas',
     filter_btn:      'FILTRAR',
     reset_btn:       'RESET',
-    th_year:         'AÃ‘O',
+    th_year:         'AÑO',
     th_tournament:   'TORNEO',
     th_level:        'NIVEL',
     th_round:        'RONDA',
@@ -255,15 +237,12 @@ const LANG = {
     th_result:       'RESULTADO',
     matches_found:   'partidos encontrados',
     players_loaded:  'jugadores cargados',
-    // Stats page â€” peak stats
     peak_serve:      '1er Servicio',
     peak_winners:    'Winners/partido',
     peak_return:     '% Dev. ganada',
     peak_breaks:     'Conv. Breaks',
-    // Speed cards
     total_power:     'Potencia total',
     kmh_avg:         'km/h media',
-    // Stat cards
     pct_1st_srv:     '% 1er Servicio',
     in_the_zone:     'Entran en zona',
     pts_1st_in:      'Pts 1st srv in',
@@ -284,13 +263,11 @@ const LANG = {
     net_eff:         'Eficacia en volea',
     height_lbl:      'Altura',
     height_sub:      'Ventaja saque/reach',
-    // Rally dist
-    data_real:       'âœ“ Dato real',
+    data_real:       '✓ Dato real',
     data_est:        '~ Estimado',
     rally_short_desc:'Aces, winners, errores inmediatos',
-    rally_mid_desc:  'Intercambios medios, construcciÃ³n del punto',
-    rally_long_desc: 'Rallies largos, resistencia, fÃ­sico',
-    // Stat table rows
+    rally_mid_desc:  'Intercambios medios, construcción del punto',
+    rally_long_desc: 'Rallies largos, resistencia, físico',
     srv_pct_lbl:     '1er Srv %',
     srv1_eff:        'Efic. 1er srv',
     srv2_eff:        'Efic. 2do srv',
@@ -298,9 +275,8 @@ const LANG = {
     errors_lbl:      'errores',
     solidity_lbl:    'Solidez (breaks salv.)',
     tb_lbl:          'Tiebreaks',
-    dec_set_lbl:     'ðŸ’ª Set decisivo',
-    net_lbl:         'ðŸ¥… Red',
-    // Comparador
+    dec_set_lbl:     '💪 Set decisivo',
+    net_lbl:         '🥅 Red',
     comp_pts_1st:    'Pts ganados 1er',
     comp_pts_2nd:    'Pts ganados 2do',
     comp_winners:    'Winners/partido',
@@ -311,7 +287,6 @@ const LANG = {
     comp_serve_kmh:  'Saque km/h',
   }
 };
-
 let currentLang = localStorage.getItem('lang') || 'en';
 function t(key) { return LANG[currentLang][key] || LANG.en[key] || key; }
 
@@ -851,13 +826,13 @@ function simulate() {
         const wType      = g.winner === 0 ? 'p1' : 'p2';
         const isBreak    = g.break === true;
         const isTb       = g.tb === true;
-        const suffix     = isTb ? ' ðŸŽ¯ TB' : (isBreak ? ' ðŸ’¥ Break' : '');
+        const suffix     = isTb ? ' 🎯 TB' : (isBreak ? ' 💥 Break' : '');
         const pointDetails = (g.pointsLog || []).map((pt, pointIdx) => {
           const rallyLabel = pt.rallyType === 'tiebreak' ? 'TB' : (pt.rallyType === 'short' ? 'Short' : (pt.rallyType === 'mid' ? 'Mid' : 'Long'));
           const scoreBefore = Array.isArray(pt.beforeScore) ? pt.beforeScore.join('-') : pt.beforeScore;
           const scoreAfter = Array.isArray(pt.afterScore) ? pt.afterScore.join('-') : pt.afterScore;
-          const tag = pt.pressureTag ? ` Â· ${pt.pressureTag}` : '';
-          return `<div class="log-point ${pt.winner === 0 ? 'p1' : 'p2'}"><span class="log-point-num">P${pointIdx + 1}</span><span class="log-point-score">${scoreBefore} â†’ ${scoreAfter}</span><span class="log-point-rally">${rallyLabel}</span><span class="log-point-winner">${pt.winnerName}${tag}</span></div>`;
+          const tag = pt.pressureTag ? ` · ${pt.pressureTag}` : '';
+          return `<div class="log-point ${pt.winner === 0 ? 'p1' : 'p2'}"><span class="log-point-num">P${pointIdx + 1}</span><span class="log-point-score">${scoreBefore} → ${scoreAfter}</span><span class="log-point-rally">${rallyLabel}</span><span class="log-point-winner">${pt.winnerName}${tag}</span></div>`;
         }).join('');
         matchLog.push({
           text: `  ${g.score[0]}-${g.score[1]}  ${winnerName}${suffix}`,
@@ -870,10 +845,10 @@ function simulate() {
 
     if (set.winner === 0) {
       winsP1++;
-      matchLog.push({ text: `ðŸ“— SET ${setNum} Â· ${p1.name} ${set.games[0]}-${set.games[1]}`, type: 'p1', isSet: true });
+      matchLog.push({ text: `📗 SET ${setNum} · ${p1.name} ${set.games[0]}-${set.games[1]}`, type: 'p1', isSet: true });
     } else {
       winsP2++;
-      matchLog.push({ text: `ðŸ“˜ SET ${setNum} Â· ${p2.name} ${set.games[0]}-${set.games[1]}`, type: 'p2', isSet: true });
+      matchLog.push({ text: `📘 SET ${setNum} · ${p2.name} ${set.games[0]}-${set.games[1]}`, type: 'p2', isSet: true });
     }
 
     // Rally stats â€” variables locales por set para evitar negativos acumulados
@@ -1211,7 +1186,7 @@ function renderMobileGrid(filter) {
       <div class="mob-card-top">
         <span class="mob-flag">${flagHTML(p)}</span>
         <span class="mob-name">${p.name}</span>
-        ${gs ? `<span class="mob-gs-badge">ðŸ†${gs}</span>` : ''}
+        ${gs ? `<span class="mob-gs-badge">🏆${gs}</span>` : ''}
       </div>`;
     card.onclick = () => mobileSelectPlayer(p);
     grid.appendChild(card);
@@ -1348,11 +1323,11 @@ function renderSidebar() {
       <span class="pli-flag">${flagHTML(p)}</span>
       <div class="pli-info">
         <div class="pli-name">${p.name}</div>
-        <div class="pli-sub">${p.country} Â· ${p.prime} Â· ${p.style}</div>
+        <div class="pli-sub">${p.country} · ${p.prime} · ${p.style}</div>
       </div>
       <div class="pli-titles">
-        ${(p.gs || 0) > 0 ? `<div class="pli-gs">ðŸ†${p.gs}</div>` : ''}
-        ${(p.masters || 0) > 0 ? `<div class="pli-masters">ðŸ’Ž${p.masters}</div>` : ''}
+        ${(p.gs || 0) > 0 ? `<div class="pli-gs">🏆${p.gs}</div>` : ''}
+        ${(p.masters || 0) > 0 ? `<div class="pli-masters">💎${p.masters}</div>` : ''}
       </div>
     </div>`).join('');
 }
@@ -1396,7 +1371,7 @@ function showPlayerDetail(playerId) {
       </div>
       <div class="player-hero-info">
         <div class="player-hero-name">${p.name}</div>
-        <div class="player-hero-country">${flagHTML(p)} ${p.country} Â· ${p.era}${p.height ? ' Â· ' + p.height + 'cm' : ''}</div>
+        <div class="player-hero-country">${flagHTML(p)} ${p.country} · ${p.era}${p.height ? ' · ' + p.height + 'cm' : ''}</div>
         <div class="player-hero-badges">
           <span class="badge highlight">Prime: ${p.prime}</span>
           <span class="badge">${p.style}</span>
@@ -1406,27 +1381,27 @@ function showPlayerDetail(playerId) {
         <div class="gs-trophy-section">
           <div class="gs-trophy-row">
             ${[
-              ['ðŸŸ ', 'Roland Garros', p.gs_ro || 0, 14],
-              ['ðŸŸ¢', 'Wimbledon',     p.gs_wi || 0, 8],
-              ['ðŸ”µ', 'US Open',       p.gs_us || 0, 5],
-              ['ðŸŸ¡', 'AO',            p.gs_au || 0, 11],
+              ['🟠', 'Roland Garros', p.gs_ro || 0, 14],
+              ['🟢', 'Wimbledon',     p.gs_wi || 0, 8],
+              ['🔵', 'US Open',       p.gs_us || 0, 5],
+              ['🟡', 'AO',            p.gs_au || 0, 11],
             ].map(([icon, name, count, maxDots]) => `
               <div class="gs-trophy-item ${count > 0 ? 'gs-won' : 'gs-zero'}">
                 <div class="gs-icon">${icon}</div>
                 <div class="gs-name">${name}</div>
                 <div class="gs-count">${count}</div>
                 ${count > 0
-                  ? `<div class="gs-dots">${'â—'.repeat(Math.min(count, maxDots))}</div>`
-                  : `<div class="gs-dots-empty">â—‹</div>`}
+                  ? `<div class="gs-dots">${'●'.repeat(Math.min(count, maxDots))}</div>`
+                  : `<div class="gs-dots-empty">○</div>`}
               </div>`).join('')}
           </div>
           <div class="gs-totals-row">
             <div class="gs-total-item">
-              <span class="gs-total-label">ðŸ† Grand Slams</span>
+              <span class="gs-total-label">🏆 Grand Slams</span>
               <span class="gs-total-val">${p.gs || 0}</span>
             </div>
             <div class="gs-total-item">
-              <span class="gs-total-label">ðŸ’Ž Masters 1000</span>
+              <span class="gs-total-label">💎 Masters 1000</span>
               <span class="gs-total-val masters-val">${p.masters || 0}</span>
             </div>
           </div>
@@ -1446,27 +1421,27 @@ function showPlayerDetail(playerId) {
       <div class="section-label">${t('stroke_speeds')}</div>
       <div class="speed-cards">
         <div class="speed-card">
-          <div class="speed-icon">ðŸŽ¯</div><div class="speed-label">${t('serve_speed')}</div>
-          <div class="speed-value">${s.serve_kmh || 'â€”'}</div><div class="speed-unit">km/h</div>
+          <div class="speed-icon">🎯</div><div class="speed-label">${t('serve_speed')}</div>
+          <div class="speed-value">${s.serve_kmh || '—'}</div><div class="speed-unit">km/h</div>
           <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round(((s.serve_kmh||200)-170)/80*100)}%;background:#c8f000"></div></div>
         </div>
         <div class="speed-card">
-          <div class="speed-icon">ðŸ‘Š</div><div class="speed-label">${t('fh_speed')}</div>
-          <div class="speed-value">${s.fh_kmh || 'â€”'}</div><div class="speed-unit">km/h</div>
+          <div class="speed-icon">👊</div><div class="speed-label">${t('fh_speed')}</div>
+          <div class="speed-value">${s.fh_kmh || '—'}</div><div class="speed-unit">km/h</div>
           <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round(((s.fh_kmh||145)-118)/60*100)}%;background:#00e5ff"></div></div>
         </div>
         <div class="speed-card">
-          <div class="speed-icon">ðŸ”„</div><div class="speed-label">${t('bh_speed')}</div>
-          <div class="speed-value">${s.bh_kmh || 'â€”'}</div><div class="speed-unit">km/h</div>
+          <div class="speed-icon">🔄</div><div class="speed-label">${t('bh_speed')}</div>
+          <div class="speed-value">${s.bh_kmh || '—'}</div><div class="speed-unit">km/h</div>
           <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round(((s.bh_kmh||138)-115)/55*100)}%;background:#ff9800"></div></div>
         </div>
         <div class="speed-card">
-          <div class="speed-icon">ðŸ“</div><div class="speed-label">${t('return_speed')}</div>
-          <div class="speed-value">${s.rest_kmh || 'â€”'}</div><div class="speed-unit">km/h</div>
+          <div class="speed-icon">🎾</div><div class="speed-label">${t('return_speed')}</div>
+          <div class="speed-value">${s.rest_kmh || '—'}</div><div class="speed-unit">km/h</div>
           <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round(((s.rest_kmh||148)-125)/45*100)}%;background:#a855f7"></div></div>
         </div>
         <div class="speed-card combo">
-          <div class="speed-icon">âš¡</div><div class="speed-label">${t('total_power')}</div>
+          <div class="speed-icon">⚡</div><div class="speed-label">${t('total_power')}</div>
           <div class="speed-value">${Math.round(((s.serve_kmh||200)+(s.fh_kmh||145)+(s.bh_kmh||138)+(s.rest_kmh||148))/4)}</div>
           <div class="speed-unit">${t('kmh_avg')}</div>
           <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round((((s.serve_kmh||200)+(s.fh_kmh||145)+(s.bh_kmh||138)+(s.rest_kmh||148))/4-138)/50*100)}%;background:linear-gradient(90deg,#c8f000,#a855f7)"></div></div>
@@ -1532,7 +1507,7 @@ function showPlayerDetail(playerId) {
         </div>
         <div class="stat-card">
           <div class="stat-card-label">${t('height_lbl')}</div>
-          <div class="stat-card-value">${p.height || 'â€”'}<span style="font-size:1rem;color:var(--muted)">cm</span></div>
+          <div class="stat-card-value">${p.height || '—'}<span style="font-size:1rem;color:var(--muted)">cm</span></div>
           <div class="stat-card-sub">${t('height_sub')}</div>
         </div>
       </div>
@@ -1540,17 +1515,17 @@ function showPlayerDetail(playerId) {
       <div class="surface-section">
         <div class="surface-title">${t('surf_modifiers')}</div>
         <div class="surface-row">
-          <div class="surface-label">ðŸ”µ Hard</div>
+          <div class="surface-label">🔵 Hard</div>
           <div class="surface-bar-track"><div class="surface-bar-fill hard" style="width:${surfaceToBar(s.surface.hard)}%"></div></div>
           <div class="surface-val ${surfaceClass(s.surface.hard)}">${surfaceLabel(s.surface.hard)}</div>
         </div>
         <div class="surface-row">
-          <div class="surface-label">ðŸŸ  Clay</div>
+          <div class="surface-label">🟠 Clay</div>
           <div class="surface-bar-track"><div class="surface-bar-fill clay" style="width:${surfaceToBar(s.surface.clay)}%"></div></div>
           <div class="surface-val ${surfaceClass(s.surface.clay)}">${surfaceLabel(s.surface.clay)}</div>
         </div>
         <div class="surface-row">
-          <div class="surface-label">ðŸŸ¢ Grass</div>
+          <div class="surface-label">🟢 Grass</div>
           <div class="surface-bar-track"><div class="surface-bar-fill grass" style="width:${surfaceToBar(s.surface.grass)}%"></div></div>
           <div class="surface-val ${surfaceClass(s.surface.grass)}">${surfaceLabel(s.surface.grass)}</div>
         </div>
@@ -1565,17 +1540,17 @@ function showPlayerDetail(playerId) {
         </div>
         <div class="rally-distribution">
           <div class="rally-bar-row">
-            <div class="rally-bar-label">âš¡ 0â€“4 golpes</div>
+            <div class="rally-bar-label">⚡ 0–4 golpes</div>
             <div class="rally-bar-outer"><div class="rally-bar-fill rally-short" style="width:${s.rally_short || 40}%"><span class="rally-pct">${s.rally_short || 40}%</span></div></div>
             <div class="rally-desc">${t('rally_short_desc')}</div>
           </div>
           <div class="rally-bar-row">
-            <div class="rally-bar-label">ðŸ”„ 5â€“8 golpes</div>
+            <div class="rally-bar-label">🔄 5–8 golpes</div>
             <div class="rally-bar-outer"><div class="rally-bar-fill rally-mid" style="width:${s.rally_mid || 34}%"><span class="rally-pct">${s.rally_mid || 34}%</span></div></div>
             <div class="rally-desc">${t('rally_mid_desc')}</div>
           </div>
           <div class="rally-bar-row">
-            <div class="rally-bar-label">ðŸ’ª 9+ golpes</div>
+            <div class="rally-bar-label">💪 9+ golpes</div>
             <div class="rally-bar-outer"><div class="rally-bar-fill rally-long" style="width:${s.rally_long || 26}%"><span class="rally-pct">${s.rally_long || 26}%</span></div></div>
             <div class="rally-desc">${t('rally_long_desc')}</div>
           </div>
@@ -1585,9 +1560,9 @@ function showPlayerDetail(playerId) {
       <div class="stat-table">
         <div class="stat-table-header"><div>${t('stat_col')}</div><div>${t('val_col')}</div><div>${t('pct_col')}</div></div>
         ${[
-          ['ðŸŽ¯ Vel. saque',        (s.serve_kmh||'â€”')+' km/h',        barW(s.serve_kmh||200, 170, 250)],
-          ['ðŸ‘Š Vel. derecha',      (s.fh_kmh||'â€”')+' km/h',           barW(s.fh_kmh||145, 118, 178)],
-          ['ðŸ”„ ' + t('bh_speed'),        (s.bh_kmh||'â€”')+' km/h',           barW(s.bh_kmh||138, 115, 162)],
+          ['🎯 Vel. saque',        (s.serve_kmh||'—')+' km/h',        barW(s.serve_kmh||200, 170, 250)],
+          ['👊 Vel. derecha',      (s.fh_kmh||'—')+' km/h',           barW(s.fh_kmh||145, 118, 178)],
+          ['🔄 ' + t('bh_speed'),  (s.bh_kmh||'—')+' km/h',           barW(s.bh_kmh||138, 115, 162)],
           [t('srv_pct_lbl'),            Math.round(s.serve1pct*100)+'%',    barW(s.serve1pct, 0.56, 0.70)],
           [t('srv1_eff'),        Math.round(s.win1st*100)+'%',       barW(s.win1st, 0.68, 0.86)],
           [t('srv2_eff'),        Math.round(s.win2nd*100)+'%',       barW(s.win2nd, 0.50, 0.62)],
@@ -1653,11 +1628,11 @@ function renderComparadorList() {
         <span class="pli-flag">${flagHTML(p)}</span>
         <div class="pli-info">
           <div class="pli-name">${p.name}</div>
-          <div class="pli-sub">${p.country} Â· ${p.prime} Â· ${p.style}</div>
+        <div class="pli-sub">${p.country} · ${p.prime} · ${p.style}</div>
         </div>
         <div class="pli-titles">
-          ${(p.gs || 0) > 0 ? `<div class="pli-gs">ðŸ†${p.gs}</div>` : ''}
-          ${(p.masters || 0) > 0 ? `<div class="pli-masters">ðŸ’Ž${p.masters}</div>` : ''}
+          ${(p.gs || 0) > 0 ? `<div class="pli-gs">🏆${p.gs}</div>` : ''}
+          ${(p.masters || 0) > 0 ? `<div class="pli-masters">💎${p.masters}</div>` : ''}
         </div>
       </div>`;
   }).join('');
@@ -1719,13 +1694,13 @@ function renderComparadorComparison() {
     [t('comp_breaks'),     Math.round(s1.breakConvert*100)+'%', Math.round(s2.breakConvert*100)+'%', s1.breakConvert, s2.breakConvert, false],
     [t('comp_tb'),        Math.round((p1.tb_win||0.62)*100)+'%', Math.round((p2.tb_win||0.62)*100)+'%', p1.tb_win||0.62, p2.tb_win||0.62, false],
     [t('comp_dec'),     Math.round((p1.dec_win||0.64)*100)+'%', Math.round((p2.dec_win||0.64)*100)+'%', p1.dec_win||0.64, p2.dec_win||0.64, false],
-    [t('comp_serve_kmh'),       s1.serve_kmh||'â€”',                s2.serve_kmh||'â€”',                s1.serve_kmh||200, s2.serve_kmh||200, false],
+    [t('comp_serve_kmh'),       s1.serve_kmh||'—',                s2.serve_kmh||'—',                s1.serve_kmh||200, s2.serve_kmh||200, false],
   ];
 
   // GS breakdown dots helper
   const gsDots = (n, max, color) => n > 0
-    ? `<span class="comp-gs-dots" style="color:${color}">${'â—'.repeat(Math.min(n, max))}</span>`
-    : `<span class="comp-gs-dots-zero">â€“</span>`;
+    ? `<span class="comp-gs-dots" style="color:${color}">${'●'.repeat(Math.min(n, max))}</span>`
+    : `<span class="comp-gs-dots-zero">–</span>`;
 
   document.getElementById('comp-detail-content').innerHTML = `
     <div class="comp-header-row">
@@ -1733,14 +1708,14 @@ function renderComparadorComparison() {
         <img src="img/${p1.id}.png" class="comp-player-photo p1-photo" onerror="this.style.display='none'">
         <div class="comp-player-text">
           <div class="comp-player-name">${flagHTML(p1)} ${p1.name}</div>
-          <div class="comp-player-meta">${p1.country} Â· ${p1.era}</div>
+          <div class="comp-player-meta">${p1.country} · ${p1.era}</div>
         </div>
       </div>
       <div class="comp-vs-badge">VS</div>
       <div class="comp-player-head p2">
         <div class="comp-player-text">
           <div class="comp-player-name">${flagHTML(p2)} ${p2.name}</div>
-          <div class="comp-player-meta">${p2.country} Â· ${p2.era}</div>
+          <div class="comp-player-meta">${p2.country} · ${p2.era}</div>
         </div>
         <img src="img/${p2.id}.png" class="comp-player-photo p2-photo" onerror="this.style.display='none'">
       </div>
@@ -1757,43 +1732,43 @@ function renderComparadorComparison() {
       <!-- Grand Slams total -->
       <div class="comp-titles-row highlight-row">
         <div class="comp-titles-val p1-col big">${p1.gs||0}</div>
-        <div class="comp-titles-label">ðŸ† Grand Slams</div>
+        <div class="comp-titles-label">🏆 Grand Slams</div>
         <div class="comp-titles-val p2-col big">${p2.gs||0}</div>
       </div>
 
       <!-- GS breakdown -->
       <div class="comp-titles-row sub-row">
         <div class="comp-titles-val p1-col">${p1.gs_ro||0} ${gsDots(p1.gs_ro||0,14,'#ff8a65')}</div>
-        <div class="comp-titles-label">ðŸŸ  Roland Garros</div>
+        <div class="comp-titles-label">🟠 Roland Garros</div>
         <div class="comp-titles-val p2-col">${p2.gs_ro||0} ${gsDots(p2.gs_ro||0,14,'#ff8a65')}</div>
       </div>
       <div class="comp-titles-row sub-row">
         <div class="comp-titles-val p1-col">${p1.gs_wi||0} ${gsDots(p1.gs_wi||0,8,'#81c784')}</div>
-        <div class="comp-titles-label">ðŸŸ¢ Wimbledon</div>
+        <div class="comp-titles-label">🟢 Wimbledon</div>
         <div class="comp-titles-val p2-col">${p2.gs_wi||0} ${gsDots(p2.gs_wi||0,8,'#81c784')}</div>
       </div>
       <div class="comp-titles-row sub-row">
         <div class="comp-titles-val p1-col">${p1.gs_us||0} ${gsDots(p1.gs_us||0,5,'#4fc3f7')}</div>
-        <div class="comp-titles-label">ðŸ”µ US Open</div>
+        <div class="comp-titles-label">🔵 US Open</div>
         <div class="comp-titles-val p2-col">${p2.gs_us||0} ${gsDots(p2.gs_us||0,5,'#4fc3f7')}</div>
       </div>
       <div class="comp-titles-row sub-row">
         <div class="comp-titles-val p1-col">${p1.gs_au||0} ${gsDots(p1.gs_au||0,11,'#ffd54f')}</div>
-        <div class="comp-titles-label">ðŸŸ¡ Australian Open</div>
+        <div class="comp-titles-label">🟡 Australian Open</div>
         <div class="comp-titles-val p2-col">${p2.gs_au||0} ${gsDots(p2.gs_au||0,11,'#ffd54f')}</div>
       </div>
 
       <!-- Masters 1000 -->
       <div class="comp-titles-row highlight-row">
         <div class="comp-titles-val p1-col big">${p1.masters||0}</div>
-        <div class="comp-titles-label">ðŸ’Ž Masters 1000</div>
+        <div class="comp-titles-label">💎 Masters 1000</div>
         <div class="comp-titles-val p2-col big">${p2.masters||0}</div>
       </div>
 
       <!-- ATP 500 -->
       <div class="comp-titles-row highlight-row">
         <div class="comp-titles-val p1-col big">${p1.m500||0}</div>
-        <div class="comp-titles-label">ðŸ¥ˆ ATP 500</div>
+        <div class="comp-titles-label">🥈 ATP 500</div>
         <div class="comp-titles-val p2-col big">${p2.m500||0}</div>
       </div>
 
@@ -1826,7 +1801,7 @@ function renderComparadorComparison() {
     </div>
     <div class="comp-surface-section">
       <div class="section-label">${t('surf_advantage')}</div>
-      ${[[`ðŸ”µ ${t('surf_hard')}`,'hard'],[`ðŸŸ  ${t('surf_clay')}`,'clay'],[`ðŸŸ¢ ${t('surf_grass')}`,'grass']].map(([label, key]) => `
+      ${[[`🔵 ${t('surf_hard')}`,'hard'],[`🟠 ${t('surf_clay')}`,'clay'],[`🟢 ${t('surf_grass')}`,'grass']].map(([label, key]) => `
         <div class="comp-surface-row">
           <span class="comp-surf-val p1-col">${((s1.surface[key]-1)*100).toFixed(0)}%</span>
           <span class="comp-surf-label">${label}</span>
@@ -1848,7 +1823,7 @@ function clearComparador() {
 // HISTÃ“RICO
 // =====================================================
 const SURF_LABEL  = { H:'Hard', C:'Clay', G:'Grass', I:'Indoor', P:'Grass', Y:'Grass' };
-const ROUND_LABEL = { F:'Final', SF:'Semifinal', QF:'Cuartos', R16:'Octavos', R32:'3Âª ronda', R64:'2Âª ronda', R128:'1Âª ronda', RR:'Round Robin' };
+const ROUND_LABEL = { F:'Final', SF:'Semifinal', QF:'Cuartos', R16:'Octavos', R32:'3ª ronda', R64:'2ª ronda', R128:'1ª ronda', RR:'Round Robin' };
 
 let resultsCurrent  = [];
 let resultsPage     = 0;
@@ -1908,7 +1883,7 @@ function applyResultsFilter() {
       badge.innerHTML = `
         <div class="h2h-inner">
           <span class="h2h-name p1-name">${pl1?.name || p1Id}</span>
-          <span class="h2h-score"><span class="h2h-w1">${w1}</span> â€“ <span class="h2h-w2">${w2}</span></span>
+          <span class="h2h-score"><span class="h2h-w1">${w1}</span> – <span class="h2h-w2">${w2}</span></span>
           <span class="h2h-name p2-name">${pl2?.name || p2Id}</span>
         </div>`;
     } else {
@@ -1985,10 +1960,10 @@ function renderResultsPagination() {
   const end     = Math.min(total, start + maxShow);
   let html = '';
 
-  if (resultsPage > 0)         html += `<button class="pag-btn" onclick="goResultsPage(${resultsPage-1})">â€¹</button>`;
+  if (resultsPage > 0)         html += `<button class="pag-btn" onclick="goResultsPage(${resultsPage-1})">‹</button>`;
   for (let i = start; i < end; i++)
     html += `<button class="pag-btn${i===resultsPage?' active':''}" onclick="goResultsPage(${i})">${i+1}</button>`;
-  if (resultsPage < total - 1) html += `<button class="pag-btn" onclick="goResultsPage(${resultsPage+1})">â€º</button>`;
+  if (resultsPage < total - 1) html += `<button class="pag-btn" onclick="goResultsPage(${resultsPage+1})">›</button>`;
 
   pag.innerHTML = html;
 }
@@ -2152,8 +2127,9 @@ function initializeUI() {
   document.getElementById('lang-toggle')?.addEventListener('click', toggleLang);
 
   applyLang();
-  console.log('[ST] âœ“ Ready â€” ' + PLAYERS.length + ' ' + t('players_loaded'));
+console.log('[ST] ✓ Ready — ' + PLAYERS.length + ' ' + t('players_loaded'));
 }
+
 
 
 

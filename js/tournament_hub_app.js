@@ -433,9 +433,9 @@
     const overviewBtn = document.getElementById('tourhub-view-overview-btn');
     const focusBtn = document.getElementById('tourhub-view-focus-btn');
 
-    title.textContent = `${t('navTitle')} Â· ${t(`slams.${slam.key}`)}`;
+    title.textContent = `${t('navTitle')} · ${t(`slams.${slam.key}`)}`;
     subtitle.textContent = t('subtitle');
-    kicker.textContent = `${t(`slams.${slam.key}`)} Â· ${slam.city} Â· ${slam.venue}`;
+    kicker.textContent = `${t(`slams.${slam.key}`)} · ${slam.city} · ${slam.venue}`;
     description.textContent = getLang() === 'es' ? slam.noteEs : slam.noteEn;
     photo.textContent = t('photoPlaceholder');
     photo.style.backgroundImage = `linear-gradient(135deg, rgba(10,10,15,0.35), rgba(10,10,15,0.78)), url('img/slams/${slam.key}.jpg')`;
@@ -448,9 +448,9 @@
     playersNote.textContent = t('playersNote');
 
     const meta = [
-      [t('metaCountry'), `${slam.country} Â· ${slam.city}`],
+      [t('metaCountry'), `${slam.country} · ${slam.city}`],
       [t('metaVenue'), slam.venue],
-      [t('metaSurface'), `${slam.surface.toUpperCase()} Â· BO${slam.bestOf}`],
+      [t('metaSurface'), `${slam.surface.toUpperCase()} · BO${slam.bestOf}`],
       [t('metaCourt'), slam.court],
       [t('metaPace'), slam.pace],
       [t('metaBounce'), slam.bounce],
