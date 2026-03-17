@@ -319,9 +319,18 @@ function applyLang() {
   const L = currentLang;
   window.__simuLang = L;
   // Nav tabs
-  const tabs = document.querySelectorAll('.nav-tab');
-  const tabKeys = ['nav_simulator','nav_tournament','nav_stats','nav_compare','nav_history','nav_ranking'];
-  tabs.forEach((tab, i) => { if (tabKeys[i]) tab.textContent = t(tabKeys[i]); });
+  const navKeyByPage = {
+    simulator: 'nav_simulator',
+    torneo: 'nav_tournament',
+    stats: 'nav_stats',
+    comparador: 'nav_compare',
+    historico: 'nav_history',
+    ranking: 'nav_ranking'
+  };
+  document.querySelectorAll('.nav-tab').forEach((tab) => {
+    const key = navKeyByPage[tab.dataset.page];
+    if (key) tab.textContent = t(key);
+  });
 
   // Toggle button
   const btn = document.getElementById('lang-toggle');
@@ -412,9 +421,11 @@ function applyLang() {
   document.querySelectorAll('.era-btn[data-era="all"]').forEach(b => b.textContent = t('all'));
 
   // Database labels
-  document.querySelectorAll('.sidebar-title').forEach(el => {
-    const count = el.querySelector('span');
-    if (count) el.innerHTML = `${t('database')} · <span>${count.textContent}</span> ${t('players_lbl')}`;
+  document.querySelectorAll('[data-sidebar-label="database"]').forEach(el => {
+    el.textContent = t('database');
+  });
+  document.querySelectorAll('[data-sidebar-suffix="players"]').forEach(el => {
+    el.textContent = ` ${t('players_lbl')}`;
   });
 
   if (typeof refreshRankingsHubLang === 'function') {
@@ -472,9 +483,12 @@ function getPageFromHash() {
 
 function showPage(page, options = {}) {
   const { updateHash = true } = options;
+  const pageEl = document.getElementById('page-' + page);
+  if (!pageEl) return;
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
+  pageEl.classList.add('active');
   document.querySelectorAll('.nav-tab').forEach(t => {
     if (t.dataset.page === page) t.classList.add('active');
   });
@@ -482,14 +496,16 @@ function showPage(page, options = {}) {
     window.location.hash = page;
   }
   if (page === 'stats') initStats();
-  if (page === 'torneo' && typeof initTournamentHub === 'function') initTournamentHub();
   if (page === 'comparador') initComparador();
   if (page === 'historico' && !resultsInitialized) {
     initResultsPage();
     resultsInitialized = true;
   }
+  if (page === 'torneo' && typeof initTournamentHub === 'function') {
+    requestAnimationFrame(() => initTournamentHub());
+  }
   if (page === 'ranking' && typeof initRankingsHub === 'function') {
-    initRankingsHub();
+    requestAnimationFrame(() => initRankingsHub());
   }
 }
 
@@ -1636,7 +1652,11 @@ function renderComparadorList() {
         <span class="pli-flag">${flagHTML(p)}</span>
         <div class="pli-info">
           <div class="pli-name">${p.name}</div>
-          <div class="pli-sub">${p.country} · ${p.era}</div>
+          <div class="pli-sub">${p.country} · ${p.prime} · ${p.style}</div>
+        </div>
+        <div class="pli-titles">
+          ${(p.gs || 0) > 0 ? `<div class="pli-gs">🏆${p.gs}</div>` : ''}
+          ${(p.masters || 0) > 0 ? `<div class="pli-masters">💎${p.masters}</div>` : ''}
         </div>
       </div>`;
   }).join('');
@@ -2133,3 +2153,6 @@ function initializeUI() {
   applyLang();
   console.log('[ST] ✓ Ready — ' + PLAYERS.length + ' ' + t('players_loaded'));
 }
+
+
+
