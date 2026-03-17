@@ -52,7 +52,7 @@
   <!-- MOBILE selector (hidden on desktop) -->
   <div id="mobile-selector" style="display:none; grid-column:1/-1">
     <div id="mob-sel-header" class="mob-sel-header"></div>
-    <input class="search-bar" placeholder="ðŸ” Search player..." id="mob-search">
+    <input class="search-bar" placeholder="Search player..." id="mob-search">
     <div class="mob-grid" id="mob-grid"></div>
     <!-- Player slots â€” se actualizan al elegir jugadores -->
     <div class="mob-vs-bar" id="mob-vs-bar">
@@ -102,7 +102,7 @@
   </div>
 
   <div class="winner-banner" id="winner-banner" style="display:none">
-    <div class="winner-label" id="winner-label-text">ðŸ† Match winner</div>
+    <div class="winner-label" id="winner-label-text">Match winner</div>
     <div class="winner-name" id="winner-name">â€”</div>
     <div class="winner-score" id="winner-score">â€”</div>
   </div>
@@ -238,7 +238,12 @@
     <!-- SIDEBAR -->
     <div class="players-sidebar">
       <div class="sidebar-header">
-        <div class="sidebar-title">Database Â· <span id="comp-player-count">0</span> players</div>
+        <div class="sidebar-title">
+          <span class="sidebar-title-label" data-sidebar-label="database">Database</span>
+          <span class="sidebar-title-sep"> Â· </span>
+          <span id="comp-player-count">0</span>
+          <span class="sidebar-title-suffix" data-sidebar-suffix="players"> players</span>
+        </div>
         <input class="sidebar-search" placeholder="Search name..." id="comp-sidebar-search">
         <div class="era-filter" id="comp-era-filter">
           <button class="era-btn active" data-era="all">All</button>
@@ -255,7 +260,7 @@
     <!-- DETAIL VIEW: dos columnas de jugadores -->
     <div class="player-detail" id="comp-player-detail">
       <div class="detail-empty" id="comp-empty-view">
-        <div class="detail-empty-icon">ðŸ”„</div>
+        <div class="detail-empty-icon">VS</div>
         <div class="detail-empty-text" id="comp-empty-text">Select two players to compare them</div>
       </div>
       <div id="comp-detail-content" style="display:none;"></div>
@@ -271,7 +276,12 @@
     <!-- SIDEBAR -->
     <div class="players-sidebar">
       <div class="sidebar-header">
-        <div class="sidebar-title">Database Â· <span id="player-count">0</span> players</div>
+        <div class="sidebar-title">
+          <span class="sidebar-title-label" data-sidebar-label="database">Database</span>
+          <span class="sidebar-title-sep"> Â· </span>
+          <span id="player-count">0</span>
+          <span class="sidebar-title-suffix" data-sidebar-suffix="players"> players</span>
+        </div>
         <input class="sidebar-search" placeholder="Search name..." id="sidebar-search">
         <div class="era-filter" id="era-filter">
           <button class="era-btn active" data-era="all">All</button>
@@ -288,7 +298,7 @@
     <!-- DETAIL -->
     <div class="player-detail" id="player-detail">
       <div class="detail-empty" id="detail-empty">
-        <div class="detail-empty-icon">ðŸŽ¾</div>
+        <div class="detail-empty-icon">ST</div>
         <div class="detail-empty-text" id="detail-empty-text">Select a player to view their stats</div>
       </div>
       <div id="detail-content" style="display:none;"></div>
