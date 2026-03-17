@@ -21,12 +21,12 @@
   <div class="logo">Simu<span>Tennis</span></div>
   <button id="lang-toggle" class="lang-toggle">ES</button>
   <div class="nav-tabs">
-    <button class="nav-tab active" data-page="simulator">⚡ Simulator</button>
-    <button class="nav-tab" data-page="torneo">🏆 Simu GS</button>
-    <button class="nav-tab" data-page="stats">📊 Stats</button>
-    <button class="nav-tab" data-page="comparador">🔄 Compare</button>
-    <button class="nav-tab" data-page="historico">🔥 History</button>
-    <button class="nav-tab" data-page="ranking">🏅 Rankings</button>
+    <button class="nav-tab active" data-page="simulator">? Simulator</button>
+    <button class="nav-tab" data-page="torneo">?? Simu GS</button>
+    <button class="nav-tab" data-page="stats">?? Stats</button>
+    <button class="nav-tab" data-page="comparador">?? Compare</button>
+    <button class="nav-tab" data-page="historico">?? History</button>
+    <button class="nav-tab" data-page="ranking">?? Rankings</button>
   </div>
 </header>
 
@@ -153,7 +153,7 @@
         <div class="sim1000-bar-p2" id="sim1000-bar-p2"></div>
       </div>
     </div>
-    <button class="sim-btn sim-btn-1000" id="sim-btn-1000" disabled>Ã— 100</button>
+    <button class="sim-btn sim-btn-1000" id="sim-btn-1000" disabled>x100</button>
     <button class="again-btn" id="again-btn">â†© New match</button>
   </div>
 
@@ -204,6 +204,10 @@
       <aside class="tourhub-sidebar">
         <div class="section-label" id="tourhub-players-title"></div>
         <input class="search-bar" id="tourhub-player-search">
+        <div class="tourhub-filter-group tourhub-sidebar-filter">
+          <label id="tourhub-era-label"></label>
+          <div class="rankhub-btn-row" id="tourhub-era-buttons"></div>
+        </div>
         <div class="tourhub-sidebar-note" id="tourhub-sidebar-note"></div>
         <div class="tourhub-player-list" id="tourhub-player-list"></div>
       </aside>
@@ -214,10 +218,14 @@
           <div class="tourhub-stage-actions">
             <span class="rankhub-pill" id="tourhub-selected-slot"></span>
             <span class="rankhub-pill" id="tourhub-round-pill"></span>
+            <div class="tourhub-view-switch" id="tourhub-view-switch">
+              <button class="rankhub-btn" id="tourhub-view-overview-btn"></button>
+              <button class="rankhub-btn" id="tourhub-view-focus-btn"></button>
+            </div>
           </div>
         </div>
 
-        <div class="tourhub-bracket-wrap">
+        <div class="tourhub-bracket-wrap" id="tourhub-bracket-wrap">
           <div class="tourhub-bracket" id="tourhub-bracket"></div>
         </div>
 
@@ -466,4 +474,7 @@
 
 </body>
 </html>
+
+
+
 
