@@ -1,5 +1,5 @@
 /* =============================================================
-   TENNISSIMU — style.css
+   SIMUTENNIS — style.css
    Estructura:
    1.  Variables & reset
    2.  Base (body, header, nav, pages)
@@ -509,6 +509,19 @@ header {
 .log-entry.log-set-p2 { color: var(--accent2); font-weight: 700; font-size: var(--fs-md); padding: 0.35rem 0.3rem; border-bottom: 1px solid var(--accent2); background: rgba(0,229,255,0.05); }
 .log-game-p1 { color: rgba(200,240,0,0.7); font-size: var(--fs-sm); padding: 0.1rem 0.8rem; border-bottom: 1px solid #13130d; font-family: 'Barlow Condensed', sans-serif; letter-spacing: var(--ls-normal); }
 .log-game-p2 { color: rgba(0,229,255,0.7);  font-size: var(--fs-sm); padding: 0.1rem 0.8rem; border-bottom: 1px solid #0d1315; font-family: 'Barlow Condensed', sans-serif; letter-spacing: var(--ls-normal); }
+.log-game-wrap { border-bottom: 1px solid #171723; }
+.log-game-wrap summary { cursor: pointer; list-style: none; }
+.log-game-wrap summary::-webkit-details-marker { display: none; }
+.log-game-wrap[open] summary { background: rgba(255,255,255,.03); }
+.log-points { padding: 0.35rem 0.8rem 0.55rem; background: rgba(255,255,255,.02); }
+.log-point { display: grid; grid-template-columns: 34px 76px 48px 1fr; gap: 10px; align-items: center; font-family: 'Barlow Condensed', sans-serif; font-size: var(--fs-xs); padding: 0.18rem 0; border-bottom: 1px dashed rgba(255,255,255,.06); }
+.log-point:last-child { border-bottom: none; }
+.log-point-num { color: var(--muted); font-weight: 700; letter-spacing: .06em; }
+.log-point-score { color: var(--text); }
+.log-point-rally { color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+.log-point-winner { font-weight: 700; }
+.log-point.p1 .log-point-winner { color: var(--accent); }
+.log-point.p2 .log-point-winner { color: var(--accent2); }
 
 
 /* ─── 5. SIMULATOR — again-wrap y x100 ─────────────────────── */
@@ -1321,4 +1334,3 @@ header {
   .mob-action-btn:active { background: var(--surface2); }
 
 } /* fin @media 768px */
-

@@ -1,0 +1,481 @@
+.tourhub-page {
+  padding-bottom: 2rem;
+}
+
+.tourhub-topbar {
+  display: grid;
+  grid-template-columns: 1.4fr 1.2fr 1fr;
+  gap: 1rem;
+  padding: 0 3rem 1.5rem;
+}
+
+.tourhub-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.tourhub-filter-group label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tourhub-sim-btn {
+  padding: 0.8rem 1.1rem;
+  font-size: var(--fs-xl);
+  width: auto;
+  min-width: 240px;
+}
+
+.tourhub-hero {
+  display: grid;
+  grid-template-columns: 1.8fr 0.9fr;
+  gap: 1.5rem;
+  padding: 0 3rem 2rem;
+}
+
+.tourhub-hero-copy,
+.tourhub-hero-photo {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.tourhub-hero-copy {
+  padding: 1.4rem 1.5rem;
+}
+
+.tourhub-kicker {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.9rem;
+}
+
+.tourhub-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.7rem;
+}
+
+.tourhub-meta-card {
+  background: var(--surface2);
+  border: 1px solid #16161e;
+  padding: 0.85rem;
+}
+
+.tourhub-meta-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.25rem;
+}
+
+.tourhub-meta-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-lg);
+  color: var(--text);
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.tourhub-description {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  max-width: 72ch;
+}
+
+.tourhub-hero-photo {
+  min-height: 250px;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.tourhub-photo-placeholder {
+  width: 100%;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: pre-line;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-lg);
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  color: var(--muted);
+  background:
+    linear-gradient(135deg, rgba(200,240,0,0.08), rgba(0,229,255,0.05)),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0,
+      transparent 18px,
+      rgba(255,255,255,0.03) 18px,
+      rgba(255,255,255,0.03) 20px
+    );
+}
+
+.tourhub-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 1.5rem;
+  padding: 0 3rem 2rem;
+}
+
+.tourhub-sidebar,
+.tourhub-main {
+  min-width: 0;
+}
+
+.tourhub-sidebar-note {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  margin-bottom: 0.8rem;
+}
+
+.tourhub-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 1180px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.tourhub-player-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tourhub-player-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+.tourhub-player-item {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tourhub-player-item:hover {
+  border-color: var(--muted);
+  background: var(--surface2);
+}
+
+.tourhub-player-item.assigned {
+  border-color: rgba(200,240,0,0.35);
+}
+
+.tourhub-player-item.selected {
+  border-color: var(--accent2);
+  background: rgba(0,229,255,0.07);
+}
+
+.tourhub-player-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tourhub-player-meta,
+.tourhub-player-gs,
+.tourhub-slot-tag {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tourhub-player-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.tourhub-slot-tag {
+  color: var(--accent);
+}
+
+.tourhub-stagebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tourhub-stage-note {
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-md);
+  letter-spacing: var(--ls-wide);
+}
+
+.tourhub-stage-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.tourhub-bracket-wrap {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.tourhub-bracket {
+  min-width: 1200px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(190px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.tourhub-round {
+  min-width: 0;
+}
+
+.tourhub-round-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tourhub-round-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.tourhub-round-1 .tourhub-round-list { padding-top: 1.7rem; }
+.tourhub-round-2 .tourhub-round-list { padding-top: 4.8rem; }
+.tourhub-round-3 .tourhub-round-list { padding-top: 10.8rem; }
+.tourhub-round-4 .tourhub-round-list { padding-top: 22rem; }
+.tourhub-round-champion .tourhub-round-list { padding-top: 22rem; }
+
+.tourhub-match-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0.55rem;
+}
+
+.tourhub-match-card.done {
+  border-color: rgba(200,240,0,0.35);
+}
+
+.tourhub-slot {
+  width: 100%;
+  text-align: left;
+  background: var(--surface2);
+  border: 1px solid #16161e;
+  color: var(--text);
+  padding: 0.65rem 0.7rem;
+  margin-bottom: 0.35rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tourhub-slot:last-child {
+  margin-bottom: 0;
+}
+
+.tourhub-slot:hover:not(:disabled) {
+  border-color: var(--muted);
+}
+
+.tourhub-slot:disabled {
+  cursor: default;
+}
+
+.tourhub-slot.empty {
+  color: var(--muted);
+}
+
+.tourhub-slot.active {
+  border-color: var(--accent2);
+  box-shadow: inset 0 0 0 1px rgba(0,229,255,0.35);
+}
+
+.tourhub-slot.winner {
+  border-color: rgba(200,240,0,0.6);
+  background: rgba(200,240,0,0.08);
+}
+
+.tourhub-slot-seed {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+
+.tourhub-slot-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+.tourhub-slot-meta,
+.tourhub-match-footer {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tourhub-match-footer {
+  margin-top: 0.55rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid #16161e;
+}
+
+.tourhub-match-card.champion {
+  min-height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tourhub-champion-inside {
+  text-align: center;
+}
+
+.tourhub-champion {
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 1180px) {
+  .tourhub-topbar,
+  .tourhub-hero,
+  .tourhub-layout {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .tourhub-topbar {
+    grid-template-columns: 1fr;
+  }
+
+  .tourhub-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .tourhub-meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tourhub-layout {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 820px) {
+  .tourhub-topbar,
+  .tourhub-hero,
+  .tourhub-layout {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .tourhub-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tourhub-filter-group .rankhub-btn-row {
+    width: 100%;
+  }
+
+  .tourhub-filter-group .rankhub-btn {
+    flex: 1 1 120px;
+  }
+
+  .tourhub-player-list {
+    max-height: 360px;
+  }
+
+  .tourhub-stagebar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tourhub-sim-btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tourhub-stage-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .tourhub-bracket {
+    min-width: 940px;
+    gap: 0.75rem;
+  }
+
+  .tourhub-round-1 .tourhub-round-list { padding-top: 1.2rem; }
+  .tourhub-round-2 .tourhub-round-list { padding-top: 3.8rem; }
+  .tourhub-round-3 .tourhub-round-list { padding-top: 8.7rem; }
+  .tourhub-round-4 .tourhub-round-list { padding-top: 17.5rem; }
+  .tourhub-round-champion .tourhub-round-list { padding-top: 17.5rem; }
+}
+
+@media (max-width: 600px) {
+  .tourhub-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tourhub-bracket {
+    min-width: 820px;
+  }
+
+  .tourhub-player-item {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .tourhub-hero-copy {
+    padding: 1rem;
+  }
+
+  .tourhub-match-card {
+    padding: 0.45rem;
+  }
+
+  .tourhub-slot {
+    padding: 0.55rem 0.6rem;
+  }
+
+  .tourhub-slot-name {
+    font-size: var(--fs-sm);
+  }
+}

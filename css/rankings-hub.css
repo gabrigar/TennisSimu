@@ -1,0 +1,252 @@
+.rankhub-page {
+  padding-bottom: 2rem;
+}
+
+.rankhub-top-meta {
+  padding: 0 3rem 1rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-wide);
+  color: var(--muted);
+}
+
+.rankhub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 0 3rem 1.5rem;
+}
+
+.rankhub-board {
+  padding: 0 3rem 2rem;
+}
+
+.rankhub-section {
+  margin-bottom: 1.5rem;
+}
+
+.rankhub-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.rankhub-pill {
+  display: inline-block;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+  padding: 0.25rem 0.55rem;
+  font-weight: 700;
+  font-family: 'Barlow Condensed', sans-serif;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.rankhub-card-value {
+  font-family: 'Anton', sans-serif;
+  font-size: var(--fs-4xl);
+  line-height: 1;
+}
+
+.rankhub-card-value.small {
+  font-size: var(--fs-3xl);
+}
+
+.rankhub-card-note {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+
+.rankhub-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  padding: 1rem 3rem;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.rankhub-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.rankhub-filter-group label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rankhub-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.rankhub-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  padding: 0.38rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rankhub-btn:hover {
+  border-color: var(--muted);
+  color: var(--text);
+}
+
+.rankhub-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+.rankhub-btn[data-surface="hard"].active {
+  background: var(--accent2);
+  border-color: var(--accent2);
+}
+
+.rankhub-btn[data-surface="clay"].active {
+  background: #e07a3b;
+  border-color: #e07a3b;
+}
+
+.rankhub-btn[data-surface="grass"].active {
+  background: #52b788;
+  border-color: #52b788;
+}
+
+.rankhub-search {
+  min-width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.45rem 0.8rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-md);
+}
+
+.rankhub-search:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.rankhub-note {
+  padding: 0 3rem 1rem;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-wide);
+}
+
+.rankhub-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.rankhub-table-header,
+.rankhub-table-row {
+  display: grid;
+  grid-template-columns: 72px minmax(220px, 1.8fr) minmax(120px, 0.9fr) minmax(110px, 0.9fr) minmax(110px, 0.9fr) minmax(150px, 1.1fr);
+  align-items: center;
+}
+
+.rankhub-table-header {
+  padding: 0.8rem 1.5rem;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rankhub-table-row {
+  padding: 0.8rem 1.5rem;
+  border-bottom: 1px solid #16161e;
+}
+
+.rankhub-table-row:last-child {
+  border-bottom: none;
+}
+
+.rankhub-rank {
+  font-family: 'Anton', sans-serif;
+  font-size: var(--fs-2xl);
+  color: var(--muted);
+}
+
+.rankhub-player-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: var(--ls-tight);
+  text-transform: uppercase;
+}
+
+.rankhub-player-meta,
+.rankhub-cell-note {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-wide);
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.rankhub-main-value {
+  font-family: 'Anton', sans-serif;
+  font-size: var(--fs-3xl);
+  line-height: 1;
+}
+
+.rankhub-empty {
+  padding: 1rem 1.5rem;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.rankhub-era-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .rankhub-top-meta,
+  .rankhub-grid,
+  .rankhub-filters,
+  .rankhub-note,
+  .rankhub-board {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .rankhub-grid,
+  .rankhub-era-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rankhub-table-header,
+  .rankhub-table-row {
+    min-width: 860px;
+  }
+}
