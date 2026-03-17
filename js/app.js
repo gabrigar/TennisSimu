@@ -4,12 +4,12 @@
 const LANG = {
   en: {
     // Nav
-    nav_simulator:   'âš¡ Simulator',
+    nav_simulator:   'Simulator',
     nav_tournament:  'Grand Slams',
-    nav_stats:       'ðŸ“Š Stats',
-    nav_compare:     'ðŸ”„ Compare',
-    nav_history:     'ðŸ”¥ History',
-    nav_ranking:     'ðŸ… Rankings',
+    nav_stats:       'Stats',
+    nav_compare:     'Compare',
+    nav_history:     'History',
+    nav_ranking:     'Rankings',
     // Simulator
     player1:         'Player 1',
     player2:         'Player 2',
@@ -158,12 +158,12 @@ const LANG = {
   },
   es: {
     // Nav
-    nav_simulator:   'âš¡ Simulador',
+    nav_simulator:   'Simulador',
     nav_tournament:  'Grand Slams',
-    nav_stats:       'ðŸ“Š EstadÃ­sticas',
-    nav_compare:     'ðŸ”„ Comparador',
-    nav_history:     'ðŸ”¥ HistÃ³rico',
-    nav_ranking:     'ðŸ… Rankings',
+    nav_stats:       'Estadisticas',
+    nav_compare:     'Comparador',
+    nav_history:     'Historico',
+    nav_ranking:     'Rankings',
     // Simulator
     player1:         'Jugador 1',
     player2:         'Jugador 2',
