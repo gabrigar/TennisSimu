@@ -5,9 +5,11 @@ const LANG = {
   en: {
     // Nav
     nav_simulator:   '⚡ Simulator',
+    nav_tournament:  '🏆 Simu GS',
     nav_stats:       '📊 Stats',
     nav_compare:     '🔄 Compare',
     nav_history:     '🔥 History',
+    nav_ranking:     '🏅 Rankings',
     // Simulator
     player1:         'Player 1',
     player2:         'Player 2',
@@ -157,9 +159,11 @@ const LANG = {
   es: {
     // Nav
     nav_simulator:   '⚡ Simulador',
+    nav_tournament:  '🏆 Simu GS',
     nav_stats:       '📊 Estadísticas',
     nav_compare:     '🔄 Comparador',
     nav_history:     '🔥 Histórico',
+    nav_ranking:     '🏅 Rankings',
     // Simulator
     player1:         'Jugador 1',
     player2:         'Jugador 2',
@@ -313,9 +317,10 @@ function t(key) { return LANG[currentLang][key] || LANG.en[key] || key; }
 
 function applyLang() {
   const L = currentLang;
+  window.__simuLang = L;
   // Nav tabs
   const tabs = document.querySelectorAll('.nav-tab');
-  const tabKeys = ['nav_simulator','nav_stats','nav_compare','nav_history'];
+  const tabKeys = ['nav_simulator','nav_tournament','nav_stats','nav_compare','nav_history','nav_ranking'];
   tabs.forEach((tab, i) => { if (tabKeys[i]) tab.textContent = t(tabKeys[i]); });
 
   // Toggle button
@@ -412,6 +417,13 @@ function applyLang() {
     if (count) el.innerHTML = `${t('database')} · <span>${count.textContent}</span> ${t('players_lbl')}`;
   });
 
+  if (typeof refreshRankingsHubLang === 'function') {
+    refreshRankingsHubLang();
+  }
+  if (typeof refreshTournamentHubLang === 'function') {
+    refreshTournamentHubLang();
+  }
+
   // Re-render dynamic parts if already initialized
   if (typeof renderMobileUI === 'function') updateMobileUI();
 }
@@ -452,18 +464,32 @@ function toggleLang() {
 // ===== PAGE NAVIGATION =====
 let resultsInitialized = false;
 
-function showPage(page) {
+function getPageFromHash() {
+  const raw = (window.location.hash || '').replace('#', '').trim().toLowerCase();
+  const allowed = new Set(['simulator', 'torneo', 'stats', 'comparador', 'historico', 'ranking']);
+  return allowed.has(raw) ? raw : null;
+}
+
+function showPage(page, options = {}) {
+  const { updateHash = true } = options;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.nav-tab').forEach(t => {
     if (t.dataset.page === page) t.classList.add('active');
   });
+  if (updateHash && window.location.hash !== `#${page}`) {
+    window.location.hash = page;
+  }
   if (page === 'stats') initStats();
+  if (page === 'torneo' && typeof initTournamentHub === 'function') initTournamentHub();
   if (page === 'comparador') initComparador();
   if (page === 'historico' && !resultsInitialized) {
     initResultsPage();
     resultsInitialized = true;
+  }
+  if (page === 'ranking' && typeof initRankingsHub === 'function') {
+    initRankingsHub();
   }
 }
 
@@ -582,36 +608,86 @@ function simPoint(pWin) {
   return Math.random() < pWin;
 }
 
-function simGame(pWin, rallyProf, sS, rS) {
+function formatPointLabel(points) {
+  const map = ['0', '15', '30', '40'];
+  if (points <= 3) return map[points];
+  return '40';
+}
+
+function getPressureTag(serverPts, returnerPts) {
+  if (serverPts >= 3 && returnerPts >= 3) return 'Deuce';
+  if (returnerPts >= 3 && returnerPts - serverPts >= 0) return 'Break point';
+  if (serverPts >= 3 && serverPts - returnerPts >= 0) return 'Game point';
+  if (serverPts === 2 && returnerPts === 2) return '30-30';
+  return '';
+}
+
+function simGame(pWin, rallyProf, sS, rS, serverName, returnerName, serving) {
   let pts = [0, 0];
+  const pointsLog = [];
   while (true) {
     const r = Math.random();
     let pw;
+    let rallyType;
     if (r < rallyProf.short) {
       const returnSpeedAdj = ((rS.rest_kmh || 148) - 148) / 40 * 0.04;
       pw = clamp(pWin + 0.04 - returnSpeedAdj, 0.38, 0.80);
+      rallyType = 'short';
     } else if (r < rallyProf.short + rallyProf.mid) {
       pw = clamp(pWin - 0.01, 0.38, 0.75);
+      rallyType = 'mid';
     } else {
       const longRallySkill = ((rS.rally_long || 26) - 26) / 34 * 0.06;
       const groundAdv      = (((rS.fh_kmh || 148) + (rS.bh_kmh || 138)) / 2 - 143) / 35 * 0.03;
       pw = clamp(pWin - 0.06 - longRallySkill - groundAdv, 0.30, 0.70);
+      rallyType = 'long';
     }
-    if (simPoint(pw)) pts[0]++; else pts[1]++;
-    if (pts[0] >= 4 && pts[0] - pts[1] >= 2) return 0;
-    if (pts[1] >= 4 && pts[1] - pts[0] >= 2) return 1;
+    const before = [pts[0], pts[1]];
+    const serverWon = simPoint(pw);
+    if (serverWon) pts[0]++; else pts[1]++;
+
+    pointsLog.push({
+      server: serverName,
+      returner: returnerName,
+      serving,
+      winner: serverWon ? serving : 1 - serving,
+      winnerName: serverWon ? serverName : returnerName,
+      beforeScore: [formatPointLabel(before[0]), formatPointLabel(before[1])],
+      afterScore: [formatPointLabel(pts[0]), formatPointLabel(pts[1])],
+      rallyType,
+      pressureTag: getPressureTag(before[0], before[1]),
+      serverWon
+    });
+
+    if (pts[0] >= 4 && pts[0] - pts[1] >= 2) return { winner: 0, pointsLog };
+    if (pts[1] >= 4 && pts[1] - pts[0] >= 2) return { winner: 1, pointsLog };
   }
 }
 
-function simTiebreak(pWin, server, returner) {
+function simTiebreak(pWin, server, returner, serving) {
   let pts = [0, 0];
+  const pointsLog = [];
   while (true) {
     const srvTB = ((server.tb_win   || 0.62) - 0.62) * 0.08;
     const retTB = ((returner.tb_win || 0.62) - 0.62) * 0.08;
     const tbPW  = clamp(pWin + 0.02 + srvTB - retTB, 0.38, 0.80);
-    if (simPoint(tbPW)) pts[0]++; else pts[1]++;
-    if (pts[0] >= 7 && pts[0] - pts[1] >= 2) return 0;
-    if (pts[1] >= 7 && pts[1] - pts[0] >= 2) return 1;
+    const before = [pts[0], pts[1]];
+    const serverWon = simPoint(tbPW);
+    if (serverWon) pts[0]++; else pts[1]++;
+    pointsLog.push({
+      server: server.name,
+      returner: returner.name,
+      serving,
+      winner: serverWon ? serving : 1 - serving,
+      winnerName: serverWon ? server.name : returner.name,
+      beforeScore: before,
+      afterScore: [pts[0], pts[1]],
+      rallyType: 'tiebreak',
+      pressureTag: 'TB',
+      serverWon
+    });
+    if (pts[0] >= 7 && pts[0] - pts[1] >= 2) return { winner: 0, pointsLog };
+    if (pts[1] >= 7 && pts[1] - pts[0] >= 2) return { winner: 1, pointsLog };
   }
 }
 
@@ -633,23 +709,48 @@ function simSet(p1, p2, surface, isFinal, useTb, firstServer) {
 
     if (games[0] === 6 && games[1] === 6) {
       if (useTb) {
-        const tbW = simTiebreak(pSrv, server, returner);
-        const gw  = tbW === 0 ? serving : 1 - serving;
+        const tbRes = simTiebreak(pSrv, server, returner, serving);
+        const gw  = tbRes.winner === 0 ? serving : 1 - serving;
         games[gw]++; gameCount++; isTb = true;
-        gameLog.push({ winner: gw, score: [games[0], games[1]], tb: true });
+        gameLog.push({
+          winner: gw,
+          score: [games[0], games[1]],
+          tb: true,
+          serving,
+          serverName: server.name,
+          returnerName: returner.name,
+          pointsLog: tbRes.pointsLog
+        });
         break;
       } else {
-        const gwGame = simGame(pSrv, rallyProf, server.stats, returner.stats);
-        const gw     = gwGame === 0 ? serving : 1 - serving;
+        const gameRes = simGame(pSrv, rallyProf, server.stats, returner.stats, server.name, returner.name, serving);
+        const gw     = gameRes.winner === 0 ? serving : 1 - serving;
         games[gw]++; gameCount++;
-        gameLog.push({ winner: gw, score: [games[0], games[1]], tb: false });
+        gameLog.push({
+          winner: gw,
+          score: [games[0], games[1]],
+          tb: false,
+          serving,
+          serverName: server.name,
+          returnerName: returner.name,
+          pointsLog: gameRes.pointsLog
+        });
         if (Math.abs(games[0] - games[1]) >= 2) break;
       }
     } else {
-      const gwGame = simGame(pSrv, rallyProf, server.stats, returner.stats);
-      const gw     = gwGame === 0 ? serving : 1 - serving;
+      const gameRes = simGame(pSrv, rallyProf, server.stats, returner.stats, server.name, returner.name, serving);
+      const gw     = gameRes.winner === 0 ? serving : 1 - serving;
       games[gw]++; gameCount++;
-      gameLog.push({ winner: gw, score: [games[0], games[1]], tb: false, break: gw !== serving });
+      gameLog.push({
+        winner: gw,
+        score: [games[0], games[1]],
+        tb: false,
+        break: gw !== serving,
+        serving,
+        serverName: server.name,
+        returnerName: returner.name,
+        pointsLog: gameRes.pointsLog
+      });
       if ((games[0] >= 6 || games[1] >= 6) && Math.abs(games[0] - games[1]) >= 2) break;
       if (games[0] === 7 || games[1] === 7) break;
     }
@@ -734,10 +835,18 @@ function simulate() {
         const isBreak    = g.break === true;
         const isTb       = g.tb === true;
         const suffix     = isTb ? ' 🎯 TB' : (isBreak ? ' 💥 Break' : '');
+        const pointDetails = (g.pointsLog || []).map((pt, pointIdx) => {
+          const rallyLabel = pt.rallyType === 'tiebreak' ? 'TB' : (pt.rallyType === 'short' ? 'Short' : (pt.rallyType === 'mid' ? 'Mid' : 'Long'));
+          const scoreBefore = Array.isArray(pt.beforeScore) ? pt.beforeScore.join('-') : pt.beforeScore;
+          const scoreAfter = Array.isArray(pt.afterScore) ? pt.afterScore.join('-') : pt.afterScore;
+          const tag = pt.pressureTag ? ` · ${pt.pressureTag}` : '';
+          return `<div class="log-point ${pt.winner === 0 ? 'p1' : 'p2'}"><span class="log-point-num">P${pointIdx + 1}</span><span class="log-point-score">${scoreBefore} → ${scoreAfter}</span><span class="log-point-rally">${rallyLabel}</span><span class="log-point-winner">${pt.winnerName}${tag}</span></div>`;
+        }).join('');
         matchLog.push({
           text: `  ${g.score[0]}-${g.score[1]}  ${winnerName}${suffix}`,
           type: wType,
-          isGame: true
+          isGame: true,
+          details: pointDetails
         });
       });
     }
@@ -901,6 +1010,9 @@ function renderResult(p1, p2, setsP1, setsP2, winner, scoreStr, stats, matchLog,
       if (e.isSet)       cls = e.type === 'p1' ? 'log-set-p1' : 'log-set-p2';
       else if (e.isGame) cls = e.type === 'p1' ? 'log-game-p1' : 'log-game-p2';
       else               cls = e.type === 'p1' ? 'important' : 'p2w';
+      if (e.isGame && e.details) {
+        return `<details class="log-game-wrap ${cls}"><summary class="log-entry ${cls}">${e.text}</summary><div class="log-points">${e.details}</div></details>`;
+      }
       return `<div class="log-entry ${cls}">${e.text}</div>`;
     }).join('');
     logEl.scrollTop = 0;
@@ -1919,8 +2031,9 @@ function simulate1000() {
 }
 
 function initializeUI() {
-  console.log('[TL] initializeUI()');
-  if (typeof PLAYERS === 'undefined') { console.error('[TL] PLAYERS not loaded'); return; }
+  console.log('[ST] initializeUI()');
+  if (typeof PLAYERS === 'undefined') { console.error('[ST] PLAYERS not loaded'); return; }
+  window.__simuLang = currentLang;
 
   // Grids
   renderGrid('grid-p1', 'p1');
@@ -1931,13 +2044,34 @@ function initializeUI() {
 
   // Nav tabs
   document.querySelectorAll('.nav-tab').forEach(btn => {
-    btn.onclick = () => showPage(btn.getAttribute('data-page'));
+    btn.onclick = () => {
+      const page = btn.getAttribute('data-page');
+      showPage(page);
+    };
+  });
+
+  if (typeof initRankingsHub === 'function') {
+    initRankingsHub();
+  }
+  if (typeof initTournamentHub === 'function') {
+    initTournamentHub();
+  }
+
+  const initialPage = getPageFromHash();
+  if (initialPage) {
+    showPage(initialPage, { updateHash: false });
+  }
+
+  window.addEventListener('hashchange', () => {
+    const pageFromHash = getPageFromHash();
+    if (pageFromHash) {
+      showPage(pageFromHash, { updateHash: false });
+    }
   });
 
   // Búsqueda grids
   document.getElementById('search-p1')?.addEventListener('input', e => filterGrid('p1', e.target.value));
   document.getElementById('search-p2')?.addEventListener('input', e => filterGrid('p2', e.target.value));
-  initMobileSimulator();
 
   // Búsqueda sidebar stats
   document.getElementById('sidebar-search')?.addEventListener('input', e => filterSidebar(e.target.value));
@@ -1955,9 +2089,14 @@ function initializeUI() {
   const simBtn1000 = document.getElementById('sim-btn-1000');
   if (simBtn1000) simBtn1000.onclick = simulate1000;
 
-  // Botón nuevo partido
+  // Botón nuevo partido — desktop por defecto
+  // initMobileSimulator lo sobreescribe con mobileNewMatch si es móvil
   const againBtn = document.getElementById('again-btn');
-  if (againBtn && !isMobile()) againBtn.onclick = resetSim;
+  if (againBtn) againBtn.onclick = resetSim;
+
+  // Inicializar móvil DESPUÉS de asignar resetSim,
+  // para que mobileNewMatch sobreescriba en último lugar
+  initMobileSimulator();
 
   // Ocultar paneles de resultado al inicio
   ['scoreboard','match-stats','point-log','winner-banner','again-wrap'].forEach(id => {
@@ -1992,5 +2131,5 @@ function initializeUI() {
   document.getElementById('lang-toggle')?.addEventListener('click', toggleLang);
 
   applyLang();
-  console.log('[TL] ✓ Ready — ' + PLAYERS.length + ' ' + t('players_loaded'));
+  console.log('[ST] ✓ Ready — ' + PLAYERS.length + ' ' + t('players_loaded'));
 }
