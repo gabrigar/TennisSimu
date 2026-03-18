@@ -275,15 +275,14 @@
   isolation: isolate;
 }
 
-.tourhub-bracket-wrap::before {
-  content: "";
+.tourhub-bracket-art {
   position: absolute;
   top: 6.5rem;
   left: 50%;
-  width: clamp(520px, 56%, 860px);
+  width: clamp(624px, 67.2%, 1032px);
   aspect-ratio: 1;
   transform: translateX(-50%);
-  background-image: var(--tourhub-bracket-art, none);
+  background-image: none;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
@@ -580,8 +579,8 @@
     gap: 0.6rem;
   }
 
-  .tourhub-bracket-wrap::before {
-    width: clamp(420px, 60%, 620px);
+  .tourhub-bracket-art {
+    width: clamp(504px, 72%, 744px);
     top: 6rem;
   }
 
@@ -620,8 +619,8 @@
     touch-action: pan-x pan-y pinch-zoom;
   }
 
-  .tourhub-bracket-wrap::before {
-    width: 420px;
+  .tourhub-bracket-art {
+    width: 504px;
     top: 5.25rem;
     opacity: 1;
   }

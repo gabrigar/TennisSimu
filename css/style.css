@@ -171,6 +171,87 @@ header {
   padding: var(--sp-8);
 }
 
+.simulator-setup {
+  grid-column: 1/-1;
+}
+
+.simulator-setup-stack {
+  max-width: 980px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(20,20,28,0.98), rgba(14,14,22,0.98));
+  border: 1px solid var(--border);
+  padding: 1rem 1rem 1.1rem;
+}
+
+.simulator-setup-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+  gap: var(--sp-6);
+  align-items: start;
+}
+
+.simulator-setup-grid.stack {
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+
+.simulator-setup-grid.aggressive {
+  grid-template-columns: minmax(340px, 1.3fr) minmax(420px, 1fr) minmax(240px, 0.6fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.simulator-setup-grid.compact {
+  grid-template-columns: 1fr auto;
+  gap: 0.9rem 1rem;
+  align-items: stretch;
+}
+
+.simulator-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.simulator-matchup-row {
+  grid-column: 1 / -1;
+}
+
+.simulator-matchup-card,
+.simulator-config-inline,
+.simulator-cta {
+  min-width: 0;
+}
+
+.simulator-config-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  background: rgba(0,0,0,0.14);
+  border-top: 1px solid rgba(123,137,189,0.18);
+  border-bottom: 1px solid rgba(123,137,189,0.18);
+  padding: 0.85rem 0;
+  min-width: 0;
+}
+
+.config-block {
+  min-width: 0;
+}
+
+.config-block-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.simulator-player-column {
+  min-width: 0;
+}
+
 .search-bar {
   width: 100%;
   background: var(--surface2);
@@ -261,7 +342,28 @@ header {
   text-transform: uppercase;
   color: var(--muted);
 }
+.config-row.inline {
+  justify-content: flex-start;
+  gap: 0.85rem;
+  white-space: nowrap;
+}
 .config-options { display: flex; gap: var(--sp-2); }
+.simulator-config-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.15rem;
+  background: linear-gradient(180deg, rgba(26,26,35,0.96), rgba(18,18,26,0.96));
+  border: 1px solid var(--border);
+  min-height: 100%;
+  overflow: hidden;
+}
+.config-divider {
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(180deg, transparent, rgba(123,137,189,0.45), transparent);
+  flex: 0 0 1px;
+}
 .opt-btn {
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -299,7 +401,14 @@ header {
   padding: 1rem 1.5rem;
   background: var(--surface2);
   border: 1px solid var(--border);
-  margin-bottom: 1.5rem;
+  min-height: 100%;
+}
+.selection-display.inline {
+  justify-content: center;
+  min-height: 100%;
+  padding: 0.25rem 0.4rem 0.1rem;
+  background: transparent;
+  border: none;
 }
 .sel-name {
   font-family: 'Barlow Condensed', sans-serif;
@@ -314,7 +423,28 @@ header {
 }
 .sel-name.p1 { color: var(--accent); }
 .sel-name.p2 { color: var(--accent2); }
-.sel-vs { font-family: 'Anton', sans-serif; font-size: var(--fs-md); color: var(--muted); letter-spacing: var(--ls-widest); }
+.selection-display.inline .sel-name {
+  flex: 0 1 auto;
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+  letter-spacing: 0.11em;
+}
+.sel-name.p2 { justify-content: flex-end; text-align: right; }
+.sel-vs { font-family: 'Anton', sans-serif; font-size: clamp(1rem, 1.4vw, 1.2rem); color: #7b89bd; letter-spacing: 0.28em; text-transform: uppercase; padding: 0 0.4rem; }
+.simulator-cta {
+  display: flex;
+  align-items: stretch;
+}
+.simulator-cta.stacked {
+  justify-content: center;
+}
+.simulator-cta .sim-btn {
+  min-height: 100%;
+  padding: 0.95rem 1.5rem;
+  font-size: clamp(1.25rem, 1.65vw, 1.65rem);
+}
+.simulator-cta.stacked .sim-btn {
+  width: 100%;
+}
 
 /* card flag */
 .card-flag-right {
@@ -559,6 +689,82 @@ header {
 }
 .sim-btn-1000:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
 .sim-btn-1000:disabled { opacity: 0.25; cursor: default; }
+
+@media (max-width: 1180px) {
+  .simulator-setup-stack {
+    max-width: none;
+  }
+
+  .simulator-setup-grid.aggressive {
+    grid-template-columns: 1fr;
+  }
+
+  .simulator-setup-grid.compact {
+    grid-template-columns: 1fr;
+  }
+
+  .simulator-config-inline {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+
+  .simulator-config-grid {
+    min-width: 0;
+  }
+
+  .config-divider {
+    display: none;
+  }
+
+  .simulator-cta .sim-btn {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .simulator-setup-stack {
+    padding: 0.85rem 0.85rem 1rem;
+  }
+
+  .selection-display.inline {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.55rem;
+    padding: 0.1rem 0;
+  }
+
+  .sel-name.p2 {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .sel-vs {
+    text-align: center;
+  }
+
+  .simulator-config-inline {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.7rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .simulator-config-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .config-row.inline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+    white-space: normal;
+  }
+
+  .config-options {
+    flex-wrap: wrap;
+  }
+}
 
 #sim1000-result {
   background: var(--surface);
