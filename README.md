@@ -38,6 +38,76 @@ Vanilla JS  ·  CSS Custom Properties  ·  GitHub Pages
 
 Sin frameworks. Sin dependencias. Solo HTML, CSS y JavaScript.
 
+---
+
+## Actualizacion 2026-03-18 - Version N
+
+La Version N deja activa la iteracion mas reciente del motor y del hub de rankings.
+
+### Resumen de lo realizado hoy
+
+- Se alinearon `js/engine.js` y `js/app.js` para compartir la misma base critica del motor.
+- Se simplifico la formula del saque para evitar doble contabilidad.
+- Se dejaron a `0` los bonus puros de saque:
+  - `serveSpeedBonus`
+  - `serverPower`
+  - `serverShortRallyBonus`
+  - `netBonus`
+- Se mantuvo `baseServe` como nucleo del saque real:
+
+```js
+baseServe = serve1pct * win1st + (1 - serve1pct) * win2nd
+```
+
+- La formula conceptual base del punto al saque queda:
+
+```js
+pServe = (baseServe * sMod) - returnPressure
+```
+
+- Se añadio una señal pequena de `shotEfficiency` a partir del ratio `winners/errors`.
+- Esa señal solo actua en rallies medios y largos, con impacto pequeno.
+- Se regenero una variante GOAT con esa señal y finalmente se dejo como activa en `js/rankings_hub_data.js`.
+- Se conservaron snapshots alternativos para comparar o revertir:
+  - `js/rankings_hub_data_pre_baseserve.js`
+  - `js/rankings_hub_data_shot_efficiency.js`
+  - `rankings-pre-baseserve.html`
+- Se simplifico el hub de rankings a dos modos:
+  - `Calculated GOAT`
+  - `Real GOAT`
+- Se elimino `Era Sim` del hub por redundante.
+- Se mantuvieron los filtros por superficie, era y jugador.
+- Se renombro la navegacion principal de la web a:
+  - `Matchup Simulator`
+  - `Grand Slam Simulator`
+  - `Stats`
+  - `Compare`
+  - `History`
+  - `Rankings Simulator`
+- Se rehizo el bloque superior del simulador para compactarlo en un bloque central por capas:
+  - `Select Players`
+  - `Match Config`
+  - `Simulate Button`
+- Se retocaron elementos visuales del `Grand Slam Simulator`, incluido el bracket y la `imagen 2` del cuadro.
+
+### Nueva señal shotEfficiency
+
+Se calcula de forma conservadora:
+
+```js
+ratio = winners / errors
+shotEfficiencyEdge = clamp((ratio - 1.5) * 0.02, -0.02, 0.02)
+```
+
+Y se aplica solo en:
+
+```js
+mid rally  -> + shotEdge * 0.4
+long rally -> + shotEdge * 0.3
+```
+
+La intencion es favorecer ligeramente a los jugadores que producen mejor relacion `winners/errors` sin volver a inflar el saque.
+
 ## Documentacion del proyecto
 
 - `README.md`: vision general y uso del simulador
@@ -46,9 +116,9 @@ Sin frameworks. Sin dependencias. Solo HTML, CSS y JavaScript.
 
 | Archivo | Descripción |
 |---|---|
-| `index.html` | Estructura de 4 pestañas |
+| `index.html` | Estructura principal de la web y navegacion |
 | `js/app.js` | Capa UI completa (~1850 líneas) |
-| `js/engine.js` | Motor Markov — no modificar |
+| `js/engine.js` | Motor Markov activo |
 | `js/players.js` | 104 jugadores con stats |
 | `js/results_db.js` | 9.489 partidos reales (764KB) |
 | `css/style.css` | Diseño completo + responsive + i18n |
@@ -58,6 +128,20 @@ Sin frameworks. Sin dependencias. Solo HTML, CSS y JavaScript.
 ## Motor de simulación
 
 El motor simula cada punto individualmente usando cadenas de Markov con los siguientes factores:
+
+### Estado actual del motor en Version N
+
+- `baseServe` es ahora el corazon del saque real
+- los bonus puros de saque estan anulados
+- la presion del restador sigue activa
+- `shotEfficiency` se usa solo en rallies medios y largos
+
+Formula conceptual:
+
+```js
+baseServe = serve1pct * win1st + (1 - serve1pct) * win2nd
+pServe = (baseServe * sMod) - returnPressure
+```
 
 - **Velocidad y precisión de saque** (`serve1pct`, `win1st`, `win2nd`)
 - **Poder de groundstrokes** (derecha y revés en km/h)
@@ -231,10 +315,12 @@ node tools/build_results_extra_players_ranked.js
 
 | Pestaña | Función |
 |---|---|
-| ⚡ Simulator | Selecciona dos jugadores, configura superficie/sets y simula |
-| 📊 Stats | Perfil completo de cada jugador con velocidades, stats y percentiles |
-| 🔄 Compare | Comparador head-to-head con palmarés y barras de stats |
-| 🔥 History | 9.489 partidos reales con filtros por jugador, superficie, nivel y año |
+| `Matchup Simulator` | Selecciona dos jugadores, configura superficie/sets y simula |
+| `Grand Slam Simulator` | Cuadro eliminatorio por Grand Slam con draw manual o aleatorio |
+| `Stats` | Perfil completo de cada jugador con velocidades, stats y percentiles |
+| `Compare` | Comparador head-to-head con palmares y barras de stats |
+| `History` | 9.489 partidos reales con filtros por jugador, superficie, nivel y año |
+| `Rankings Simulator` | Hub de rankings con `Calculated GOAT` y `Real GOAT` |
 
 ---
 
