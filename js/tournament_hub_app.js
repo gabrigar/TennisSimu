@@ -201,6 +201,7 @@
     search: '',
     eraFilter: 'all',
     mobileView: 'focus',
+    imageExpanded: false,
     selectedSlot: 0,
     entrants: Array(DRAW_SIZE).fill(null),
     rounds: [],
@@ -433,6 +434,7 @@
     const overviewBtn = document.getElementById('tourhub-view-overview-btn');
     const focusBtn = document.getElementById('tourhub-view-focus-btn');
     const bracketWrap = document.getElementById('tourhub-bracket-wrap');
+    const bracketArt = document.getElementById('tourhub-bracket-art');
 
     title.textContent = `${t('navTitle')} · ${t(`slams.${slam.key}`)}`;
     subtitle.textContent = t('subtitle');
@@ -440,7 +442,10 @@
     description.textContent = getLang() === 'es' ? slam.noteEs : slam.noteEn;
     photo.innerHTML = '';
     photo.style.backgroundImage = `linear-gradient(135deg, rgba(10,10,15,0.28), rgba(10,10,15,0.82)), url('img/slams/${slam.key}.png')`;
-    bracketWrap?.style.setProperty('--tourhub-bracket-art', `url('img/slams/${slam.key}.png')`);
+    photo.classList.toggle('is-expanded', state.imageExpanded);
+    if (bracketArt) {
+      bracketArt.style.backgroundImage = `url('img/slams/${slam.key}.png')`;
+    }
     slamLabel.textContent = t('slamLabel');
     actionsLabel.textContent = t('actionsLabel');
     progressLabel.textContent = t('progressLabel');
@@ -636,6 +641,7 @@
       <div class="tourhub-round tourhub-round-final">
         <div class="tourhub-round-title">${t(ROUND_LABEL_KEYS[4])}</div>
         <div class="tourhub-round-list">
+          <button class="sim-btn tourhub-sim-btn tourhub-sim-btn-mobile" id="tourhub-simulate-round-btn-mobile" ${(!isDrawComplete() || getCurrentRoundIndex() >= ROUND_NAMES.length) ? 'disabled' : ''}>${t('simulateRound')}</button>
           ${finalMatch ? renderMatchCard(finalMatch, 4, 0, 'center') : renderMatchCard({ p1: null, p2: null, score: '', winner: null, roundIndex: 4, pending: true }, 4, 0, 'center')}
           ${championMatch ? renderChampionCard(championMatch) : ''}
         </div>
@@ -711,6 +717,33 @@
     });
   }
 
+  function toggleTournamentPhoto() {
+    state.imageExpanded = !state.imageExpanded;
+    const photo = document.getElementById('tourhub-photo-placeholder');
+    if (photo) {
+      photo.classList.toggle('is-expanded', state.imageExpanded);
+    }
+  }
+
+  function bindTournamentPhoto() {
+    const photo = document.getElementById('tourhub-photo-placeholder');
+    if (!photo || photo.dataset.bound === 'true') return;
+    photo.dataset.bound = 'true';
+    photo.setAttribute('role', 'button');
+    photo.setAttribute('tabindex', '0');
+    photo.addEventListener('click', toggleTournamentPhoto);
+    photo.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleTournamentPhoto();
+      }
+    });
+  }
+
+  function bindMobileSimButton() {
+    document.getElementById('tourhub-simulate-round-btn-mobile')?.addEventListener('click', simulateNextRound);
+  }
+
   function renderChampion() {
     const banner = document.getElementById('tourhub-champion-banner');
     banner.style.display = 'none';
@@ -722,6 +755,8 @@
     renderStageBar();
     renderBracket();
     bindBracketSlots();
+    bindMobileSimButton();
+    bindTournamentPhoto();
     renderChampion();
   }
 
