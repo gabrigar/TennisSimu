@@ -120,6 +120,8 @@
     linear-gradient(135deg, rgba(10,10,15,0.28), rgba(10,10,15,0.82));
   background-size: cover;
   background-position: center bottom;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
 .tourhub-photo-placeholder::before {
@@ -140,6 +142,34 @@
 .tourhub-photo-placeholder > * {
   position: relative;
   z-index: 2;
+}
+
+.tourhub-photo-placeholder:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 45px rgba(0,0,0,0.28);
+}
+
+.tourhub-photo-placeholder.is-expanded {
+  position: fixed;
+  top: 5vh;
+  left: 50%;
+  width: min(90vw, 1400px);
+  height: 82vh;
+  min-height: 0;
+  transform: translateX(-50%);
+  z-index: 1400;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.62);
+  background-position: center center;
+}
+
+.tourhub-photo-placeholder.is-expanded::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(6,6,10,0.72);
+  backdrop-filter: blur(8px);
 }
 
 
@@ -354,6 +384,10 @@
 .tourhub-round-final .tourhub-round-title,
 .tourhub-round-final .tourhub-match-footer {
   text-align: center;
+}
+
+.tourhub-sim-btn-mobile {
+  display: none;
 }
 
 .tourhub-match-card.done {
@@ -573,6 +607,10 @@
     justify-content: flex-start;
   }
 
+  .tourhub-round-final .tourhub-round-list {
+    position: relative;
+  }
+
   .tourhub-bracket {
     min-width: 1020px;
     grid-template-columns: repeat(9, minmax(120px, 1fr));
@@ -603,6 +641,10 @@
     display: inline-flex;
   }
 
+  .tourhub-topbar .tourhub-filter-group:last-child {
+    display: none;
+  }
+
   .tourhub-stage-actions {
     align-items: center;
   }
@@ -614,7 +656,7 @@
     background:
       linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
       var(--bg);
-    max-height: 72vh;
+    max-height: 70vh;
     padding: 0.65rem 0.65rem 1rem;
     touch-action: pan-x pan-y pinch-zoom;
   }
@@ -630,17 +672,19 @@
   }
 
   .tourhub-bracket {
-    min-width: 1180px;
+    min-width: 980px;
     transform-origin: top left;
     transition: transform 0.2s ease;
+    grid-template-columns: repeat(9, minmax(102px, 1fr));
+    gap: 0.45rem;
   }
 
   .tourhub-bracket-wrap[data-view="overview"] .tourhub-bracket {
-    transform: scale(0.68);
+    transform: scale(0.62);
   }
 
   .tourhub-bracket-wrap[data-view="overview"] {
-    min-height: 980px;
+    min-height: 690px;
   }
 
   .tourhub-bracket-wrap[data-view="focus"] .tourhub-bracket {
@@ -655,17 +699,75 @@
     padding: 1rem;
   }
 
+  .tourhub-hero-photo,
+  .tourhub-photo-placeholder {
+    min-height: 180px;
+  }
+
   .tourhub-match-card {
-    padding: 0.4rem;
-    min-height: 106px;
+    padding: 0.28rem;
+    min-height: 84px;
   }
 
   .tourhub-slot {
-    padding: 0.5rem 0.55rem;
-    min-height: 48px;
+    padding: 0.34rem 0.38rem;
+    min-height: 38px;
+    margin-bottom: 0.18rem;
   }
 
   .tourhub-slot-name {
-    font-size: 0.92rem;
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+
+  .tourhub-slot-seed,
+  .tourhub-slot-meta,
+  .tourhub-match-footer,
+  .tourhub-round-title,
+  .tourhub-champion-kicker,
+  .tourhub-champion-score {
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+  }
+
+  .tourhub-match-footer {
+    margin-top: 0.28rem;
+    padding-top: 0.28rem;
+  }
+
+  .tourhub-match-card.champion {
+    min-height: 84px;
+    margin-top: 0.45rem;
+  }
+
+  .tourhub-champion-name {
+    font-size: 0.86rem;
+    margin: 0.12rem 0;
+  }
+
+  .tourhub-depth-1 .tourhub-round-list { padding-top: 1rem; }
+  .tourhub-depth-2 .tourhub-round-list { padding-top: 2.7rem; }
+  .tourhub-depth-3 .tourhub-round-list { padding-top: 6rem; }
+  .tourhub-round-final .tourhub-round-list { padding-top: 12.15rem; }
+
+  .tourhub-sim-btn-mobile {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 0.45rem;
+    padding: 0.5rem 0.55rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+  }
+
+  .tourhub-photo-placeholder.is-expanded {
+    top: 8vh;
+    width: 90vw;
+    height: auto;
+    aspect-ratio: 1 / 1.12;
+  }
+
+  .tourhub-photo-placeholder.is-expanded:hover {
+    transform: translateX(-50%);
   }
 }
