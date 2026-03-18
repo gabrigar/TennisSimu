@@ -1540,3 +1540,323 @@ header {
   .mob-action-btn:active { background: var(--surface2); }
 
 } /* fin @media 768px */
+
+/* Cookies, footer and privacy UI */
+.site-footer {
+  border-top: 1px solid var(--border);
+  background:
+    radial-gradient(circle at top left, rgba(200,240,0,0.08), transparent 28%),
+    linear-gradient(180deg, rgba(10,10,15,0.96), rgba(14,14,22,0.98));
+}
+
+.site-footer-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.25rem 3rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.site-footer-logo {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: var(--ls-normal);
+  color: var(--accent);
+}
+
+.site-footer-logo span { color: var(--text); }
+
+.site-footer-copy {
+  max-width: 640px;
+  margin-top: 0.45rem;
+  color: rgba(232,232,240,0.72);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.site-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.site-footer-link {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.site-footer-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.button-link {
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  padding: 0;
+}
+
+.cookie-banner[hidden],
+.cookie-modal[hidden] {
+  display: none !important;
+}
+
+.cookie-banner {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  width: min(92vw, 540px);
+  z-index: 1200;
+  border: 1px solid rgba(200,240,0,0.28);
+  background:
+    linear-gradient(135deg, rgba(200,240,0,0.08), transparent 40%),
+    rgba(12,12,18,0.96);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.42);
+  backdrop-filter: blur(16px);
+  padding: 1.15rem;
+}
+
+.cookie-banner-kicker,
+.cookie-modal-kicker {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.45rem;
+}
+
+.cookie-banner-title,
+.cookie-modal-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.05;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.55rem;
+}
+
+.cookie-banner-text,
+.cookie-option-text {
+  color: rgba(232,232,240,0.78);
+  line-height: 1.55;
+  font-size: 0.95rem;
+}
+
+.cookie-banner-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.cookie-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.cookie-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+.cookie-btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.cookie-btn-primary:hover {
+  background: #d9ff3b;
+  color: var(--bg);
+}
+
+.cookie-btn-secondary {
+  background: rgba(255,255,255,0.03);
+}
+
+.cookie-btn-ghost {
+  color: var(--muted);
+}
+
+.cookie-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+}
+
+.cookie-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,5,9,0.7);
+  backdrop-filter: blur(8px);
+}
+
+.cookie-modal-panel {
+  position: relative;
+  width: min(92vw, 720px);
+  margin: 8vh auto 0;
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(circle at top right, rgba(0,229,255,0.08), transparent 30%),
+    linear-gradient(180deg, rgba(17,17,24,0.98), rgba(10,10,15,0.98));
+  box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  padding: 1.35rem;
+}
+
+.cookie-modal-header,
+.cookie-modal-footer,
+.cookie-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cookie-modal-header {
+  margin-bottom: 1rem;
+}
+
+.cookie-modal-close {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  width: 2.4rem;
+  height: 2.4rem;
+  cursor: pointer;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.cookie-option {
+  padding: 1rem 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.cookie-option-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.cookie-option-badge {
+  color: var(--accent);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.cookie-option-toggle {
+  cursor: pointer;
+}
+
+.cookie-switch-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cookie-switch-wrap input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cookie-switch {
+  width: 54px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.cookie-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--text);
+  transition: transform 0.2s;
+}
+
+.cookie-switch-wrap input:checked + .cookie-switch {
+  background: rgba(200,240,0,0.22);
+  border-color: var(--accent);
+}
+
+.cookie-switch-wrap input:checked + .cookie-switch::after {
+  transform: translateX(24px);
+  background: var(--accent);
+}
+
+.cookie-modal-footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .site-footer-inner {
+    padding: 1.1rem 1rem 5.8rem;
+    align-items: flex-start;
+  }
+
+  .cookie-banner {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: auto;
+  }
+
+  .cookie-modal-panel {
+    width: calc(100vw - 1.5rem);
+    margin-top: 4vh;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+
+  .cookie-modal-header,
+  .cookie-modal-footer,
+  .cookie-option {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cookie-banner-actions {
+    width: 100%;
+  }
+
+  .cookie-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
