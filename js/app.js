@@ -3,17 +3,17 @@
 // =====================================================
 const LANG = {
   en: {
-    nav_simulator:   '⚡ Simulator',
-    nav_tournament:  '🎾 Grand Slams',
+    nav_simulator:   '⚡ Matchup Simulator',
+    nav_tournament:  '🎾 Grand Slam Simulator',
     nav_stats:       '📊 Stats',
     nav_compare:     '🔄 Compare',
     nav_history:     '🔥 History',
-    nav_ranking:     '🏆 Rankings',
+    nav_ranking:     '🏆 Rankings Simulator',
     player1:         'Player 1',
     player2:         'Player 2',
     search_player:   'Search player...',
     search_mob:      '🔍 Search player...',
-    settings:        'Settings',
+    settings:        'Select 2 players',
     sel_p1:          '— Select P1 —',
     sel_p2:          '— Select P2 —',
     surface:         'Surface',
@@ -145,17 +145,17 @@ const LANG = {
     comp_serve_kmh:  'Serve km/h',
   },
   es: {
-    nav_simulator:   '⚡ Simulador',
-    nav_tournament:  '🎾 Grand Slams',
+    nav_simulator:   '⚡ Matchup Simulator',
+    nav_tournament:  '🎾 Grand Slam Simulator',
     nav_stats:       '📊 Estadísticas',
     nav_compare:     '🔄 Comparador',
     nav_history:     '🔥 Histórico',
-    nav_ranking:     '🏆 Rankings',
+    nav_ranking:     '🏆 Rankings Simulator',
     player1:         'Jugador 1',
     player2:         'Jugador 2',
     search_player:   'Buscar jugador...',
     search_mob:      '🔍 Buscar jugador...',
-    settings:        'Configuración',
+    settings:        'Selecciona 2 jugadores',
     sel_p1:          '— Selecciona P1 —',
     sel_p2:          '— Selecciona P2 —',
     surface:         'Superficie',
@@ -555,31 +555,38 @@ function selectPlayer(p, key) {
 // MOTOR DE SIMULACIÃ“N MARKOV
 // =====================================================
 
+const ENGINE_API = (typeof globalThis !== 'undefined' && globalThis.TENNIS_ENGINE)
+  ? globalThis.TENNIS_ENGINE
+  : null;
+
 function calibratedSurf(player, surface) {
+  if (ENGINE_API?.calibratedSurf) return ENGINE_API.calibratedSurf(player, surface);
   const raw = player.stats.surface[surface] || 1.0;
   return 1.0 + (raw - 1.0) * 0.55;
 }
 
 function clamp(v, lo, hi) {
+  if (ENGINE_API?.clamp) return ENGINE_API.clamp(v, lo, hi);
   return Math.max(lo, Math.min(hi, v));
 }
 
 function calcWinProbServe(server, returner, surface) {
+  if (ENGINE_API?.calcWinProbServe) return ENGINE_API.calcWinProbServe(server, returner, surface);
   const sS = server.stats;
   const rS = returner.stats;
   const sMod = calibratedSurf(server, surface);
   const rMod = calibratedSurf(returner, surface);
 
   const baseServe = sS.serve1pct * sS.win1st + (1 - sS.serve1pct) * sS.win2nd;
-  const serveSpeedBonus  = ((sS.serve_kmh || 205) - 175) / 75 * 0.03;
+  const serveSpeedBonus  = ((sS.serve_kmh || 205) - 175) / 75 * 0.00;
   const serverPower      = (((sS.fh_kmh || 148) + (sS.bh_kmh || 138)) / 2 - 120) / 55 * 0.02;
-  const serverShortBonus = ((sS.rally_short || 40) - 38) / 100 * 0.015;
+  const serverShortBonus = ((sS.rally_short || 40) - 38) / 100 * 0.00;
   const returnSpeedFact  = ((rS.rest_kmh || 148) - 125) / 40 * 0.02;
   const returnPressure   = rS.returnWin * rMod * (1 - serverPower * 0.3) + returnSpeedFact * 0.5;
-  const netBonus         = ((server.net_win || 0.65) - 0.65) * 0.04;
+  const netBonus         = ((server.net_win || 0.65) - 0.65) * 0.00;
 
-  const prob = (baseServe * sMod) + serveSpeedBonus + serverPower * 0.5
-               + serverShortBonus + netBonus - (returnPressure * 0.15);
+  const prob = (baseServe * sMod) + serveSpeedBonus + serverPower * 0.0
+               + serverShortBonus + netBonus - returnPressure;
   return clamp(prob, 0.40, 0.75);
 }
 
@@ -600,6 +607,14 @@ function simPoint(pWin) {
   return Math.random() < pWin;
 }
 
+function getShotEfficiencyEdgeFromStats(stats) {
+  const winners = stats.winners || 34;
+  const errors = Math.max(stats.errors || 22, 1);
+  const ratio = winners / errors;
+  const avgRatio = 1.5;
+  return clamp((ratio - avgRatio) * 0.02, -0.02, 0.02);
+}
+
 function formatPointLabel(points) {
   const map = ['0', '15', '30', '40'];
   if (points <= 3) return map[points];
@@ -617,6 +632,7 @@ function getPressureTag(serverPts, returnerPts) {
 function simGame(pWin, rallyProf, sS, rS, serverName, returnerName, serving) {
   let pts = [0, 0];
   const pointsLog = [];
+  const shotEdge = getShotEfficiencyEdgeFromStats(sS) - getShotEfficiencyEdgeFromStats(rS);
   while (true) {
     const r = Math.random();
     let pw;
@@ -626,12 +642,12 @@ function simGame(pWin, rallyProf, sS, rS, serverName, returnerName, serving) {
       pw = clamp(pWin + 0.04 - returnSpeedAdj, 0.38, 0.80);
       rallyType = 'short';
     } else if (r < rallyProf.short + rallyProf.mid) {
-      pw = clamp(pWin - 0.01, 0.38, 0.75);
+      pw = clamp(pWin - 0.01 + shotEdge * 0.4, 0.38, 0.75);
       rallyType = 'mid';
     } else {
       const longRallySkill = ((rS.rally_long || 26) - 26) / 34 * 0.06;
       const groundAdv      = (((rS.fh_kmh || 148) + (rS.bh_kmh || 138)) / 2 - 143) / 35 * 0.03;
-      pw = clamp(pWin - 0.06 - longRallySkill - groundAdv, 0.30, 0.70);
+      pw = clamp(pWin - 0.06 - longRallySkill - groundAdv + shotEdge * 0.3, 0.30, 0.70);
       rallyType = 'long';
     }
     const before = [pts[0], pts[1]];

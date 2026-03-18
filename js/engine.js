@@ -495,6 +495,15 @@ function getPressureIndex(player) {
        + (stats.rally_long || 26) / 2.5;
 }
 
+function getShotEfficiencyEdge(player) {
+  const stats = player.stats || player;
+  const winners = stats.winners || 34;
+  const errors = Math.max(stats.errors || 22, 1);
+  const ratio = winners / errors;
+  const avgRatio = 1.5;
+  return clamp((ratio - avgRatio) * 0.02, -0.02, 0.02);
+}
+
 function serverVulnerability(server, actualLongPct) {
   const sS    = server.stats || server;
   const netWin = server.net_win || AVG_NET_WIN;
@@ -528,17 +537,17 @@ function calcWinProbServe(server, returner, surface) {
   const baseServe = sS.serve1pct * sS.win1st + (1 - sS.serve1pct) * sS.win2nd;
 
   // Bonuses secundarios: velocidad, potencia de golpes, perfil de rally corto, red
-  const serveSpeedBonus       = ((sS.serve_kmh || 205) - 175) / 75 * 0.03;
+  const serveSpeedBonus       = ((sS.serve_kmh || 205) - 175) / 75 * 0.00;
   const serverPower           = (((sS.fh_kmh||148) + (sS.bh_kmh||138)) / 2 - 120) / 55 * 0.02;
-  const serverShortRallyBonus = ((sS.rally_short||40) - 38) / 100 * 0.015;
-  const netBonus              = ((server.net_win || 0.65) - 0.65) * 0.04;
+  const serverShortRallyBonus = ((sS.rally_short||40) - 38) / 100 * 0.00;
+  const netBonus              = ((server.net_win || 0.65) - 0.65) * 0.00;
 
   // FIX A: presión del returner relativa a la media del campo
   const returnSpeedFactor = ((rS.rest_kmh||148) - 125) / 40 * 0.02;
   const returnRelative    = (rS.returnWin - getAvgReturnWin()) * rMod;
   const returnPressure    = returnRelative * 0.30 + returnSpeedFactor * 0.5;
 
-  const prob = (baseServe * sMod) + serveSpeedBonus + serverPower * 0.5
+  const prob = (baseServe * sMod) + serveSpeedBonus + serverPower * 0.0
                + serverShortRallyBonus + netBonus - returnPressure;
   return clamp(prob, 0.40, 0.75);
 }
@@ -561,6 +570,7 @@ function simGame(pWin, rallyProf, server, returner, isFinal) {
   const rS = returner.stats || returner;
   const serverPressure = getPressureIndex(server);
   const returnerPressure = getPressureIndex(returner);
+  const shotEdge = getShotEfficiencyEdge(server) - getShotEfficiencyEdge(returner);
   const pressureEdgeRaw = (returnerPressure - serverPressure) / 20;
   let pts = [0, 0];
   while (true) {
@@ -573,7 +583,7 @@ function simGame(pWin, rallyProf, server, returner, isFinal) {
 
     } else if (r < rallyProf.short + rallyProf.mid) {
       // Rally medio: ventaja del saque se desvanece
-      pw = clamp(pWin - 0.01, 0.38, 0.75);
+      pw = clamp(pWin - 0.01 + shotEdge * 0.4, 0.38, 0.75);
 
     } else {
       // Rally largo: el returner toma el control
@@ -584,7 +594,7 @@ function simGame(pWin, rallyProf, server, returner, isFinal) {
       // Fix D: vulnerabilidad del servidor cuando el partido se alarga más de lo natural
       const vuln = serverVulnerability(server, rallyProf.long);
 
-      pw = clamp(pWin - 0.06 - longRallySkill - groundAdv - vuln, 0.28, 0.70);
+      pw = clamp(pWin - 0.06 - longRallySkill - groundAdv - vuln + shotEdge * 0.3, 0.28, 0.70);
     }
 
     // FIX M2 — puntos de presión dentro del juego.
@@ -761,6 +771,25 @@ function simMatch(p1, p2, surface, bestOf, useTb) {
 
   return { winner, loser, sets, setScores, surface,
            scoreStr: setScores.map(s => s.join('-')).join(' ') };
+}
+
+const TENNIS_ENGINE = {
+  calibratedSurf,
+  clamp,
+  getRallyProfile,
+  calcWinProbServe,
+  simPoint,
+  simGame,
+  simTiebreak,
+  simSet,
+  simMatch
+};
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.TENNIS_ENGINE = TENNIS_ENGINE;
+}
+if (typeof window !== 'undefined') {
+  window.TENNIS_ENGINE = TENNIS_ENGINE;
 }
 
 // ============================================================

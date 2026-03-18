@@ -8,8 +8,8 @@
   const I18N = {
     en: {
       heroKicker: 'SimuTennis rankings',
-      heroTitle: 'GOAT, Era and Real',
-      heroCopy: 'Use one responsive hub to compare three different views of the field: a total all-vs-all simulation, an intra-era simulation, and a real ranking based on wins and titles already present in the database.',
+      heroTitle: 'Calculated and Real GOAT',
+      heroCopy: 'Compare a calculated GOAT ranking from the simulator against a real GOAT ranking built from wins and titles already present in the database.',
       filters: {
         mode: 'Mode',
         surface: 'Surface',
@@ -18,14 +18,12 @@
         searchPlaceholder: 'Federer, Nadal, Djokovic...'
       },
       modes: {
-        goat: 'GOAT Sim',
-        era: 'Era Sim',
-        real: 'Real'
+        goat: 'Calculated GOAT',
+        real: 'Real GOAT'
       },
       modeDescriptions: {
-        goat: 'All-vs-all simulation. Every player faces the whole field, 100 matches per matchup and surface.',
-        era: 'Era simulation. Every player faces only the players from his own era.',
-        real: 'Real ranking. Wins from the database plus weighted titles from player profiles.'
+        goat: 'Calculated GOAT. All-vs-all simulation, 100 matches per matchup and surface.',
+        real: 'Real GOAT. Wins from the database plus weighted titles from player profiles.'
       },
       eras: { all: 'All', '70s': '70s', '80s': '80s', '90s': '90s', '2000s': '2000s', '2010s': '2010s+' },
       surfaces: { all: 'All', hard: 'Hard', clay: 'Clay', grass: 'Grass' },
@@ -38,26 +36,11 @@
         visiblePlayers: 'visible players',
         scorePrefix: 'Score'
       },
-      eraAllCards: {
-        oneTitle: 'View',
-        oneValue: 'Era Sim',
-        oneNote: 'Each block shows the intra-era leaderboard',
-        twoTitle: 'Surface',
-        twoNote: 'Same filter applied to every era',
-        threeTitle: 'Eras',
-        threeNote: 'Visible era panels',
-        fourTitle: 'Method',
-        fourValue: 'Intra-era',
-        fourNote: '100 matches per matchup and surface'
-      },
       board: {
-        goatTitle: 'GOAT Ranking',
-        goatSubtitle: 'Full field all-vs-all simulation',
-        eraTitle: 'Era Ranking',
-        eraSubtitle: 'Only against players from the same era',
-        realTitle: 'Real Ranking',
+        goatTitle: 'Calculated GOAT',
+        goatSubtitle: 'Full field simulated ranking',
+        realTitle: 'Real GOAT',
         realSubtitle: 'Wins and titles available in the database',
-        eraPanelSuffix: 'players shown - intra-era view',
         noRows: 'No players match the current filter.'
       },
       table: {
@@ -80,8 +63,8 @@
     },
     es: {
       heroKicker: 'Rankings de SimuTennis',
-      heroTitle: 'GOAT, Era y Real',
-      heroCopy: 'Usa una sola pagina responsive para comparar tres lecturas del circuito: simulacion total all-vs-all, simulacion intra-era y ranking real basado en victorias y titulos ya presentes en la base de datos.',
+      heroTitle: 'Calculated y Real GOAT',
+      heroCopy: 'Compara un ranking GOAT calculado por el simulador con un ranking GOAT real construido con victorias y titulos ya presentes en la base de datos.',
       filters: {
         mode: 'Modo',
         surface: 'Superficie',
@@ -90,14 +73,12 @@
         searchPlaceholder: 'Federer, Nadal, Djokovic...'
       },
       modes: {
-        goat: 'GOAT Sim',
-        era: 'Era Sim',
-        real: 'Real'
+        goat: 'Calculated GOAT',
+        real: 'Real GOAT'
       },
       modeDescriptions: {
-        goat: 'Simulacion all-vs-all. Cada jugador se enfrenta a todo el campo con 100 partidos por cruce y superficie.',
-        era: 'Simulacion por era. Cada jugador se enfrenta solo a jugadores de su misma era.',
-        real: 'Ranking real. Suma victorias de la base y titulos ponderados del perfil de cada jugador.'
+        goat: 'Calculated GOAT. Simulacion all-vs-all con 100 partidos por cruce y superficie.',
+        real: 'Real GOAT. Suma victorias de la base y titulos ponderados del perfil de cada jugador.'
       },
       eras: { all: 'Todas', '70s': '70s', '80s': '80s', '90s': '90s', '2000s': '2000s', '2010s': '2010s+' },
       surfaces: { all: 'Todas', hard: 'Hard', clay: 'Clay', grass: 'Grass' },
@@ -110,26 +91,11 @@
         visiblePlayers: 'jugadores visibles',
         scorePrefix: 'Score'
       },
-      eraAllCards: {
-        oneTitle: 'Vista',
-        oneValue: 'Era Sim',
-        oneNote: 'Cada bloque muestra el ranking intra-era',
-        twoTitle: 'Superficie',
-        twoNote: 'Mismo filtro aplicado a todas las eras',
-        threeTitle: 'Eras',
-        threeNote: 'Paneles de era visibles',
-        fourTitle: 'Metodo',
-        fourValue: 'Intra-era',
-        fourNote: '100 partidos por cruce y superficie'
-      },
       board: {
-        goatTitle: 'GOAT Ranking',
-        goatSubtitle: 'Simulacion total all-vs-all',
-        eraTitle: 'Era Ranking',
-        eraSubtitle: 'Solo contra jugadores de la misma era',
-        realTitle: 'Real Ranking',
+        goatTitle: 'Calculated GOAT',
+        goatSubtitle: 'Ranking simulado sobre todo el campo',
+        realTitle: 'Real GOAT',
         realSubtitle: 'Victorias y titulos disponibles en la base',
-        eraPanelSuffix: 'jugadores mostrados - vista intra-era',
         noRows: 'No hay jugadores para el filtro actual.'
       },
       table: {
@@ -181,15 +147,16 @@
   function getModeData(mode, eraKey, surface) {
     const pickSurface = (obj) => surface === 'all' ? obj.overall : obj.surfaces[surface];
 
-    if (mode === 'goat') return pickSurface(DATA.goat);
+    if (mode === 'goat') {
+      const rows = pickSurface(DATA.goat);
+      return eraKey === 'all' ? rows : rows.filter((row) => row.eraKey === eraKey);
+    }
     if (mode === 'real') {
       if (eraKey === 'all') return pickSurface(DATA.real);
       const era = DATA.eras.find((item) => item.key === eraKey);
       return era ? pickSurface(era.real) : [];
     }
-
-    const era = DATA.eras.find((item) => item.key === eraKey);
-    return era ? pickSurface(era.simulated) : [];
+    return [];
   }
 
   function safeRows(rows) {
@@ -199,10 +166,6 @@
   function filterRows(rows) {
     const query = state.search.trim().toLowerCase();
     let filtered = rows;
-
-    if (state.mode === 'goat' && state.era !== 'all') {
-      filtered = filtered.filter((row) => row.eraKey === state.era);
-    }
 
     if (query) {
       filtered = filtered.filter((row) => {
@@ -363,48 +326,11 @@
     `;
   }
 
-  function renderEraSections(surface) {
-    const target = document.getElementById('boards');
-    if (!target) return;
-    const sections = DATA.eras.map((era) => {
-      const rows = filterRows(safeRows(getModeData('era', era.key, surface))).slice(0, 12);
-      return renderTable(rows, era.label, `${rows.length} ${t('board.eraPanelSuffix')}`);
-    }).join('');
-    target.innerHTML = `<div class="rankhub-era-grid">${sections}</div>`;
-  }
-
   function render() {
     buildButtons();
 
     const modeNote = document.getElementById('mode-note');
     if (modeNote) modeNote.textContent = t(`modeDescriptions.${state.mode}`);
-
-    if (state.mode === 'era' && state.era === 'all') {
-      document.getElementById('summary-cards').innerHTML = `
-        <article class="stat-card highlight">
-          <div class="stat-card-label">${t('eraAllCards.oneTitle')}</div>
-          <div class="rankhub-card-value">${t('eraAllCards.oneValue')}</div>
-          <div class="rankhub-card-note">${t('eraAllCards.oneNote')}</div>
-        </article>
-        <article class="stat-card">
-          <div class="stat-card-label">${t('eraAllCards.twoTitle')}</div>
-          <div class="rankhub-card-value">${t(`surfaces.${state.surface}`)}</div>
-          <div class="rankhub-card-note">${t('eraAllCards.twoNote')}</div>
-        </article>
-        <article class="stat-card">
-          <div class="stat-card-label">${t('eraAllCards.threeTitle')}</div>
-          <div class="rankhub-card-value">${DATA.eras.length}</div>
-          <div class="rankhub-card-note">${t('eraAllCards.threeNote')}</div>
-        </article>
-        <article class="stat-card">
-          <div class="stat-card-label">${t('eraAllCards.fourTitle')}</div>
-          <div class="rankhub-card-value">${t('eraAllCards.fourValue')}</div>
-          <div class="rankhub-card-note">${t('eraAllCards.fourNote')}</div>
-        </article>
-      `;
-      renderEraSections(state.surface);
-      return;
-    }
 
     const rows = filterRows(safeRows(getModeData(state.mode, state.era, state.surface))).slice(0, 80);
     const label = `${t(`modes.${state.mode}`)} - ${t(`surfaces.${state.surface}`)}`;
@@ -419,12 +345,11 @@
     let title = t('board.goatTitle');
     let subtitle = t('board.goatSubtitle');
 
-    if (state.mode === 'era') {
-      title = `${t('board.eraTitle')} - ${t(`eras.${state.era}`)}`;
-      subtitle = t('board.eraSubtitle');
-    } else if (state.mode === 'real') {
+    if (state.mode === 'real') {
       title = `${t('board.realTitle')} - ${t(`eras.${state.era}`)}`;
       subtitle = t('board.realSubtitle');
+    } else {
+      title = `${t('board.goatTitle')} - ${t(`eras.${state.era}`)}`;
     }
 
     const boards = document.getElementById('boards');
