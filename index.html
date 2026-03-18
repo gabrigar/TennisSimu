@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="Professional tennis simulation platform with matchup analysis, Grand Slam brackets, rankings simulation and historical comparisons.">
+<meta name="google-analytics-id" content="G-QBJM0HB05N">
 <title>SimuTennis</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230a0a0f' stroke='%232a2a3a' stroke-width='1'/%3E%3Ctext x='16' y='22' font-family='Arial Black,sans-serif' font-size='18' font-weight='900' fill='%23c8f000' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E">
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230a0a0f' stroke='%232a2a3a' stroke-width='1'/%3E%3Ctext x='16' y='22' font-family='Arial Black,sans-serif' font-size='18' font-weight='900' fill='%23c8f000' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E">
@@ -325,7 +327,7 @@
 <div id="page-historico" class="page">
   <div class="results-header">
     <h2 id="hist-title">HISTORICAL RESULTS</h2>
-    <p class="results-subtitle" id="hist-sub">9,489 real matches · 1985–2024 · 99 players</p>
+    <p class="results-subtitle" id="hist-sub">9,489 real matches · 1985–2025 · 99 players</p>
   </div>
 
   <!-- FILTROS -->
@@ -364,7 +366,7 @@
     </div>
     <div class="filter-group">
       <label id="rf-label-year-to">YEAR TO</label>
-      <select id="rf-year-to"><option value="">2024</option></select>
+      <select id="rf-year-to"><option value="">2025</option></select>
     </div>
     <button class="btn-filter" id="rf-btn-filter" onclick="applyResultsFilter()">FILTER</button>
     <button class="btn-filter btn-reset" id="rf-btn-reset" onclick="resetResultsFilter()">RESET</button>
@@ -433,6 +435,72 @@
     <section class="rankhub-board" id="boards"></section>
   </main>
 </div>
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="site-footer-brand">
+      <div class="site-footer-logo">Simu<span>Tennis</span></div>
+      <p class="site-footer-copy" data-cookie-footer-copy>
+        Professional tennis simulation platform with analytics, history and rankings.
+      </p>
+    </div>
+    <div class="site-footer-links">
+      <a class="site-footer-link" href="docs/privacy-cookies.html" target="_blank" rel="noopener" data-cookie-policy-link>Privacy & Cookies Policy</a>
+      <button class="site-footer-link button-link" type="button" id="open-cookie-settings" data-cookie-settings-link>Cookie settings</button>
+    </div>
+  </div>
+</footer>
+
+<div class="cookie-banner" id="cookie-banner" hidden>
+  <div class="cookie-banner-copy">
+    <div class="cookie-banner-kicker" id="cookie-banner-kicker">Cookies & privacy</div>
+    <h2 class="cookie-banner-title" id="cookie-banner-title">We use analytics cookies only with your consent.</h2>
+    <p class="cookie-banner-text" id="cookie-banner-text">
+      SimuTennis uses essential cookies to keep the site working and optional analytics cookies to understand usage and improve the experience.
+    </p>
+  </div>
+  <div class="cookie-banner-actions">
+    <button class="cookie-btn cookie-btn-secondary" type="button" id="cookie-reject-btn">Reject analytics</button>
+    <button class="cookie-btn cookie-btn-ghost" type="button" id="cookie-customize-btn">Customize</button>
+    <button class="cookie-btn cookie-btn-primary" type="button" id="cookie-accept-btn">Accept all</button>
+  </div>
+</div>
+
+<div class="cookie-modal" id="cookie-modal" hidden aria-hidden="true">
+  <div class="cookie-modal-backdrop" data-cookie-close></div>
+  <div class="cookie-modal-panel" role="dialog" aria-modal="true" aria-labelledby="cookie-modal-title">
+    <div class="cookie-modal-header">
+      <div>
+        <div class="cookie-modal-kicker" id="cookie-modal-kicker">Privacy controls</div>
+        <h2 class="cookie-modal-title" id="cookie-modal-title">Choose which cookies you want to allow.</h2>
+      </div>
+      <button class="cookie-modal-close" type="button" id="cookie-modal-close" aria-label="Close">×</button>
+    </div>
+    <div class="cookie-option">
+      <div>
+        <div class="cookie-option-title" id="cookie-essential-title">Essential cookies</div>
+        <p class="cookie-option-text" id="cookie-essential-text">Required for language preferences, navigation and core simulator functionality.</p>
+      </div>
+      <span class="cookie-option-badge" id="cookie-essential-badge">Always active</span>
+    </div>
+    <label class="cookie-option cookie-option-toggle" for="cookie-analytics-toggle">
+      <div>
+        <div class="cookie-option-title" id="cookie-analytics-title">Analytics cookies</div>
+        <p class="cookie-option-text" id="cookie-analytics-text">Help us understand visits and improve the product through Google Analytics.</p>
+      </div>
+      <span class="cookie-switch-wrap">
+        <input type="checkbox" id="cookie-analytics-toggle">
+        <span class="cookie-switch" aria-hidden="true"></span>
+      </span>
+    </label>
+    <div class="cookie-modal-footer">
+      <a class="site-footer-link" href="docs/privacy-cookies.html" target="_blank" rel="noopener" id="cookie-modal-policy-link">Read policy</a>
+      <div class="cookie-banner-actions">
+        <button class="cookie-btn cookie-btn-secondary" type="button" id="cookie-save-btn">Save preferences</button>
+        <button class="cookie-btn cookie-btn-primary" type="button" id="cookie-accept-all-btn">Accept all</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="js/players.js" defer></script>
 <script src="js/player_game_resilience.js" defer></script>
 <script src="js/player_game_control.js" defer></script>
@@ -442,6 +510,7 @@
 <script src="js/rankings_hub_data.js" defer></script>
 <script src="js/rankings_hub_app.js" defer></script>
 <script src="js/tournament_hub_app.js" defer></script>
+<script src="js/cookies.js" defer></script>
 <script src="js/app.js" defer></script>
 
 <!-- Ensure initialization happens after all scripts load -->
