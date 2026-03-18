@@ -21,12 +21,12 @@
   <div class="logo">Simu<span>Tennis</span></div>
   <button id="lang-toggle" class="lang-toggle">ES</button>
   <div class="nav-tabs">
-    <button class="nav-tab active" data-page="simulator">? Simulator</button>
-    <button class="nav-tab" data-page="torneo">?? Simu GS</button>
-    <button class="nav-tab" data-page="stats">?? Stats</button>
-    <button class="nav-tab" data-page="comparador">?? Compare</button>
-    <button class="nav-tab" data-page="historico">?? History</button>
-    <button class="nav-tab" data-page="ranking">?? Rankings</button>
+    <button class="nav-tab active" data-page="simulator">⚡ Matchup Simulator</button>
+    <button class="nav-tab" data-page="torneo">🎾 Grand Slam Simulator</button>
+    <button class="nav-tab" data-page="stats">📊 Stats</button>
+    <button class="nav-tab" data-page="comparador">🔄 Compare</button>
+    <button class="nav-tab" data-page="historico">🔥 History</button>
+    <button class="nav-tab" data-page="ranking">🏆 Rankings Simulator</button>
   </div>
 </header>
 
@@ -34,15 +34,55 @@
 <div id="page-simulator" class="page active">
 <div class="main-grid">
 
+  <section class="simulator-setup" style="grid-column:1/-1">
+    <div class="simulator-setup-stack">
+      <div class="section-label" id="section-label-config">Select 2 players</div>
+      <div class="simulator-setup-grid stack">
+        <div class="selection-display inline">
+          <div class="sel-name p1" id="sel-p1">— Select P1 —</div>
+          <div class="sel-vs">vs</div>
+          <div class="sel-name p2" id="sel-p2">— Select P2 —</div>
+        </div>
+        <div class="simulator-config-grid">
+          <div class="config-block">
+            <span class="config-block-label" id="label-surface">Surface</span>
+            <div class="config-options" id="surface-opts">
+              <button class="opt-btn active" data-val="hard">Hard</button>
+              <button class="opt-btn" data-val="clay">Clay</button>
+              <button class="opt-btn" data-val="grass">Grass</button>
+            </div>
+          </div>
+          <div class="config-block">
+            <span class="config-block-label" id="label-sets">Sets</span>
+            <div class="config-options" id="sets-opts">
+              <button class="opt-btn" data-val="3">3 sets</button>
+              <button class="opt-btn active" data-val="5">5 sets</button>
+            </div>
+          </div>
+          <div class="config-block">
+            <span class="config-block-label" id="label-tb">Final tiebreak</span>
+            <div class="config-options" id="tb-opts">
+              <button class="opt-btn active" data-val="yes">Yes</button>
+              <button class="opt-btn" data-val="no">No</button>
+            </div>
+          </div>
+        </div>
+        <div class="simulator-cta stacked">
+          <button class="sim-btn" id="sim-btn" disabled>SIMULATE MATCH</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- DESKTOP selector (hidden on mobile) -->
-  <div id="desktop-selector" style="display:contents">
-  <div>
+  <div id="desktop-selector" class="simulator-player-pickers" style="display:contents">
+  <div class="simulator-player-column">
     <div class="section-label" id="section-label-p1">Player 1</div>
     <input class="search-bar" placeholder="Search player..." id="search-p1">
     <div class="player-grid" id="grid-p1"></div>
   </div>
 
-  <div>
+  <div class="simulator-player-column">
     <div class="section-label" id="section-label-p2">Player 2</div>
     <input class="search-bar" placeholder="Search player..." id="search-p2">
     <div class="player-grid" id="grid-p2"></div>
@@ -66,45 +106,10 @@
     </div>
   </div>
 
-  <div style="grid-column:1/-1">
-    <div class="section-label" id="section-label-config">Settings</div>
-    <div class="selection-display">
-      <div class="sel-name p1" id="sel-p1" id="sel-p1">â€” Select P1 â€”</div>
-      <div class="sel-vs">VS</div>
-      <div class="sel-name p2" id="sel-p2">â€” Select P2 â€”</div>
-    </div>
-    <div class="config-panel">
-      <div class="config-row">
-        <span id="label-surface">Surface</span>
-        <div class="config-options" id="surface-opts">
-          <button class="opt-btn active" data-val="hard">Hard</button>
-          <button class="opt-btn" data-val="clay">Clay</button>
-          <button class="opt-btn" data-val="grass">Grass</button>
-        </div>
-      </div>
-      <div class="config-row">
-        <span id="label-sets">Sets</span>
-        <div class="config-options" id="sets-opts">
-          <button class="opt-btn" data-val="3">3 sets</button>
-          <button class="opt-btn active" data-val="5">5 sets</button>
-        </div>
-      </div>
-      <div class="config-row">
-        <span id="label-tb">Final tiebreak</span>
-        <div class="config-options" id="tb-opts">
-          <button class="opt-btn active" data-val="yes">Yes</button>
-          <button class="opt-btn" data-val="no">No</button>
-        </div>
-      </div>
-    </div>
-    <br>
-    <button class="sim-btn" id="sim-btn" disabled>SIMULATE MATCH</button>
-  </div>
-
   <div class="winner-banner" id="winner-banner" style="display:none">
     <div class="winner-label" id="winner-label-text">Match winner</div>
-    <div class="winner-name" id="winner-name">â€”</div>
-    <div class="winner-score" id="winner-score">â€”</div>
+    <div class="winner-name" id="winner-name">—</div>
+    <div class="winner-score" id="winner-score">—</div>
   </div>
 
   <div id="scoreboard" style="display:none">
@@ -114,7 +119,7 @@
       <div id="sb-header-games">Games</div>
     </div>
     <div class="score-row">
-      <div class="player-label"><span class="dot-p1"></span><span id="sb-name-p1">â€”</span></div>
+      <div class="player-label"><span class="dot-p1"></span><span id="sb-name-p1">—</span></div>
       <div class="set-score inactive" id="s1p1">-</div>
       <div class="set-score inactive" id="s2p1">-</div>
       <div class="set-score inactive" id="s3p1">-</div>
@@ -123,7 +128,7 @@
       <div class="games-total p1" id="tot-p1">0</div>
     </div>
     <div class="score-row">
-      <div class="player-label"><span class="dot-p2"></span><span id="sb-name-p2">â€”</span></div>
+      <div class="player-label"><span class="dot-p2"></span><span id="sb-name-p2">—</span></div>
       <div class="set-score inactive" id="s1p2">-</div>
       <div class="set-score inactive" id="s2p2">-</div>
       <div class="set-score inactive" id="s3p2">-</div>
@@ -145,8 +150,8 @@
     <div id="sim1000-result" style="display:none;">
       <div class="sim1000-header" id="sim1000-header">100 MATCHES</div>
       <div class="sim1000-nums">
-        <div class="sim1000-num p1" id="sim1000-num-p1">â€”</div>
-        <div class="sim1000-num p2" id="sim1000-num-p2">â€”</div>
+        <div class="sim1000-num p1" id="sim1000-num-p1">—</div>
+        <div class="sim1000-num p2" id="sim1000-num-p2">—</div>
       </div>
       <div class="sim1000-bar-wrap">
         <div class="sim1000-bar-p1" id="sim1000-bar-p1"></div>
@@ -154,7 +159,7 @@
       </div>
     </div>
     <button class="sim-btn sim-btn-1000" id="sim-btn-1000" disabled>x100</button>
-    <button class="again-btn" id="again-btn">â†© New match</button>
+    <button class="again-btn" id="again-btn">↩ New match</button>
   </div>
 
 </div>
@@ -226,6 +231,7 @@
         </div>
 
         <div class="tourhub-bracket-wrap" id="tourhub-bracket-wrap">
+          <div class="tourhub-bracket-art" id="tourhub-bracket-art"></div>
           <div class="tourhub-bracket" id="tourhub-bracket"></div>
         </div>
 
@@ -248,7 +254,7 @@
       <div class="sidebar-header">
         <div class="sidebar-title">
           <span class="sidebar-title-label" data-sidebar-label="database">Database</span>
-          <span class="sidebar-title-sep"> Â· </span>
+          <span class="sidebar-title-sep"> · </span>
           <span id="comp-player-count">0</span>
           <span class="sidebar-title-suffix" data-sidebar-suffix="players"> players</span>
         </div>
@@ -277,7 +283,7 @@
   </div>
 </div>
 
-<!-- ==================== PAGE: ESTADÃSTICAS ==================== -->
+<!-- ==================== PAGE: ESTADÍSTICAS ==================== -->
 <div id="page-stats" class="page">
   <div class="stats-page-layout">
 
@@ -286,7 +292,7 @@
       <div class="sidebar-header">
         <div class="sidebar-title">
           <span class="sidebar-title-label" data-sidebar-label="database">Database</span>
-          <span class="sidebar-title-sep"> Â· </span>
+          <span class="sidebar-title-sep"> · </span>
           <span id="player-count">0</span>
           <span class="sidebar-title-suffix" data-sidebar-suffix="players"> players</span>
         </div>
@@ -315,11 +321,11 @@
   </div>
 </div>
 
-<!-- ==================== PAGE: HISTÃ“RICO ==================== -->
+<!-- ==================== PAGE: HISTÓRICO ==================== -->
 <div id="page-historico" class="page">
   <div class="results-header">
     <h2 id="hist-title">HISTORICAL RESULTS</h2>
-    <p class="results-subtitle" id="hist-sub">9,489 real matches Â· 1985â€“2024 Â· 99 players</p>
+    <p class="results-subtitle" id="hist-sub">9,489 real matches · 1985–2024 · 99 players</p>
   </div>
 
   <!-- FILTROS -->
@@ -389,7 +395,7 @@
     </table>
   </div>
 
-  <!-- PAGINACIÃ“N -->
+  <!-- PAGINACIÓN -->
   <div id="results-pagination" class="results-pagination"></div>
 </div>
 
@@ -474,6 +480,10 @@
 
 </body>
 </html>
+
+
+
+
 
 
 
