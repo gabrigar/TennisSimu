@@ -75,7 +75,7 @@ const LANG = {
     total_titles:    'TOTAL TITLES',
     clear_sel:       '↩ Clear selection',
     hist_title:      'HISTORICAL RESULTS',
-    hist_sub:        '9,489 real matches · 1985–2024 · 99 players',
+    hist_sub:        '9,489 real matches · 1985–2025 · 99 players',
     lbl_p1:          'PLAYER 1',
     lbl_p2:          'PLAYER 2',
     lbl_surface:     'SURFACE',
@@ -217,7 +217,7 @@ const LANG = {
     total_titles:    'TOTAL TÍTULOS',
     clear_sel:       '↩ Limpiar selección',
     hist_title:      'RESULTADOS HISTÓRICOS',
-    hist_sub:        '9.489 partidos reales · 1985–2024 · 99 jugadores',
+    hist_sub:        '9.489 partidos reales · 1985–2025 · 99 jugadores',
     lbl_p1:          'JUGADOR 1',
     lbl_p2:          'JUGADOR 2',
     lbl_surface:     'SUPERFICIE',
@@ -293,6 +293,7 @@ function t(key) { return LANG[currentLang][key] || LANG.en[key] || key; }
 function applyLang() {
   const L = currentLang;
   window.__simuLang = L;
+  document.documentElement.lang = L;
   // Nav tabs
   const navKeyByPage = {
     simulator: 'nav_simulator',
@@ -410,9 +411,13 @@ function applyLang() {
   if (typeof refreshTournamentHubLang === 'function') {
     refreshTournamentHubLang();
   }
+  if (typeof refreshCookieConsentLang === 'function') {
+    refreshCookieConsentLang();
+  }
 
   // Re-render dynamic parts if already initialized
   if (typeof renderMobileUI === 'function') updateMobileUI();
+  window.dispatchEvent(new CustomEvent('simu:langchange', { detail: { lang: L } }));
 }
 
 function setText(id, val) {
@@ -1854,14 +1859,14 @@ function initResultsPage() {
   const toSel   = document.getElementById('rf-year-to');
   if (!p1Sel || !fromSel) return;
 
-  for (let y = 1985; y <= 2024; y++) {
+  for (let y = 1985; y <= 2025; y++) {
     [fromSel, toSel].forEach(sel => {
       const o = document.createElement('option');
       o.value = y; o.textContent = y;
       sel.appendChild(o);
     });
   }
-  toSel.value = 2024;
+  toSel.value = 2025;
 
   const sorted = PLAYERS.slice().sort((a, b) => a.name.localeCompare(b.name));
   sorted.forEach(p => {
@@ -1883,7 +1888,7 @@ function applyResultsFilter() {
   const surf  = document.getElementById('rf-surf').value;
   const lvl   = document.getElementById('rf-lvl').value;
   const yFrom = parseInt(document.getElementById('rf-year-from').value) || 1985;
-  const yTo   = parseInt(document.getElementById('rf-year-to').value)   || 2024;
+  const yTo   = parseInt(document.getElementById('rf-year-to').value)   || 2025;
 
   // H2H badge
   const badge = document.getElementById('h2h-badge');
@@ -1934,7 +1939,7 @@ function resetResultsFilter() {
   document.getElementById('rf-surf').value = '';
   document.getElementById('rf-lvl').value  = '';
   document.getElementById('rf-year-from').value = '';
-  document.getElementById('rf-year-to').value   = 2024;
+  document.getElementById('rf-year-to').value   = 2025;
   applyResultsFilter();
 }
 
