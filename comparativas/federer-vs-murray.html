@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Federer vs Murray | TennisSimu</title>
+<meta name="description" content="Simulación Federer vs Murray con 1000 partidos por superficie, comparativa de carrera y resumen en español.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #071017;
+    --bg-soft: #0f1b24;
+    --panel: rgba(11, 23, 31, 0.84);
+    --panel-strong: rgba(8, 16, 23, 0.94);
+    --line: rgba(201, 225, 236, 0.12);
+    --text: #f5f7f8;
+    --muted: #93a8b3;
+    --fed: #d9f247;
+    --fed-soft: #7d8f1f;
+    --mur: #75d2ff;
+    --mur-soft: #195c7e;
+    --hard: #5fcfff;
+    --clay: #ff9b54;
+    --grass: #a3f278;
+    --shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(circle at top left, rgba(117, 210, 255, 0.18), transparent 36%),
+      radial-gradient(circle at top right, rgba(217, 242, 71, 0.12), transparent 34%),
+      linear-gradient(180deg, #061017 0%, #071017 50%, #08141b 100%);
+    color: var(--text);
+    font-family: "Barlow", sans-serif;
+  }
+
+  body {
+    padding: 28px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .poster {
+    position: relative;
+    width: min(1080px, calc(100vw - 32px));
+    min-height: 1360px;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent 30%),
+      linear-gradient(180deg, rgba(15, 31, 42, 0.92), rgba(7, 14, 20, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 34px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .poster::before,
+  .poster::after {
+    content: "";
+    position: absolute;
+    inset: auto;
+    pointer-events: none;
+  }
+
+  .poster::before {
+    top: 18px;
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+  }
+
+  .poster::after {
+    top: 17%;
+    left: 8%;
+    width: 84%;
+    height: 62%;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 22px;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+      0 0 0 120px rgba(255, 255, 255, 0.01) inset;
+    opacity: 0.35;
+  }
+
+  .hero {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    gap: 18px;
+    align-items: center;
+    padding: 34px 34px 22px;
+  }
+
+  .portrait {
+    position: relative;
+    height: 244px;
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .portrait::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 50%;
+    background: linear-gradient(180deg, transparent, rgba(5, 10, 15, 0.88));
+  }
+
+  .portrait.fed {
+    box-shadow: inset 0 0 0 1px rgba(217, 242, 71, 0.16);
+  }
+
+  .portrait.mur {
+    box-shadow: inset 0 0 0 1px rgba(117, 210, 255, 0.18);
+  }
+
+  .portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: saturate(1.04) contrast(1.02);
+  }
+
+  .portrait-label {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-family: "Barlow Condensed", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .portrait-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .portrait-flag {
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .hero-copy {
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0 0 8px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+
+  .title {
+    margin: 0;
+    font-family: "Anton", sans-serif;
+    font-size: clamp(3rem, 6vw, 4.7rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .subtitle {
+    margin: 14px auto 0;
+    max-width: 560px;
+    color: #dce5e9;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  .chips {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .chip {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    color: #dce5e9;
+    font-size: 0.84rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  .headline {
+    margin-top: 18px;
+    padding: 18px 22px;
+    border-radius: 22px;
+    background: linear-gradient(90deg, rgba(217, 242, 71, 0.14), rgba(117, 210, 255, 0.12));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .headline-kicker {
+    margin: 0 0 6px;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+  }
+
+  .headline-main {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 16px;
+    font-family: "Barlow Condensed", sans-serif;
+    text-transform: uppercase;
+  }
+
+  .headline-main strong {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    line-height: 1;
+    letter-spacing: 0.03em;
+  }
+
+  .headline-main span {
+    font-size: 1rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .fed-tint {
+    color: var(--fed);
+  }
+
+  .mur-tint {
+    color: var(--mur);
+  }
+
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 0 34px;
+  }
+
+  .section-title {
+    margin: 0 0 14px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #dce5e9;
+  }
+
+  .surface-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .surface-card {
+    padding: 18px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--panel);
+    backdrop-filter: blur(10px);
+  }
+
+  .surface-card.hard {
+    box-shadow: inset 0 0 0 1px rgba(95, 207, 255, 0.12);
+  }
+
+  .surface-card.clay {
+    box-shadow: inset 0 0 0 1px rgba(255, 155, 84, 0.14);
+  }
+
+  .surface-card.grass {
+    box-shadow: inset 0 0 0 1px rgba(163, 242, 120, 0.12);
+  }
+
+  .surface-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .surface-name {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .surface-h2h {
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: right;
+  }
+
+  .surface-leader {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .surface-winline {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    margin: 6px 0 14px;
+  }
+
+  .surface-player {
+    font-family: "Barlow Condensed", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.98rem;
+  }
+
+  .surface-pct {
+    font-family: "Anton", sans-serif;
+    font-size: 2.2rem;
+    line-height: 0.9;
+  }
+
+  .surface-record {
+    color: #dce5e9;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .split-bar {
+    display: flex;
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.08);
+    margin-bottom: 14px;
+  }
+
+  .split-bar .fed {
+    background: linear-gradient(90deg, rgba(217, 242, 71, 0.95), rgba(217, 242, 71, 0.55));
+  }
+
+  .split-bar .mur {
+    background: linear-gradient(90deg, rgba(117, 210, 255, 0.55), rgba(117, 210, 255, 0.95));
+  }
+
+  .surface-notes {
+    display: grid;
+    gap: 8px;
+    color: #dbe4e8;
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+
+  .surface-notes span {
+    color: var(--muted);
+  }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .card {
+    padding: 22px;
+    border-radius: 24px;
+    background: var(--panel);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .summary-copy {
+    margin: 0;
+    color: #e4ecef;
+    font-size: 1rem;
+    line-height: 1.58;
+  }
+
+  .summary-points {
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .summary-point {
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #dce5e9;
+    line-height: 1.4;
+  }
+
+  .summary-point strong {
+    color: var(--text);
+  }
+
+  .career-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .duel {
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .duel-label {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  .duel-values {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    font-family: "Barlow Condensed", sans-serif;
+    text-transform: uppercase;
+  }
+
+  .duel-values strong {
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .duel-values span {
+    color: var(--muted);
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+  }
+
+  .stats-card {
+    margin-top: 22px;
+  }
+
+  .stats-lead {
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .metric-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .metric-row {
+    display: grid;
+    grid-template-columns: 92px 1fr 92px;
+    gap: 14px;
+    align-items: center;
+    padding: 11px 12px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .metric-value {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 1.22rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .metric-value.right {
+    text-align: right;
+  }
+
+  .metric-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #e6eef1;
+  }
+
+  .metric-source {
+    color: var(--muted);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .metric-track {
+    display: flex;
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .metric-track .fed {
+    background: linear-gradient(90deg, rgba(217, 242, 71, 0.95), rgba(217, 242, 71, 0.55));
+  }
+
+  .metric-track .mur {
+    background: linear-gradient(90deg, rgba(117, 210, 255, 0.55), rgba(117, 210, 255, 0.95));
+  }
+
+  .footer {
+    padding: 18px 34px 28px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 960px) {
+    body {
+      padding: 14px;
+    }
+
+    .poster {
+      width: 100%;
+      min-height: auto;
+    }
+
+    .hero,
+    .surface-grid,
+    .insight-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .portrait {
+      height: 300px;
+    }
+
+    .metric-row {
+      grid-template-columns: 76px 1fr 76px;
+      gap: 10px;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="poster">
+    <section class="hero">
+      <div class="portrait fed">
+        <img src="img/federer.png" alt="Roger Federer">
+        <div class="portrait-label">
+          <span class="portrait-name fed-tint">Roger Federer</span>
+          <span class="portrait-flag">SUI</span>
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <p class="eyebrow">TennisSimu Markov Report</p>
+        <h1 class="title">Federer vs Murray</h1>
+        <p class="subtitle">
+          3.000 simulaciones reproducibles con el motor del proyecto: 1.000 en dura,
+          1.000 en tierra y 1.000 en hierba.
+        </p>
+
+        <div class="chips">
+          <span class="chip">Bo5</span>
+          <span class="chip">Tie-break final</span>
+          <span class="chip">Semilla 20260319</span>
+          <span class="chip">H2H real en base local</span>
+        </div>
+
+        <div class="headline">
+          <p class="headline-kicker">Balance global del experimento</p>
+          <div class="headline-main">
+            <strong class="fed-tint">55,8% Federer</strong>
+            <span>1674 - 1326</span>
+            <strong class="mur-tint">44,2% Murray</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="portrait mur">
+        <img src="img/murray.png" alt="Andy Murray">
+        <div class="portrait-label">
+          <span class="portrait-name mur-tint">Andy Murray</span>
+          <span class="portrait-flag">GBR</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Resultados por superficie</h2>
+      <div class="surface-grid">
+        <article class="surface-card hard">
+          <div class="surface-top">
+            <div class="surface-name" style="color: var(--hard);">Dura</div>
+            <div class="surface-h2h">H2H real: Federer 12-10</div>
+          </div>
+          <p class="surface-leader">Ventaja simulada para Federer</p>
+          <div class="surface-winline">
+            <div>
+              <div class="surface-player fed-tint">Federer</div>
+              <div class="surface-pct fed-tint">58,4%</div>
+            </div>
+            <div class="surface-record">584-416</div>
+          </div>
+          <div class="split-bar">
+            <div class="fed" style="width:58.4%"></div>
+            <div class="mur" style="width:41.6%"></div>
+          </div>
+          <div class="surface-notes">
+            <div><span>Marcador más común Federer:</span> 3-1 (24,8%)</div>
+            <div><span>Marcador más común Murray:</span> 2-3 (20,8%)</div>
+            <div><span>Partidos al quinto set:</span> 45,0%</div>
+          </div>
+        </article>
+
+        <article class="surface-card clay">
+          <div class="surface-top">
+            <div class="surface-name" style="color: var(--clay);">Tierra</div>
+            <div class="surface-h2h">H2H real: 0-0</div>
+          </div>
+          <p class="surface-leader">La serie más cerrada, con mínima ventaja para Murray</p>
+          <div class="surface-winline">
+            <div>
+              <div class="surface-player mur-tint">Murray</div>
+              <div class="surface-pct mur-tint">51,9%</div>
+            </div>
+            <div class="surface-record">519-481</div>
+          </div>
+          <div class="split-bar">
+            <div class="fed" style="width:48.1%"></div>
+            <div class="mur" style="width:51.9%"></div>
+          </div>
+          <div class="surface-notes">
+            <div><span>Marcador más común Federer:</span> 3-2 (21,8%)</div>
+            <div><span>Marcador más común Murray:</span> 2-3 (21,8%)</div>
+            <div><span>Partidos al quinto set:</span> 43,6%</div>
+          </div>
+        </article>
+
+        <article class="surface-card grass">
+          <div class="surface-top">
+            <div class="surface-name" style="color: var(--grass);">Hierba</div>
+            <div class="surface-h2h">H2H real: Federer 2-1</div>
+          </div>
+          <p class="surface-leader">El mayor pico de Federer aparece aquí</p>
+          <div class="surface-winline">
+            <div>
+              <div class="surface-player fed-tint">Federer</div>
+              <div class="surface-pct fed-tint">60,9%</div>
+            </div>
+            <div class="surface-record">609-391</div>
+          </div>
+          <div class="split-bar">
+            <div class="fed" style="width:60.9%"></div>
+            <div class="mur" style="width:39.1%"></div>
+          </div>
+          <div class="surface-notes">
+            <div><span>Marcador más común Federer:</span> 3-2 (28,3%)</div>
+            <div><span>Marcador más común Murray:</span> 2-3 (21,9%)</div>
+            <div><span>Partidos al quinto set:</span> 50,2%</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="insight-grid">
+        <article class="card">
+          <h2 class="section-title">Resumen rápido</h2>
+          <p class="summary-copy">
+            Federer se lleva el global por una ventaja moderada, pero muy consistente:
+            domina la dura y la hierba gracias a un paquete de saque bastante más fuerte,
+            más daño con la primera derecha y mejor cierre de puntos cortos. Murray le
+            recorta casi toda esa ventaja cuando el rally se alarga: en tierra el choque
+            queda prácticamente al 50-50 y es la única superficie donde termina por delante.
+          </p>
+          <div class="summary-points">
+            <div class="summary-point">
+              <strong>Dato central:</strong> casi la mitad del experimento se fue al quinto set
+              (46,3%), así que el cruce sale competitivo incluso cuando Federer queda arriba.
+            </div>
+            <div class="summary-point">
+              <strong>Lectura de estilos:</strong> Federer gana altura cuando la pista acelera y el
+              punto se acorta; Murray crece cuanto más pesa el resto, la presión y la estabilidad de revés.
+            </div>
+            <div class="summary-point">
+              <strong>Encaje con el H2H real:</strong> Federer mandó 14-11 en total y 9-2 entre Grand Slams
+              y ATP Finals, mientras que Murray rindió mejor en Masters 1000 (6-3).
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2 class="section-title">Carrera y contexto</h2>
+          <div class="career-grid">
+            <div class="duel">
+              <p class="duel-label">Grand Slams</p>
+              <div class="duel-values">
+                <strong class="fed-tint">20</strong>
+                <span>vs</span>
+                <strong class="mur-tint">3</strong>
+              </div>
+            </div>
+            <div class="duel">
+              <p class="duel-label">Masters 1000</p>
+              <div class="duel-values">
+                <strong class="fed-tint">28</strong>
+                <span>vs</span>
+                <strong class="mur-tint">14</strong>
+              </div>
+            </div>
+            <div class="duel">
+              <p class="duel-label">ATP 500</p>
+              <div class="duel-values">
+                <strong class="fed-tint">24</strong>
+                <span>vs</span>
+                <strong class="mur-tint">13</strong>
+              </div>
+            </div>
+            <div class="duel">
+              <p class="duel-label">Wimbledon</p>
+              <div class="duel-values">
+                <strong class="fed-tint">8</strong>
+                <span>vs</span>
+                <strong class="mur-tint">2</strong>
+              </div>
+            </div>
+            <div class="duel">
+              <p class="duel-label">H2H real</p>
+              <div class="duel-values">
+                <strong class="fed-tint">14</strong>
+                <span>vs</span>
+                <strong class="mur-tint">11</strong>
+              </div>
+            </div>
+            <div class="duel">
+              <p class="duel-label">Grand Slams + Finals</p>
+              <div class="duel-values">
+                <strong class="fed-tint">9</strong>
+                <span>vs</span>
+                <strong class="mur-tint">2</strong>
+              </div>
+            </div>
+            <div class="duel">
+              <p class="duel-label">Pico</p>
+              <div class="duel-values">
+                <strong class="fed-tint" style="font-size:1.3rem;">No.1 2004</strong>
+                <span>vs</span>
+                <strong class="mur-tint" style="font-size:1.3rem;">No.1 2016</strong>
+              </div>
+            </div>
+            <div class="duel">
+              <p class="duel-label">Prime</p>
+              <div class="duel-values">
+                <strong class="fed-tint" style="font-size:1.3rem;">2004-07</strong>
+                <span>vs</span>
+                <strong class="mur-tint" style="font-size:1.3rem;">2012-16</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section stats-card">
+      <article class="card">
+        <h2 class="section-title">Comparativa de stats y estilo</h2>
+        <p class="stats-lead">
+          Mezcla de datos PBP agregados del proyecto y señales del modelo. Federer sobresale en
+          saque, red y daño con la derecha; Murray responde con mejor resto, más presión y un revés más estable.
+        </p>
+
+        <div class="metric-list">
+          <div class="metric-row">
+            <div class="metric-value fed-tint">71,1%</div>
+            <div>
+              <div class="metric-label">
+                <span>Puntos ganados al saque</span>
+                <span class="metric-source">PBP</span>
+              </div>
+              <div class="metric-track">
+                <div class="fed" style="width:51.9%"></div>
+                <div class="mur" style="width:48.1%"></div>
+              </div>
+            </div>
+            <div class="metric-value right mur-tint">65,8%</div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-value fed-tint">39,8%</div>
+            <div>
+              <div class="metric-label">
+                <span>Puntos ganados al resto</span>
+                <span class="metric-source">PBP</span>
+              </div>
+              <div class="metric-track">
+                <div class="fed" style="width:48.7%"></div>
+                <div class="mur" style="width:51.3%"></div>
+              </div>
+            </div>
+            <div class="metric-value right mur-tint">42,0%</div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-value fed-tint">90,6%</div>
+            <div>
+              <div class="metric-label">
+                <span>Hold%</span>
+                <span class="metric-source">PBP</span>
+              </div>
+              <div class="metric-track">
+                <div class="fed" style="width:52.3%"></div>
+                <div class="mur" style="width:47.7%"></div>
+              </div>
+            </div>
+            <div class="metric-value right mur-tint">82,7%</div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-value fed-tint">41,1%</div>
+            <div>
+              <div class="metric-label">
+                <span>Conversión de break</span>
+                <span class="metric-source">PBP</span>
+              </div>
+              <div class="metric-track">
+                <div class="fed" style="width:48.1%"></div>
+                <div class="mur" style="width:51.9%"></div>
+              </div>
+            </div>
+            <div class="metric-value right mur-tint">44,2%</div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-value fed-tint">86,2</div>
+            <div>
+              <div class="metric-label">
+                <span>Daño de derecha</span>
+                <span class="metric-source">Modelo</span>
+              </div>
+              <div class="metric-track">
+                <div class="fed" style="width:53.2%"></div>
+                <div class="mur" style="width:46.8%"></div>
+              </div>
+            </div>
+            <div class="metric-value right mur-tint">75,7</div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-value fed-tint">79,2</div>
+            <div>
+              <div class="metric-label">
+                <span>Estabilidad de revés</span>
+                <span class="metric-source">Modelo</span>
+              </div>
+              <div class="metric-track">
+                <div class="fed" style="width:46.1%"></div>
+                <div class="mur" style="width:53.9%"></div>
+              </div>
+            </div>
+            <div class="metric-value right mur-tint">92,5</div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-value fed-tint">72%</div>
+            <div>
+              <div class="metric-label">
+                <span>Juego de red</span>
+                <span class="metric-source">Modelo</span>
+              </div>
+              <div class="metric-track">
+                <div class="fed" style="width:53.7%"></div>
+                <div class="mur" style="width:46.3%"></div>
+              </div>
+            </div>
+            <div class="metric-value right mur-tint">62%</div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-value fed-tint">37,1</div>
+            <div>
+              <div class="metric-label">
+                <span>Pressure index</span>
+                <span class="metric-source">Modelo</span>
+              </div>
+              <div class="metric-track">
+                <div class="fed" style="width:45.6%"></div>
+                <div class="mur" style="width:54.4%"></div>
+              </div>
+            </div>
+            <div class="metric-value right mur-tint">44,3</div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <footer class="footer">
+      HTML generado para captura social. Datos usados: <code>js/engine.js</code>, <code>js/players_v3.js</code>,
+      <code>js/results_db.js</code> y <code>js/results_extra_players.js</code>. Configuración del experimento:
+      1.000 partidos por superficie, mejor de 5 sets, tie-break final activado.
+    </footer>
+  </main>
+</body>
+</html>
