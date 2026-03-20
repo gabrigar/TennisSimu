@@ -143,6 +143,14 @@ const LANG = {
     comp_tb:         'Tiebreaks',
     comp_dec:        'Decisive set',
     comp_serve_kmh:  'Serve km/h',
+    report_lab:      'Report Lab',
+    report_desc:     'Build a shareable matchup sheet from the selected players.',
+    report_matches:  'Matches per surface',
+    report_generate: 'Create report',
+    report_generating:'Generating...',
+    report_hint:     'Opens in a new window and lets you download a PNG.',
+    report_pick_surface:'Select at least one surface',
+    report_popup_blocked:'Popup blocked. Allow popups to open the report.',
   },
   es: {
     nav_simulator:   '⚡ Matchup Simulator',
@@ -285,6 +293,14 @@ const LANG = {
     comp_tb:         'Tiebreaks',
     comp_dec:        'Set decisivo',
     comp_serve_kmh:  'Saque km/h',
+    report_lab:      'Laboratorio de informes',
+    report_desc:     'Genera una ficha compartible a partir de los dos jugadores elegidos.',
+    report_matches:  'Partidos por superficie',
+    report_generate: 'Crear informe',
+    report_generating:'Generando...',
+    report_hint:     'Abre otra ventana y te deja descargar un PNG.',
+    report_pick_surface:'Elige al menos una superficie',
+    report_popup_blocked:'El navegador bloqueó la nueva ventana. Permite popups para abrir el informe.',
   }
 };
 let currentLang = localStorage.getItem('lang') || 'en';
@@ -1679,6 +1695,724 @@ function selectCompPlayer(id) {
   renderComparadorList();
 }
 
+const COMP_REPORT_SURFACES = ['hard', 'clay', 'grass'];
+
+function compareLocale() {
+  return currentLang === 'es' ? 'es-ES' : 'en-US';
+}
+
+function compareFormatNumber(value, digits = 1) {
+  const safe = Number.isFinite(Number(value)) ? Number(value) : 0;
+  return new Intl.NumberFormat(compareLocale(), {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits
+  }).format(safe);
+}
+
+function compareFormatPct(value, digits = 1) {
+  return `${compareFormatNumber(value, digits)}%`;
+}
+
+function compareCssPct(value) {
+  const safe = Math.max(0, Math.min(100, Number(value) || 0));
+  return `${safe.toFixed(3)}%`;
+}
+
+function compareSurfaceLabel(surface) {
+  if (surface === 'clay') return t('surf_clay');
+  if (surface === 'grass') return t('surf_grass');
+  return t('surf_hard');
+}
+
+function compareSurfaceColor(surface) {
+  if (surface === 'clay') return '#ff9b54';
+  if (surface === 'grass') return '#9ef06d';
+  return '#67d7ff';
+}
+
+function compareJoinLabels(labels) {
+  if (!labels.length) return '';
+  if (labels.length === 1) return labels[0];
+  if (labels.length === 2) {
+    return currentLang === 'es'
+      ? `${labels[0]} y ${labels[1]}`
+      : `${labels[0]} and ${labels[1]}`;
+  }
+  const last = labels[labels.length - 1];
+  const head = labels.slice(0, -1).join(', ');
+  return currentLang === 'es'
+    ? `${head} y ${last}`
+    : `${head}, and ${last}`;
+}
+
+function comparePressureIndex(player) {
+  const stats = player.stats || {};
+  if (typeof player.model?.pressure_index_100 === 'number') {
+    return player.model.pressure_index_100;
+  }
+  return (stats.returnWin || 0.42) * 60
+    + (stats.breakConvert || 0.42) * 40
+    + (stats.rally_long || 26) / 2.5;
+}
+
+function compareBaseServe(player) {
+  const stats = player.stats || {};
+  const serve1pct = stats.serve1pct || 0.61;
+  const win1st = stats.win1st || 0.74;
+  const win2nd = stats.win2nd || 0.54;
+  return serve1pct * win1st + (1 - serve1pct) * win2nd;
+}
+
+function compareShotRatio(player) {
+  const winners = player.stats?.winners || 1;
+  const errors = Math.max(player.stats?.errors || 1, 1);
+  return winners / errors;
+}
+
+function compareSharePct(n1, n2) {
+  const total = (Number(n1) || 0) + (Number(n2) || 0);
+  if (!total) return 50;
+  return (Number(n1) / total) * 100;
+}
+
+function compareBlobToDataURL(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function resolveCompareReportAvatar(player, slotKey) {
+  const fallbackUrl = new URL(`img/${player.id}.png`, window.location.href).href;
+  const slotImage = document.querySelector(`.comp-player-photo.${slotKey}-photo`);
+  const pageImage = Array.from(document.images || []).find((img) => {
+    const src = img?.currentSrc || img?.src || '';
+    return src.endsWith(`img/${player.id}.png`);
+  });
+  const imgEl = slotImage || pageImage || null;
+  const src = imgEl?.currentSrc || imgEl?.src || fallbackUrl;
+  if (!src || src.startsWith('data:')) return src || fallbackUrl;
+
+  try {
+    const response = await fetch(src);
+    if (response.ok) {
+      return compareBlobToDataURL(await response.blob());
+    }
+  } catch (_error) {
+    // Some file:// contexts block fetch, so we fall back to the loaded image.
+  }
+
+  if (imgEl?.complete && imgEl.naturalWidth && imgEl.naturalHeight) {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = imgEl.naturalWidth;
+      canvas.height = imgEl.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(imgEl, 0, 0);
+        return canvas.toDataURL('image/png');
+      }
+    } catch (_error) {
+      // If the canvas is tainted we still keep the plain image URL.
+    }
+  }
+
+  return src;
+}
+
+function renderCompReportControls() {
+  return `
+    <div class="comp-report-panel">
+      <div class="section-label">${t('report_lab')}</div>
+      <div class="comp-report-copy">${t('report_desc')}</div>
+      <div class="comp-report-grid">
+        <label class="comp-report-field">
+          <span>${t('report_matches')}</span>
+          <input id="comp-report-count" class="comp-report-input" type="number" min="10" max="3000" step="10" value="1000">
+        </label>
+        <label class="comp-report-field">
+          <span>${t('sets')}</span>
+          <select id="comp-report-sets" class="comp-report-select">
+            <option value="3">Bo3</option>
+            <option value="5" selected>Bo5</option>
+          </select>
+        </label>
+        <label class="comp-report-field">
+          <span>${t('final_tb')}</span>
+          <select id="comp-report-tb" class="comp-report-select">
+            <option value="yes" selected>${t('yes')}</option>
+            <option value="no">${t('no')}</option>
+          </select>
+        </label>
+      </div>
+      <div class="comp-report-surfaces">
+        ${COMP_REPORT_SURFACES.map((surface) => `
+          <button type="button" class="comp-report-surface active" data-surface="${surface}" onclick="toggleCompReportSurface(this)">
+            ${compareSurfaceLabel(surface)}
+          </button>
+        `).join('')}
+      </div>
+      <div class="comp-report-actions">
+        <button type="button" class="comp-report-btn" id="comp-report-btn" onclick="openCompareReport()">${t('report_generate')}</button>
+        <div class="comp-report-hint">${t('report_hint')}</div>
+      </div>
+    </div>`;
+}
+
+function toggleCompReportSurface(button) {
+  if (!button) return;
+  button.classList.toggle('active');
+}
+
+function getCompareReportConfig() {
+  const countInput = document.getElementById('comp-report-count');
+  const setsInput = document.getElementById('comp-report-sets');
+  const tbInput = document.getElementById('comp-report-tb');
+  const rawCount = Math.round(Number(countInput?.value || 1000));
+  const count = Math.max(10, Math.min(3000, Number.isFinite(rawCount) ? rawCount : 1000));
+  if (countInput) countInput.value = count;
+
+  return {
+    count,
+    sets: Number(setsInput?.value) === 3 ? 3 : 5,
+    tb: tbInput?.value !== 'no',
+    surfaces: COMP_REPORT_SURFACES.filter((surface) => (
+      document.querySelector(`.comp-report-surface[data-surface="${surface}"]`)?.classList.contains('active')
+    ))
+  };
+}
+
+function getCompareH2HData(p1, p2) {
+  const dbMatches = Array.isArray(window.RESULTS_DB?.matches) ? window.RESULTS_DB.matches : [];
+  const matches = dbMatches
+    .filter(([winner, loser]) => (
+      (winner === p1.id && loser === p2.id) || (winner === p2.id && loser === p1.id)
+    ))
+    .sort((a, b) => (b[7] || 0) - (a[7] || 0));
+
+  const total = { p1: 0, p2: 0 };
+  const bySurface = {
+    hard: { p1: 0, p2: 0 },
+    clay: { p1: 0, p2: 0 },
+    grass: { p1: 0, p2: 0 }
+  };
+  const byLevel = {};
+
+  matches.forEach(([winner, _loser, surface, level]) => {
+    const key = winner === p1.id ? 'p1' : 'p2';
+    total[key] += 1;
+    const surfaceKey = surface === 'C'
+      ? 'clay'
+      : (surface === 'G' || surface === 'P' || surface === 'Y')
+        ? 'grass'
+        : 'hard';
+    if (bySurface[surfaceKey]) bySurface[surfaceKey][key] += 1;
+    byLevel[level] ||= { p1: 0, p2: 0 };
+    byLevel[level][key] += 1;
+  });
+
+  return { matches, total, bySurface, byLevel, latestMatch: matches[0] || null };
+}
+
+function getCompareTopScore(scoreDist, playerKey, setsToWin, totalMatches) {
+  const sorted = Object.entries(scoreDist)
+    .map(([score, count]) => {
+      const [p1Sets, p2Sets] = score.split('-').map(Number);
+      return { score, count, p1Sets, p2Sets };
+    })
+    .filter((row) => (playerKey === 'p1' ? row.p1Sets === setsToWin : row.p2Sets === setsToWin))
+    .sort((a, b) => b.count - a.count);
+
+  if (!sorted.length) return null;
+  return {
+    score: sorted[0].score,
+    count: sorted[0].count,
+    pct: totalMatches ? (sorted[0].count / totalMatches) * 100 : 0
+  };
+}
+
+function simulateCompareReportSurface(p1, p2, surface, config) {
+  const count = config.count;
+  const setsToWin = Math.ceil(config.sets / 2);
+  const wins = { p1: 0, p2: 0 };
+  const straight = { p1: 0, p2: 0 };
+  const scoreDist = {};
+  let decidingMatches = 0;
+  let totalGames = 0;
+
+  for (let i = 0; i < count; i += 1) {
+    const result = TENNIS_ENGINE.simMatch(p1, p2, surface, config.sets, config.tb);
+    const p1Sets = result.sets[0];
+    const p2Sets = result.sets[1];
+    if (p1Sets > p2Sets) wins.p1 += 1;
+    else wins.p2 += 1;
+
+    const scoreKey = `${p1Sets}-${p2Sets}`;
+    scoreDist[scoreKey] = (scoreDist[scoreKey] || 0) + 1;
+    totalGames += result.setScores.reduce((sum, set) => sum + set[0] + set[1], 0);
+
+    if (p1Sets === setsToWin && p2Sets === 0) straight.p1 += 1;
+    if (p2Sets === setsToWin && p1Sets === 0) straight.p2 += 1;
+    if ((p1Sets === setsToWin && p2Sets === setsToWin - 1) || (p2Sets === setsToWin && p1Sets === setsToWin - 1)) {
+      decidingMatches += 1;
+    }
+  }
+
+  const leaderKey = wins.p1 >= wins.p2 ? 'p1' : 'p2';
+  return {
+    key: surface,
+    label: compareSurfaceLabel(surface),
+    color: compareSurfaceColor(surface),
+    wins,
+    straight,
+    scoreDist,
+    decidingMatches,
+    decidingPct: count ? (decidingMatches / count) * 100 : 0,
+    avgGames: count ? totalGames / count : 0,
+    leaderKey,
+    leaderPct: count ? (wins[leaderKey] / count) * 100 : 0,
+    topScoreP1: getCompareTopScore(scoreDist, 'p1', setsToWin, count),
+    topScoreP2: getCompareTopScore(scoreDist, 'p2', setsToWin, count)
+  };
+}
+
+function buildCompareReportMetrics(p1, p2) {
+  const s1 = p1.stats || {};
+  const s2 = p2.stats || {};
+  const metrics = [
+    { label: currentLang === 'es' ? '1er servicio dentro' : '1st serve in', source: 'ATP', p1: (s1.serve1pct || 0) * 100, p2: (s2.serve1pct || 0) * 100, digits: 0, suffix: '%' },
+    { label: t('comp_pts_1st'), source: 'ATP', p1: (s1.win1st || 0) * 100, p2: (s2.win1st || 0) * 100, digits: 0, suffix: '%' },
+    { label: t('comp_pts_2nd'), source: 'ATP', p1: (s1.win2nd || 0) * 100, p2: (s2.win2nd || 0) * 100, digits: 0, suffix: '%' },
+    { label: t('return_row'), source: 'ATP', p1: (s1.returnWin || 0) * 100, p2: (s2.returnWin || 0) * 100, digits: 0, suffix: '%' },
+    { label: t('comp_breaks'), source: 'ATP', p1: (s1.breakConvert || 0) * 100, p2: (s2.breakConvert || 0) * 100, digits: 0, suffix: '%' },
+    { label: 'Base serve', source: 'Engine', p1: compareBaseServe(p1) * 100, p2: compareBaseServe(p2) * 100, digits: 1, suffix: '%' },
+    { label: 'Pressure index', source: 'V3', p1: comparePressureIndex(p1), p2: comparePressureIndex(p2), digits: 1 },
+    { label: currentLang === 'es' ? 'Juego de red' : 'Net play', source: 'V3', p1: (p1.net_win || 0) * 100, p2: (p2.net_win || 0) * 100, digits: 0, suffix: '%' },
+    { label: currentLang === 'es' ? 'Daño de derecha' : 'Forehand damage', source: 'V3', p1: p1.model?.fh_dom_100 || 50, p2: p2.model?.fh_dom_100 || 50, digits: 1 },
+    { label: currentLang === 'es' ? 'Estabilidad de revés' : 'Backhand stability', source: 'V3', p1: p1.model?.bh_stab_100 || 50, p2: p2.model?.bh_stab_100 || 50, digits: 1 },
+    { label: currentLang === 'es' ? 'Ratio winners/error' : 'Winners/error ratio', source: 'ATP', p1: compareShotRatio(p1), p2: compareShotRatio(p2), digits: 2 }
+  ];
+
+  return metrics.map((metric) => {
+    const p1Share = compareSharePct(metric.p1, metric.p2);
+    return {
+      ...metric,
+      p1Text: `${compareFormatNumber(metric.p1, metric.digits)}${metric.suffix || ''}`,
+      p2Text: `${compareFormatNumber(metric.p2, metric.digits)}${metric.suffix || ''}`,
+      p1Share,
+      p2Share: 100 - p1Share
+    };
+  });
+}
+
+function buildCompareReportSummary(data) {
+  const overallWinner = data.aggregate.winnerKey === 'p1' ? data.p1 : data.p2;
+  const overallLoser = data.aggregate.winnerKey === 'p1' ? data.p2 : data.p1;
+  const overallWinnerWins = data.aggregate.wins[data.aggregate.winnerKey];
+  const overallLoserWins = data.aggregate.wins[data.aggregate.winnerKey === 'p1' ? 'p2' : 'p1'];
+  const altSurfaces = data.surfaces.filter((surface) => surface.leaderKey !== data.aggregate.winnerKey).map((surface) => surface.label);
+  const serveLeader = compareBaseServe(data.p1) >= compareBaseServe(data.p2) ? data.p1 : data.p2;
+  const returnLeader = (data.p1.stats?.returnWin || 0) >= (data.p2.stats?.returnWin || 0) ? data.p1 : data.p2;
+
+  if (currentLang === 'es') {
+    return [
+      `${overallWinner.name} manda el global simulado ${overallWinnerWins}-${overallLoserWins} (${compareFormatPct(data.aggregate.winnerPct, 1)}).`,
+      data.surfaces.length === 1
+        ? `${data.surfaces[0].label} deja un reparto ${data.surfaces[0].wins.p1}-${data.surfaces[0].wins.p2} y ${compareFormatPct(data.surfaces[0].decidingPct, 1)} de partidos decisivos.`
+        : altSurfaces.length
+          ? `${compareJoinLabels(altSurfaces)} es donde ${overallLoser.name} equilibra o le da la vuelta al cruce.`
+          : `${overallWinner.name} gana en todas las superficies seleccionadas.`,
+      `${serveLeader.name} tiene la ventaja mayor al saque (${compareFormatPct(compareBaseServe(serveLeader) * 100, 1)} base serve), mientras ${returnLeader.name} destaca más al resto (${compareFormatPct((returnLeader.stats?.returnWin || 0) * 100, 0)} return).`
+    ];
+  }
+
+  return [
+    `${overallWinner.name} leads the simulated matchup ${overallWinnerWins}-${overallLoserWins} (${compareFormatPct(data.aggregate.winnerPct, 1)}).`,
+    data.surfaces.length === 1
+      ? `${data.surfaces[0].label} lands at ${data.surfaces[0].wins.p1}-${data.surfaces[0].wins.p2}, with ${compareFormatPct(data.surfaces[0].decidingPct, 1)} going the distance.`
+      : altSurfaces.length
+        ? `${compareJoinLabels(altSurfaces)} is where ${overallLoser.name} either balances or flips the matchup.`
+        : `${overallWinner.name} wins on every selected surface.`,
+    `${serveLeader.name} owns the bigger serve edge (${compareFormatPct(compareBaseServe(serveLeader) * 100, 1)} base serve), while ${returnLeader.name} stands out more on return (${compareFormatPct((returnLeader.stats?.returnWin || 0) * 100, 0)} return).`
+  ];
+}
+
+function slugifyReport(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function buildCompareReportData(p1, p2, config) {
+  const h2h = getCompareH2HData(p1, p2);
+  const surfaces = config.surfaces.map((surface) => {
+    const row = simulateCompareReportSurface(p1, p2, surface, config);
+    row.h2h = h2h.bySurface[surface];
+    return row;
+  });
+
+  const aggregate = surfaces.reduce((acc, row) => {
+    acc.wins.p1 += row.wins.p1;
+    acc.wins.p2 += row.wins.p2;
+    acc.decidingMatches += row.decidingMatches;
+    return acc;
+  }, { wins: { p1: 0, p2: 0 }, decidingMatches: 0 });
+
+  aggregate.totalMatches = config.count * surfaces.length;
+  aggregate.winnerKey = aggregate.wins.p1 >= aggregate.wins.p2 ? 'p1' : 'p2';
+  aggregate.winnerPct = aggregate.totalMatches ? (aggregate.wins[aggregate.winnerKey] / aggregate.totalMatches) * 100 : 0;
+  aggregate.decidingPct = aggregate.totalMatches ? (aggregate.decidingMatches / aggregate.totalMatches) * 100 : 0;
+
+  return {
+    lang: currentLang,
+    fileName: `${slugifyReport(p1.name)}-vs-${slugifyReport(p2.name)}-report`,
+    p1: {
+      id: p1.id,
+      name: p1.name,
+      country: p1.country,
+      flag: p1.countryFlag || p1.country,
+      era: p1.era,
+      prime: p1.prime,
+      peak: p1.peak,
+      style: p1.style,
+      gs: p1.gs || 0,
+      masters: p1.masters || 0,
+      m500: p1.m500 || 0,
+      gs_wi: p1.gs_wi || 0,
+      totalTitles: (p1.gs || 0) + (p1.masters || 0) + (p1.m500 || 0),
+      avatarUrl: new URL(`img/${p1.id}.png`, window.location.href).href,
+      stats: p1.stats || {}
+    },
+    p2: {
+      id: p2.id,
+      name: p2.name,
+      country: p2.country,
+      flag: p2.countryFlag || p2.country,
+      era: p2.era,
+      prime: p2.prime,
+      peak: p2.peak,
+      style: p2.style,
+      gs: p2.gs || 0,
+      masters: p2.masters || 0,
+      m500: p2.m500 || 0,
+      gs_wi: p2.gs_wi || 0,
+      totalTitles: (p2.gs || 0) + (p2.masters || 0) + (p2.m500 || 0),
+      avatarUrl: new URL(`img/${p2.id}.png`, window.location.href).href,
+      stats: p2.stats || {}
+    },
+    config: {
+      ...config,
+      totalMatches: aggregate.totalMatches
+    },
+    surfaces,
+    aggregate,
+    h2h,
+    bigStages: {
+      p1: (h2h.byLevel['Grand Slam']?.p1 || 0) + (h2h.byLevel['ATP Finals']?.p1 || 0),
+      p2: (h2h.byLevel['Grand Slam']?.p2 || 0) + (h2h.byLevel['ATP Finals']?.p2 || 0)
+    },
+    metrics: buildCompareReportMetrics(p1, p2),
+    summary: null
+  };
+}
+
+function buildCompareReportStyles() {
+  return `
+    :root{--bg:#071017;--panel:rgba(12,24,33,.96);--line:rgba(255,255,255,.08);--text:#f4f7f8;--muted:#90a7b2;--accent1:#d4f247;--accent2:#6fd3ff}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:radial-gradient(circle at top left,rgba(111,211,255,.18),transparent 32%),radial-gradient(circle at top right,rgba(212,242,71,.12),transparent 28%),linear-gradient(180deg,#071017 0%,#08131b 100%);color:var(--text);font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif}
+    body{padding:24px}
+    .report-toolbar{position:sticky;top:0;z-index:10;display:flex;justify-content:center;gap:10px;margin-bottom:18px}
+    .report-toolbar button{border:1px solid rgba(255,255,255,.1);background:rgba(8,18,24,.94);color:var(--text);border-radius:999px;padding:10px 18px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.03em}
+    .report-toolbar button:hover{transform:translateY(-1px)}
+    .tweet-report{width:min(1080px,100%);margin:0 auto;padding:30px;border-radius:30px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(135deg,rgba(255,255,255,.03),transparent 34%),linear-gradient(180deg,rgba(15,28,39,.98),rgba(8,15,21,.99));box-shadow:0 26px 70px rgba(0,0,0,.38);position:relative;overflow:hidden}
+    .tweet-report::before{content:"";position:absolute;inset:16px;border:1px solid rgba(255,255,255,.05);border-radius:22px;pointer-events:none}
+    .hero{display:grid;grid-template-columns:180px 1fr 180px;gap:18px;align-items:center;position:relative;z-index:1}
+    .portrait{position:relative;height:220px;border-radius:22px;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .portrait img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+    .portrait::after{content:"";position:absolute;inset:auto 0 0 0;height:46%;background:linear-gradient(180deg,transparent,rgba(4,9,13,.9))}
+    .portrait-label{position:absolute;left:12px;right:12px;bottom:12px;z-index:1;display:flex;justify-content:space-between;align-items:baseline;font-size:14px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+    .fed{color:var(--accent1)} .mur{color:var(--accent2)} .muted{color:var(--muted)}
+    .hero-copy{text-align:center}
+    .eyebrow{margin:0 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.22em;font-size:11px;font-weight:700}
+    .hero-copy h1{margin:0;font-family:Impact,"Arial Black",sans-serif;font-size:66px;line-height:.95;text-transform:uppercase;letter-spacing:.03em}
+    .hero-copy p{margin:14px auto 0;max-width:560px;color:#e0e8ec;line-height:1.45}
+    .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
+    .chip{border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#dbe4e8;padding:7px 11px;font-size:12px;font-weight:700}
+    .headline{margin-top:16px;padding:18px 20px;border-radius:20px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(90deg,rgba(212,242,71,.14),rgba(111,211,255,.14))}
+    .headline-kicker{margin:0 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.16em;font-size:11px;font-weight:700}
+    .headline-main{display:flex;justify-content:center;align-items:baseline;gap:14px;flex-wrap:wrap;font-family:Impact,"Arial Black",sans-serif;text-transform:uppercase}
+    .headline-main strong{font-size:40px;line-height:1;letter-spacing:.03em}
+    .headline-main span{color:var(--muted);font-size:16px;letter-spacing:.08em}
+    .section{margin-top:24px;position:relative;z-index:1}
+    .section-title{margin:0 0 12px;color:#dfe8eb;text-transform:uppercase;letter-spacing:.18em;font-size:14px;font-weight:800}
+    .surface-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+    .surface-card,.panel{padding:18px;border-radius:22px;background:var(--panel);border:1px solid rgba(255,255,255,.08)}
+    .surface-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+    .surface-name{font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}
+    .surface-h2h{color:var(--muted);font-size:12px;text-align:right}
+    .surface-copy{color:var(--muted);margin:0;font-size:13px}
+    .surface-lead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:10px 0 12px}
+    .surface-player{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .surface-pct{font-family:Impact,"Arial Black",sans-serif;font-size:34px;line-height:.95}
+    .surface-record{font-size:15px;font-weight:700}
+    .bar{display:flex;width:100%;height:10px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.07);margin-bottom:12px}
+    .bar .fed{background:linear-gradient(90deg,rgba(212,242,71,.96),rgba(212,242,71,.5))}
+    .bar .mur{background:linear-gradient(90deg,rgba(111,211,255,.5),rgba(111,211,255,.96))}
+    .surface-notes{display:grid;gap:7px;font-size:13px;color:#dce6ea}
+    .info-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}
+    .note-list{display:grid;gap:10px}
+    .note{padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.05);line-height:1.45;color:#dce5e9}
+    .career-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .career-tile{padding:14px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.05)}
+    .career-tile small{display:block;margin-bottom:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:700}
+    .career-values{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-weight:800;text-transform:uppercase}
+    .career-values strong{font-family:Impact,"Arial Black",sans-serif;font-size:30px;line-height:1}
+    .metrics{display:grid;gap:10px}
+    .metric-row{display:grid;grid-template-columns:86px 1fr 86px;gap:12px;align-items:center;padding:11px 12px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+    .metric-value{font-weight:800;font-size:18px}
+    .metric-value.right{text-align:right}
+    .metric-label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px;font-size:14px;font-weight:700}
+    .metric-source{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}
+    .footer{margin-top:18px;color:var(--muted);font-size:12px;line-height:1.45}
+    @media (max-width:920px){body{padding:12px}.hero,.info-grid{grid-template-columns:1fr}.portrait{height:280px}.hero-copy h1{font-size:48px}.career-grid{grid-template-columns:1fr 1fr}}
+  `;
+}
+
+function buildCompareReportHtml(data) {
+  data.summary = buildCompareReportSummary(data);
+  const styles = buildCompareReportStyles();
+  const winnerName = data.aggregate.winnerKey === 'p1' ? data.p1.name : data.p2.name;
+  const winnerWins = data.aggregate.wins[data.aggregate.winnerKey];
+  const loserWins = data.aggregate.wins[data.aggregate.winnerKey === 'p1' ? 'p2' : 'p1'];
+  const summaryHtml = data.summary.map((line) => `<div class="note">${line}</div>`).join('');
+  const surfacesHtml = data.surfaces.map((surface) => {
+    const leader = surface.leaderKey === 'p1' ? data.p1 : data.p2;
+    const winsText = surface.leaderKey === 'p1'
+      ? `${surface.wins.p1}-${surface.wins.p2}`
+      : `${surface.wins.p2}-${surface.wins.p1}`;
+    const h2hText = (surface.h2h?.p1 || surface.h2h?.p2)
+      ? `${data.p1.name} ${surface.h2h?.p1 || 0}-${surface.h2h?.p2 || 0}`
+      : (currentLang === 'es' ? 'Sin H2H real' : 'No real H2H');
+    const topP1 = surface.topScoreP1
+      ? `${data.p1.name}: ${surface.topScoreP1.score} (${compareFormatPct(surface.topScoreP1.pct, 1)})`
+      : '';
+    const topP2 = surface.topScoreP2
+      ? `${data.p2.name}: ${surface.topScoreP2.score} (${compareFormatPct(surface.topScoreP2.pct, 1)})`
+      : '';
+    return `
+      <article class="surface-card">
+        <div class="surface-top">
+          <div class="surface-name" style="color:${surface.color};">${surface.label}</div>
+          <div class="surface-h2h">${currentLang === 'es' ? 'H2H real' : 'Real H2H'}: ${h2hText}</div>
+        </div>
+        <p class="surface-copy">${currentLang === 'es' ? 'Ventaja simulada para' : 'Simulated edge for'} ${leader.name}</p>
+        <div class="surface-lead">
+          <div>
+            <div class="surface-player ${surface.leaderKey === 'p1' ? 'fed' : 'mur'}">${leader.name}</div>
+            <div class="surface-pct ${surface.leaderKey === 'p1' ? 'fed' : 'mur'}">${compareFormatPct(surface.leaderPct, 1)}</div>
+          </div>
+          <div class="surface-record">${winsText}</div>
+        </div>
+        <div class="bar">
+          <div class="fed" style="width:${compareCssPct((surface.wins.p1 / data.config.count) * 100)}"></div>
+          <div class="mur" style="width:${compareCssPct((surface.wins.p2 / data.config.count) * 100)}"></div>
+        </div>
+        <div class="surface-notes">
+          ${topP1 ? `<div><span class="muted">${currentLang === 'es' ? 'Marcador común' : 'Common score'}:</span> ${topP1}</div>` : ''}
+          ${topP2 ? `<div><span class="muted">${currentLang === 'es' ? 'Marcador común' : 'Common score'}:</span> ${topP2}</div>` : ''}
+          <div><span class="muted">${currentLang === 'es' ? 'Partidos decisivos' : 'Deciding matches'}:</span> ${compareFormatPct(surface.decidingPct, 1)}</div>
+        </div>
+      </article>
+    `;
+  }).join('');
+
+  const careerTiles = [
+    { label: 'Grand Slams', p1: data.p1.gs, p2: data.p2.gs },
+    { label: 'Masters 1000', p1: data.p1.masters, p2: data.p2.masters },
+    { label: 'ATP 500', p1: data.p1.m500, p2: data.p2.m500 },
+    { label: 'Wimbledon', p1: data.p1.gs_wi, p2: data.p2.gs_wi },
+    { label: currentLang === 'es' ? 'H2H real' : 'Real H2H', p1: data.h2h.total.p1, p2: data.h2h.total.p2 },
+    { label: currentLang === 'es' ? 'Grand Slams + Finals' : 'Grand Slams + Finals', p1: data.bigStages.p1, p2: data.bigStages.p2 },
+    { label: currentLang === 'es' ? 'Prime' : 'Prime', p1: data.p1.prime, p2: data.p2.prime, text: true },
+    { label: currentLang === 'es' ? 'Pico' : 'Peak', p1: data.p1.peak, p2: data.p2.peak, text: true }
+  ].map((tile) => `
+    <div class="career-tile">
+      <small>${tile.label}</small>
+      <div class="career-values">
+        <strong class="fed" style="${tile.text ? 'font-size:20px;' : ''}">${tile.p1}</strong>
+        <span class="muted">vs</span>
+        <strong class="mur" style="${tile.text ? 'font-size:20px;' : ''}">${tile.p2}</strong>
+      </div>
+    </div>
+  `).join('');
+
+  const metricsHtml = data.metrics.map((metric) => `
+    <div class="metric-row">
+      <div class="metric-value fed">${metric.p1Text}</div>
+      <div>
+        <div class="metric-label">
+          <span>${metric.label}</span>
+          <span class="metric-source">${metric.source}</span>
+        </div>
+        <div class="bar">
+          <div class="fed" style="width:${compareCssPct(metric.p1Share)}"></div>
+          <div class="mur" style="width:${compareCssPct(metric.p2Share)}"></div>
+        </div>
+      </div>
+      <div class="metric-value right mur">${metric.p2Text}</div>
+    </div>
+  `).join('');
+
+  const totalMatchesLabel = currentLang === 'es'
+    ? `${data.config.totalMatches} simulaciones`
+    : `${data.config.totalMatches} simulations`;
+  const footerText = currentLang === 'es'
+    ? `Generado desde Compare · ${data.config.count} partidos por superficie · ${data.config.sets === 5 ? 'Bo5' : 'Bo3'} · ${data.config.tb ? 'tie-break final' : 'sin tie-break final'}`
+    : `Generated from Compare · ${data.config.count} matches per surface · ${data.config.sets === 5 ? 'Bo5' : 'Bo3'} · ${data.config.tb ? 'final tiebreak on' : 'final tiebreak off'}`;
+
+  return `<!DOCTYPE html>
+<html lang="${data.lang}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${data.p1.name} vs ${data.p2.name} Report</title>
+  <style>${styles}</style>
+</head>
+<body>
+  <div class="report-toolbar">
+    <button id="report-download-btn">${currentLang === 'es' ? 'Descargar PNG' : 'Download PNG'}</button>
+    <button id="report-close-btn">${currentLang === 'es' ? 'Cerrar' : 'Close'}</button>
+  </div>
+  <article class="tweet-report" id="tweet-report">
+    <section class="hero">
+      <div class="portrait">
+        <img src="${data.p1.avatarUrl}" alt="${data.p1.name}" onerror="this.style.display='none'">
+        <div class="portrait-label"><span class="fed">${data.p1.name}</span><span class="muted">${data.p1.country}</span></div>
+      </div>
+      <div class="hero-copy">
+        <p class="eyebrow">${currentLang === 'es' ? 'Informe generado desde Compare' : 'Compare generated report'}</p>
+        <h1>${data.p1.name} vs ${data.p2.name}</h1>
+        <p>${currentLang === 'es' ? 'Hoja personalizada de matchup con simulación, carrera y lectura rápida.' : 'Custom matchup sheet with simulation, career context and quick read.'}</p>
+        <div class="chips">
+          <span class="chip">${totalMatchesLabel}</span>
+          <span class="chip">${data.config.sets === 5 ? 'Bo5' : 'Bo3'}</span>
+          <span class="chip">${data.config.surfaces.map(compareSurfaceLabel).join(' · ')}</span>
+          <span class="chip">${data.config.tb ? (currentLang === 'es' ? 'TB final' : 'Final TB') : (currentLang === 'es' ? 'Sin TB final' : 'No final TB')}</span>
+        </div>
+        <div class="headline">
+          <p class="headline-kicker">${currentLang === 'es' ? 'Balance global' : 'Overall balance'}</p>
+          <div class="headline-main">
+            <strong class="${data.aggregate.winnerKey === 'p1' ? 'fed' : 'mur'}">${winnerName}</strong>
+            <span>${winnerWins}-${loserWins}</span>
+            <strong class="${data.aggregate.winnerKey === 'p1' ? 'fed' : 'mur'}">${compareFormatPct(data.aggregate.winnerPct, 1)}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="portrait">
+        <img src="${data.p2.avatarUrl}" alt="${data.p2.name}" onerror="this.style.display='none'">
+        <div class="portrait-label"><span class="mur">${data.p2.name}</span><span class="muted">${data.p2.country}</span></div>
+      </div>
+    </section>
+    <section class="section">
+      <h2 class="section-title">${currentLang === 'es' ? 'Resultados por superficie' : 'Surface results'}</h2>
+      <div class="surface-grid">${surfacesHtml}</div>
+    </section>
+    <section class="section">
+      <div class="info-grid">
+        <article class="panel"><h2 class="section-title">${currentLang === 'es' ? 'Resumen rapido' : 'Quick read'}</h2><div class="note-list">${summaryHtml}</div></article>
+        <article class="panel"><h2 class="section-title">${currentLang === 'es' ? 'Carrera + H2H real' : 'Career + real H2H'}</h2><div class="career-grid">${careerTiles}</div></article>
+      </div>
+    </section>
+    <section class="section">
+      <article class="panel"><h2 class="section-title">${currentLang === 'es' ? 'Comparativa de stats' : 'Stats comparison'}</h2><div class="metrics">${metricsHtml}</div></article>
+    </section>
+    <div class="footer">${footerText}</div>
+  </article>
+  <script>
+    const EXPORT_STYLES = ${JSON.stringify(styles)};
+    const EXPORT_NAME = ${JSON.stringify(data.fileName)};
+    const PREPARE_LABEL = ${JSON.stringify(currentLang === 'es' ? 'Preparando PNG...' : 'Preparing PNG...')};
+    const DOWNLOAD_LABEL = ${JSON.stringify(currentLang === 'es' ? 'Descargar PNG' : 'Download PNG')};
+    function blobToDataURL(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});}
+    async function inlineImages(root){const images=Array.from(root.querySelectorAll('img'));await Promise.all(images.map(async(img)=>{const src=img.getAttribute('src');if(!src||src.startsWith('data:')) return;try{const response=await fetch(src);const blob=await response.blob();const dataUrl=await blobToDataURL(blob);img.setAttribute('src',dataUrl);}catch(_error){}}));}
+    async function downloadReportImage(){const button=document.getElementById('report-download-btn');const report=document.getElementById('tweet-report');if(!button||!report) return;button.disabled=true;button.textContent=PREPARE_LABEL;try{const clone=report.cloneNode(true);clone.style.margin='0';await inlineImages(clone);const width=Math.ceil(report.offsetWidth);const height=Math.ceil(report.offsetHeight);const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="'+height+'"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml"><style>'+EXPORT_STYLES+'</style>'+clone.outerHTML+'</div></foreignObject></svg>';const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(blob);const img=new Image();img.onload=()=>{const scale=2;const canvas=document.createElement('canvas');canvas.width=width*scale;canvas.height=height*scale;const ctx=canvas.getContext('2d');ctx.scale(scale,scale);ctx.drawImage(img,0,0);URL.revokeObjectURL(url);const link=document.createElement('a');link.download=EXPORT_NAME+'.png';link.href=canvas.toDataURL('image/png');link.click();button.disabled=false;button.textContent=DOWNLOAD_LABEL;};img.onerror=()=>{URL.revokeObjectURL(url);button.disabled=false;button.textContent=DOWNLOAD_LABEL;};img.src=url;}catch(_error){button.disabled=false;button.textContent=DOWNLOAD_LABEL;}}
+    document.getElementById('report-download-btn')?.addEventListener('click',downloadReportImage);
+    document.getElementById('report-close-btn')?.addEventListener('click',()=>window.close());
+  </script>
+</body>
+</html>`;
+}
+
+function buildCompareReportLoadingHtml(p1, p2) {
+  const title = currentLang === 'es' ? `Generando informe ${p1.name} vs ${p2.name}...` : `Generating ${p1.name} vs ${p2.name} report...`;
+  return `<!DOCTYPE html><html lang="${currentLang}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${title}</title><style>html,body{margin:0;min-height:100%;background:#071017;color:#f4f7f8;font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif}body{display:grid;place-items:center;padding:24px;text-align:center}.loading{max-width:520px;padding:26px 28px;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:rgba(12,24,33,.95);box-shadow:0 24px 60px rgba(0,0,0,.35)}.spinner{width:42px;height:42px;margin:0 auto 16px;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color:#d4f247;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}h1{margin:0 0 10px;font-size:28px;font-family:Impact,"Arial Black",sans-serif;letter-spacing:.03em;text-transform:uppercase}p{margin:0;color:#90a7b2;line-height:1.5}</style></head><body><div class="loading"><div class="spinner"></div><h1>${currentLang === 'es' ? 'Preparando informe' : 'Preparing report'}</h1><p>${title}</p></div></body></html>`;
+}
+
+function buildCompareReportErrorHtml(error) {
+  const title = currentLang === 'es' ? 'No se pudo generar el informe' : 'Could not generate report';
+  return `<!DOCTYPE html><html lang="${currentLang}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${title}</title><style>html,body{margin:0;min-height:100%;background:#071017;color:#f4f7f8;font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif}body{display:grid;place-items:center;padding:24px}.error{max-width:620px;padding:26px 28px;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:rgba(12,24,33,.95);box-shadow:0 24px 60px rgba(0,0,0,.35)}h1{margin:0 0 12px;font-size:26px;font-family:Impact,"Arial Black",sans-serif;text-transform:uppercase;letter-spacing:.03em}p{margin:0;color:#90a7b2;line-height:1.5}</style></head><body><div class="error"><h1>${title}</h1><p>${error?.message || error || 'Unknown error'}</p></div></body></html>`;
+}
+
+function openCompareReport() {
+  const p1 = comparadorState.player1;
+  const p2 = comparadorState.player2;
+  if (!p1 || !p2) return;
+
+  const config = getCompareReportConfig();
+  if (!config.surfaces.length) {
+    alert(t('report_pick_surface'));
+    return;
+  }
+
+  const reportWindow = window.open('', '_blank');
+  if (!reportWindow) {
+    alert(t('report_popup_blocked'));
+    return;
+  }
+
+  const trigger = document.getElementById('comp-report-btn');
+  const previousLabel = trigger?.textContent;
+  if (trigger) {
+    trigger.disabled = true;
+    trigger.textContent = t('report_generating');
+  }
+
+  reportWindow.document.open();
+  reportWindow.document.write(buildCompareReportLoadingHtml(p1, p2));
+  reportWindow.document.close();
+
+  setTimeout(async () => {
+    try {
+      const data = buildCompareReportData(p1, p2, config);
+      const [p1Avatar, p2Avatar] = await Promise.all([
+        resolveCompareReportAvatar(p1, 'p1'),
+        resolveCompareReportAvatar(p2, 'p2')
+      ]);
+      data.p1.avatarUrl = p1Avatar;
+      data.p2.avatarUrl = p2Avatar;
+      reportWindow.document.open();
+      reportWindow.document.write(buildCompareReportHtml(data));
+      reportWindow.document.close();
+    } catch (error) {
+      console.error(error);
+      reportWindow.document.open();
+      reportWindow.document.write(buildCompareReportErrorHtml(error));
+      reportWindow.document.close();
+    } finally {
+      if (trigger) {
+        trigger.disabled = false;
+        trigger.textContent = previousLabel || t('report_generate');
+      }
+    }
+  }, 40);
+}
+
 function renderComparadorComparison() {
   const p1 = comparadorState.player1;
   const p2 = comparadorState.player2;
@@ -1829,6 +2563,7 @@ function renderComparadorComparison() {
           <span class="comp-surf-val p2-col">${((s2.surface[key]-1)*100).toFixed(0)}%</span>
         </div>`).join('')}
     </div>
+    ${renderCompReportControls()}
     <button class="comp-clear-btn" onclick="clearComparador()">${t('clear_sel')}</button>`;
 }
 
